@@ -1,0 +1,13 @@
+{
+  "name": "ai-visibility-skills",
+  "skills": [
+    "./skills/ai-visibility/ai-visibility-audit",
+    "./skills/ai-visibility/llms-txt-generator",
+    "./skills/ai-visibility/robots-ai-crawler-audit",
+    "./skills/ai-visibility/schema-markup-audit",
+    "./skills/ai-visibility/sitemap-discovery-audit",
+    "./skills/ai-visibility/answer-engine-content-audit",
+    "./skills/ai-visibility/citation-readiness-audit",
+    "./skills/ai-visibility/ai-search-remediation-plan"
+  ]
+}
