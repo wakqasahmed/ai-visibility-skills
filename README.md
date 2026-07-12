@@ -46,6 +46,18 @@ npx skills@latest add wakqasahmed/skills
 See [SECURITY.md](SECURITY.md) for what these skills are (instruction files, not
 executable code), which skills document outbound network checks, and how to report a
 security concern.
+## Testing
+
+`ai-visibility-audit` has an offline behavioral eval fixture that checks the skill
+actually ranks blockers, cites evidence, and delegates to the focused skills instead
+of redoing their work inline — no live network calls or LLM in the loop:
+
+```bash
+python3 skills/ai-visibility/ai-visibility-audit/eval/run_eval.py
+```
+
+See `skills/ai-visibility/ai-visibility-audit/eval/README.md` for what it checks and
+how to add new fixture cases.
 
 ## Marketplace And Discovery
 
