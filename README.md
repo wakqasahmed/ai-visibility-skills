@@ -41,6 +41,11 @@ npx skills@latest add wakqasahmed/ai-engineering-workflow-skills
 npx skills@latest add wakqasahmed/skills
 ```
 
+## Security
+
+See [SECURITY.md](SECURITY.md) for what these skills are (instruction files, not
+executable code), which skills document outbound network checks, and how to report a
+security concern.
 ## Testing
 
 `ai-visibility-audit` has an offline behavioral eval fixture that checks the skill
