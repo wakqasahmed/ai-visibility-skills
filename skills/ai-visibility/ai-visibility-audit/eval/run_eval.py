@@ -133,13 +133,25 @@ def assert_report(findings: list[dict], report: str) -> list[str]:
         if not f.get("evidence"):
             failures.append(f"finding '{f['title']}' has no evidence citation")
 
+    # Full delegation map from SKILL.md's "## Delegation" section, so this check
+    # stays valid if a future fixture case exercises a delegate this fixture
+    # doesn't currently need.
+    known_delegates = {
+        "robots-ai-crawler-audit",
+        "sitemap-discovery-audit",
+        "schema-markup-audit",
+        "llms-txt-generator",
+        "answer-engine-content-audit",
+        "citation-readiness-audit",
+        "ai-search-remediation-plan",
+    }
     delegates_named = {f["delegate"] for f in findings}
     if not delegates_named:
         failures.append("no finding names a delegate skill for deep-dive")
-    expected_delegates = {"robots-ai-crawler-audit", "schema-markup-audit", "answer-engine-content-audit"}
-    if not (delegates_named & expected_delegates):
+    elif not (delegates_named <= known_delegates):
         failures.append(
-            f"expected at least one known delegate skill named, got {sorted(delegates_named)}"
+            f"finding names a delegate skill not in SKILL.md's delegation map: "
+            f"{sorted(delegates_named - known_delegates)}"
         )
 
     if FORBIDDEN_GUARANTEE_PATTERN.search(report):

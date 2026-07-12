@@ -3,6 +3,15 @@
 A frozen, offline fixture that checks the `ai-visibility-audit` skill's contract
 without a live network call or an LLM in the loop.
 
+`run_eval.py` does not invoke `SKILL.md` or an LLM — skills are prompt files with no
+code path to execute directly. Instead it is a hand-maintained Python
+reimplementation of the commands in `../references/checks.md`, run against the fixture
+and asserted against the severity/evidence/delegation/guardrail rules `SKILL.md`
+documents. It proves the fixture and the assertions are internally consistent and
+regression-safe; it does not prove an LLM following `SKILL.md` will produce this exact
+output. If `checks.md` or `SKILL.md`'s workflow changes, update the matching
+`check_*` function here too — nothing else will catch the drift.
+
 ## What it checks
 
 `fixture/` is a saved snapshot with three injected issues of differing severity:
