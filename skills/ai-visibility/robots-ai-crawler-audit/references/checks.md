@@ -17,14 +17,38 @@ curl -s "$SITE/robots.txt" | grep -iE "^(user-agent|disallow|allow|crawl-delay)"
 curl -s "$SITE/robots.txt" | awk 'BEGIN{IGNORECASE=1} /^user-agent:/{ua=$0} /^disallow:|^allow:/{print ua" | "$0}'
 ```
 
-## Known AI crawler user-agents to check for explicit allow/deny blocks
+## Known AI crawler user-agents to check for explicit rules
 
 ```bash
 for ua in GPTBot ChatGPT-User OAI-SearchBot ClaudeBot Claude-Web anthropic-ai PerplexityBot Google-Extended Applebot-Extended Bytespider CCBot Amazonbot; do
-  printf "%-20s " "$ua"
-  curl -s "$SITE/robots.txt" | grep -qi "^user-agent:\s*$ua" && echo "explicit block found in robots.txt" || echo "no explicit rule"
+  printf "%-20s\n" "$ua"
+  curl -s "$SITE/robots.txt" | awk -v target="$ua" '
+    function finish() {
+      if (!matches) return
+      if (!rules) print "  explicit stanza with no Allow/Disallow directives"
+      else print directives
+    }
+    /^[[:space:]]*#/ { next }
+    /^[[:space:]]*user-agent[[:space:]]*:/ {
+      if (rules) { finish(); matches = rules = 0; directives = "" }
+      agent = $0
+      sub(/^[^:]*:[[:space:]]*/, "", agent)
+      if (tolower(agent) == tolower(target)) { matches = found = 1 }
+      next
+    }
+    /^[[:space:]]*(allow|disallow)[[:space:]]*:/ {
+      rules = 1
+      if (matches) directives = directives "  " $0 "\n"
+    }
+    /^[[:space:]]*$/ { finish(); matches = rules = 0; directives = "" }
+    END { finish(); if (!found) print "  no explicit rule" }
+  '
 done
 ```
+
+Read `Allow` and `Disallow` directives as shown: an explicit `Allow: /` permits the
+bot, while a non-empty `Disallow` identifies a denied path. Do not call a bot blocked
+solely because it has a `User-agent` stanza.
 
 ## Live fetch as each bot (edge/WAF blocks won't show in robots.txt)
 

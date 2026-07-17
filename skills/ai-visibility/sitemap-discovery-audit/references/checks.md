@@ -50,13 +50,30 @@ curl -s "$URL" | grep -oiE '<link[^>]+rel="canonical"[^>]*>'
 
 ## Cross-check coverage against navigation
 
-Manually list the site's important nav/footer links, then diff against sitemap URLs to spot omissions:
+Manually list the site's important nav/footer links, normalize internal links to absolute
+URLs, then diff against sitemap URLs to spot omissions:
 
 ```bash
-curl -s "$SITE" | grep -oE 'href="[^"]+"' | sed 's/href="//;s/"$//' | sort -u > /tmp/nav-links.txt
+curl -s "$SITE" | grep -oE 'href="[^"]+"' | sed 's/href="//;s/"$//' | SITE="$SITE" python3 -c '
+import os, sys
+from urllib.parse import urljoin, urlsplit, urlunsplit
+
+site = os.environ["SITE"].rstrip("/")
+site_parts = urlsplit(site)
+for href in sys.stdin:
+    href = href.strip()
+    if not href or href.startswith(("#", "mailto:", "tel:", "javascript:", "data:")):
+        continue
+    link = urlsplit(urljoin(site + "/", href))
+    if link.scheme != site_parts.scheme or link.netloc != site_parts.netloc:
+        continue
+    print(urlunsplit((link.scheme, link.netloc, link.path, link.query, "")))
+' | sort -u > /tmp/nav-links.txt
 curl -s "$SITE/sitemap.xml" | grep -oE '<loc>[^<]+</loc>' | sed -e 's/<loc>//' -e 's/<\/loc>//' | sort -u > /tmp/sitemap-links.txt
 comm -23 /tmp/nav-links.txt /tmp/sitemap-links.txt
 ```
+
+This excludes anchors and external links before comparing only same-origin absolute URLs.
 
 ## Evidence discipline
 
