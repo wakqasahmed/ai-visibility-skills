@@ -18,6 +18,8 @@ Scope: access rules only. Sitemap coverage belongs to `sitemap-discovery-audit`;
 5. Compare access rules against the user's visibility goals.
 6. Recommend exact changes only when the desired access policy is clear.
 
+Run the robots.txt and per-bot access checks in `references/checks.md` and cite command output as evidence.
+
 ## Output
 
 - Current crawler policy summary

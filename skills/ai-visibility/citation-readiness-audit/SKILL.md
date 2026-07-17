@@ -15,6 +15,8 @@ Check whether AI systems can cite the site confidently.
 4. Check trust signals: author, organization, date, contact, support path, policy ownership, and update cadence.
 5. Identify claims that need better sourcing, clearer wording, or dedicated pages.
 
+Run the canonical-URL and trust-signal checks in `references/checks.md` and cite command output as evidence.
+
 ## Output
 
 - Claims and canonical URLs
