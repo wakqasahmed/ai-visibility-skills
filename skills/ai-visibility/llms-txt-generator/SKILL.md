@@ -17,8 +17,6 @@ Scope: drafting and reviewing the file itself. Whether crawlers can reach it bel
 4. Draft `llms.txt` with short descriptions for each section.
 5. Note missing pages that would make the file more useful.
 
-Run the existing-file and link-validation checks in `references/checks.md` and cite command output as evidence.
-
 ## Output
 
 - Proposed `llms.txt`
