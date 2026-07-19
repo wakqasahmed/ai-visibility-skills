@@ -17,8 +17,6 @@ Scope: discovery paths only. Access rules (robots, headers, bot blocks) belong t
 4. Check representative URLs for status codes, redirects, canonical tags, and noindex.
 5. Identify missing, duplicate, blocked, broken, or low-value sitemap entries.
 
-Run the sitemap fetch and coverage checks in `references/checks.md` and cite command output as evidence.
-
 ## Output
 
 - Sitemap paths found

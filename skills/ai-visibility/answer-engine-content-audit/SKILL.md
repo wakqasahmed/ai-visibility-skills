@@ -15,8 +15,6 @@ Assess whether a site answers the questions AI systems need to answer for users.
 4. Find missing, vague, outdated, or unciteable answers.
 5. Prioritize pages that improve recommendations, comparisons, objections, pricing clarity, and support automation.
 
-Run the rendered-content and answer-pattern checks in `references/checks.md` and cite command output as evidence.
-
 ## Output
 
 - Question-to-URL map
