@@ -1,11 +1,17 @@
-# AI Visibility Skills — Archived
+# AI Visibility Skills
 
-This repository is a historical reference. It is no longer maintained or distributed independently.
+Canonical source for AI visibility, AEO, GEO, crawler, sitemap, schema, and citation-readiness skills.
 
-Install the canonical catalogue instead:
+## Install
 
 ```bash
-npx skills@latest add wakqasahmed/skills
+npx skills@latest add wakqasahmed/ai-visibility-skills
 ```
 
-The active skills now live under [`skills/ai-visibility/`](https://github.com/wakqasahmed/skills/tree/main/skills/ai-visibility) in [wakqasahmed/skills](https://github.com/wakqasahmed/skills).
+## Contents
+
+The installable skills live in [`skills/ai-visibility/`](skills/ai-visibility/).
+
+## Aggregate catalogue
+
+Changes merged to this repository are automatically synchronized to [wakqasahmed/skills](https://github.com/wakqasahmed/skills). Treat this repository as the source of truth for AI visibility skills.
