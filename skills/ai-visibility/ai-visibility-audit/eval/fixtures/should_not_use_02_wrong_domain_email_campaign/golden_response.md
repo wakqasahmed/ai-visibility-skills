@@ -1,0 +1,1 @@
+This isn't an AI visibility audit request — it's an email marketing campaign brief (teaser/launch/last-chance emails for existing subscribers). That's a different skill's job, not something to force into a discoverability/schema/citation audit. Use an email marketing campaign skill for this instead.

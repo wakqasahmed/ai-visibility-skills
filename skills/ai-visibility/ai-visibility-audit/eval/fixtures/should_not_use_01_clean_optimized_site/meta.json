@@ -1,0 +1,9 @@
+{
+  "category": "should_not_use",
+  "mode": "audit",
+  "description": "Site passes every discoverability, machine-readable-context, and content-quality check declared in the fixture — a correct audit reports zero fabricated blockers, not manufactured findings to look thorough.",
+  "expected_min_findings": 0,
+  "expected_max_findings": 0,
+  "expected_severities": [],
+  "expected_delegates": []
+}

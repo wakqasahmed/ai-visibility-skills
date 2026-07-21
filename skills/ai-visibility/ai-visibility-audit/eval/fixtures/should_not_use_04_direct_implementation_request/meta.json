@@ -1,0 +1,10 @@
+{
+  "category": "should_not_use",
+  "mode": "decline",
+  "description": "Ask is to directly implement fixes (rewrite robots.txt, add schema) with the audit explicitly skipped, not to produce an audit report — implementation is out of scope for this skill.",
+  "decline_signal_patterns": [
+    "not (a |the )?(implementation|code|editing)",
+    "robots-ai-crawler-audit|schema-markup-audit",
+    "doesn't (implement|make|write) (code |file )?changes|does not implement"
+  ]
+}
