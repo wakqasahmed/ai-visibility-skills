@@ -1,0 +1,6 @@
+{
+  "id": "should_not_use_03_vague_whole_site_visibility",
+  "category": "should_not_use",
+  "description": "Whole-site triage request spanning crawling, schema, sitemap, and content - broader than this skill's crawler-access-rules-only scope; belongs to ai-visibility-audit.",
+  "decline_signal_patterns": ["ai-visibility-audit", "whole-site", "broader than (this|crawler)", "access rules only"]
+}
