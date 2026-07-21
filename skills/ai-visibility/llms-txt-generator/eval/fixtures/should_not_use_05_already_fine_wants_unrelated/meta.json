@@ -1,0 +1,6 @@
+{
+  "id": "should_not_use_05_already_fine_wants_unrelated",
+  "category": "should_not_use",
+  "description": "llms.txt already exists and is confirmed fine (200, text/plain) — the actual ask (mobile page-speed performance) is unrelated to this skill entirely and must not be forced into an llms.txt draft/review.",
+  "decline_signal_patterns": ["page (load |speed )?performance|page speed|load time", "not (something|what) this skill", "outside (the scope|this skill)"]
+}

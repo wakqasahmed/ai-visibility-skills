@@ -1,0 +1,19 @@
+{
+  "id": "should_use_02_ecommerce_multi_section",
+  "category": "should_use",
+  "description": "E-commerce site needing product collections, policies, support, and company info grouped into distinct sections.",
+  "existing_llms_txt": false,
+  "expected_min_sections": 4,
+  "source_urls": [
+    "https://brightleaf.store/",
+    "https://brightleaf.store/collections/kitchen",
+    "https://brightleaf.store/collections/bedding",
+    "https://brightleaf.store/shipping-policy",
+    "https://brightleaf.store/returns-policy",
+    "https://brightleaf.store/support",
+    "https://brightleaf.store/about",
+    "https://brightleaf.store/contact"
+  ],
+  "excluded_urls": [],
+  "missing_page_keywords": []
+}
