@@ -1,0 +1,1 @@
+This is a request to directly implement a fix, not a request to convert findings into a remediation plan or checklist — this skill produces tickets and acceptance criteria, it does not edit or deploy files itself. Make the robots.txt change directly, or ask for it as an implementation task rather than a remediation plan.

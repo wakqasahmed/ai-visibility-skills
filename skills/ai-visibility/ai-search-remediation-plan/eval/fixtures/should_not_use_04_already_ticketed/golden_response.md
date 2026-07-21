@@ -1,0 +1,1 @@
+JIRA-4821 is already an execution-ready ticket — it already has acceptance criteria, a verification command, an owner, and is in progress. There is no raw audit finding here to convert; re-issuing it as a new ticket would create a duplicate. No remediation plan needed.
