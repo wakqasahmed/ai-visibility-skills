@@ -1,0 +1,6 @@
+{
+  "id": "should_use_03_missing_comparison_and_stale",
+  "category": "should_use",
+  "description": "Two independent gaps on the same page (no comparison content; no freshness signal) — must produce two independently-verifiable findings, not one bundled finding.",
+  "expected_finding_count": 2
+}

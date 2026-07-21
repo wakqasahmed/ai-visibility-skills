@@ -17,3 +17,5 @@ jobs:
         run: python3 scripts/validate-plugin.py
       - name: Run ai-visibility-audit behavioral eval
         run: python3 skills/ai-visibility/ai-visibility-audit/eval/run_eval.py
+      - name: Run answer-engine-content-audit deterministic contract eval
+        run: python3 skills/ai-visibility/answer-engine-content-audit/eval/run_eval.py
