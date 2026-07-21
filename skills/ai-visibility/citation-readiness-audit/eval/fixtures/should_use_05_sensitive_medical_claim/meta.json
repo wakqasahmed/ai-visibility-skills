@@ -1,0 +1,8 @@
+{
+  "id": "should_use_05_sensitive_medical_claim",
+  "category": "should_use",
+  "description": "One claim is a health/medical efficacy claim needing human review despite being technically well-sourced; the other is an ordinary logistics claim that is cleanly citable.",
+  "expected_claim_count": 2,
+  "expected_blocked_or_flagged_titles": ["30% cholesterol reduction in 8 weeks (Omega-3 softgels)"],
+  "expected_sensitive_titles": ["30% cholesterol reduction in 8 weeks (Omega-3 softgels)"]
+}

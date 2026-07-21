@@ -1,0 +1,10 @@
+{
+  "id": "should_not_use_04_direct_rewrite_request",
+  "category": "should_not_use",
+  "description": "Request explicitly skips the audit and asks for a direct page rewrite deliverable — this skill audits and recommends, it does not produce finished replacement copy.",
+  "decline_signal_patterns": [
+    "this (skill|audit) (doesn't|does not|isn't|is not)",
+    "audit,? not (a rewrite|rewrite|copywriting)",
+    "can('|no)t (write|produce) (the )?final copy"
+  ]
+}

@@ -17,3 +17,5 @@ jobs:
         run: python3 scripts/validate-plugin.py
       - name: Run ai-visibility-audit behavioral eval
         run: python3 skills/ai-visibility/ai-visibility-audit/eval/run_eval.py
+      - name: Run citation-readiness-audit deterministic contract eval
+        run: python3 skills/ai-visibility/citation-readiness-audit/eval/run_eval.py

@@ -1,0 +1,8 @@
+{
+  "id": "should_use_03_claim_text_mismatch",
+  "category": "should_use",
+  "description": "Claim text does not appear in server-rendered HTML (client-rendered only) — must not be marked citable, must be flagged for substantiation.",
+  "expected_claim_count": 1,
+  "expected_blocked_or_flagged_titles": ["$12/user/month starting price"],
+  "expected_sensitive_titles": []
+}
