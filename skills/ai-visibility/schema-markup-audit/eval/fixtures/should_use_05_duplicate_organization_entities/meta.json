@@ -1,0 +1,7 @@
+{
+  "category": "should_use",
+  "page_type": "Organization",
+  "description": "Site has three inconsistent, per-page Organization entities instead of one canonical entity, and is missing sameAs and contactPoint despite visible social links and a support phone number",
+  "expect_mismatch": true,
+  "forbidden_properties": []
+}

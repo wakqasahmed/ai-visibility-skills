@@ -1,0 +1,7 @@
+{
+  "category": "should_use",
+  "page_type": "LocalBusiness",
+  "description": "Page is typed generically as LocalBusiness instead of the specific truthful type Restaurant, and is missing telephone, geo, and openingHoursSpecification, all visible on the page",
+  "expect_mismatch": false,
+  "forbidden_properties": []
+}
