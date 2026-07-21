@@ -4,6 +4,10 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   pull-requests: write
@@ -37,7 +41,7 @@ jobs:
             exit 1
           fi
 
-      - uses: alibaba/open-code-review@v1.7.12
+      - uses: alibaba/open-code-review@17049fb1e3d6a96a8554e7576a6013cb8266635d
         with:
           llm_url: ${{ vars.OCR_LLM_URL }}
           llm_auth_token: ${{ secrets.OCR_LLM_AUTH_TOKEN }}
