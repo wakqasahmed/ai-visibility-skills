@@ -1,0 +1,6 @@
+{
+  "id": "should_use_02_no_question_headings",
+  "category": "should_use",
+  "description": "Support page has relevant content under label-style headings but none phrased as the direct question users/assistants ask — unciteable, not missing outright.",
+  "expected_finding_count": 1
+}

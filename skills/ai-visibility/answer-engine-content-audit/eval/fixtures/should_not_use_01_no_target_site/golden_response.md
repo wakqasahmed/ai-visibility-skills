@@ -1,0 +1,1 @@
+No content audit can be run yet — no site, URL, or product name was given. This skill finds gaps by pulling and reading actual pages; it cannot audit a company that hasn't been identified. Share the site's domain and, ideally, the specific pages you want reviewed (homepage, pricing, docs, FAQ), and the audit can proceed.
