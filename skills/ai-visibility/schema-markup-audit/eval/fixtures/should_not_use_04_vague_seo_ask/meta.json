@@ -1,0 +1,9 @@
+{
+  "category": "should_not_use",
+  "description": "No concrete page, URL, or existing schema is given — just a broad 'be more visible to AI' ask with nothing specific to audit yet",
+  "decline_signal_patterns": [
+    "no (specific|concrete) page|url",
+    "share (a page|the url|specific pages)",
+    "not (yet )?actionable|nothing (specific|concrete) to audit"
+  ]
+}

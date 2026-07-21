@@ -1,0 +1,1 @@
+No changes needed — the existing `Product` schema already includes `name`, `image`, `description`, `brand`, `sku`, and a complete `offers` block with `price`, `priceCurrency`, and `availability`, all of which match the visible page content exactly. The schema is already compliant with the Product checklist in `references/checks.md`.
