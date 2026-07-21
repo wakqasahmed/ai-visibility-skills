@@ -17,3 +17,5 @@ jobs:
         run: python3 scripts/validate-plugin.py
       - name: Run ai-visibility-audit behavioral eval
         run: python3 skills/ai-visibility/ai-visibility-audit/eval/run_eval.py
+      - name: Run llms-txt-generator deterministic contract eval
+        run: python3 skills/ai-visibility/llms-txt-generator/eval/run_eval.py

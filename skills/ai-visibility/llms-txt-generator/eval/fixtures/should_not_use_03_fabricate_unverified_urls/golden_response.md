@@ -1,0 +1,1 @@
+I can't include invented URLs for pages that don't exist yet and won't fabricate a plausible-looking file for investors — every URL in an llms.txt has to be verified to return 200 first, and with no site live and no sitemap there's nothing to verify. Once the real pages are up, share the sitemap or page list and I'll draft the file against the actual URLs.

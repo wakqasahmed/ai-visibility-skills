@@ -1,0 +1,1 @@
+Deciding which pages deserve to exist (comparison page, FAQ, more docs) is a content-gap question, not an llms.txt drafting task — that belongs to the `answer-engine-content-audit` skill. This skill only curates links to pages that already exist into an `llms.txt` file. Once you know what to build and it's live, come back here to add it to the file.

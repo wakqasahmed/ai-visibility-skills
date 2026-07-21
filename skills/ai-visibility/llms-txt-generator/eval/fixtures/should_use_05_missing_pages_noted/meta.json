@@ -1,0 +1,16 @@
+{
+  "id": "should_use_05_missing_pages_noted",
+  "category": "should_use",
+  "description": "Pricing is linked from nav but 404s and isn't in the sitemap — must not be included as a source URL, and the gap must be surfaced under Missing recommended URLs rather than silently dropped.",
+  "existing_llms_txt": false,
+  "expected_min_sections": 1,
+  "source_urls": [
+    "https://queuelayer.dev/",
+    "https://queuelayer.dev/docs",
+    "https://queuelayer.dev/status"
+  ],
+  "excluded_urls": [
+    "https://queuelayer.dev/pricing"
+  ],
+  "missing_page_keywords": ["pricing"]
+}

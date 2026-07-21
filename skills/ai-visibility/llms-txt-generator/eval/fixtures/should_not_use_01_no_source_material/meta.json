@@ -1,0 +1,6 @@
+{
+  "id": "should_not_use_01_no_source_material",
+  "category": "should_not_use",
+  "description": "No sitemap, page list, or crawl evidence provided at all — nothing to draft from and nothing to verify. Correct behavior is to ask for source material first, not invent a plausible-looking file.",
+  "decline_signal_patterns": ["(no|without) (a |any )?(sitemap|source material|page list|pages)", "can('t| ?not) draft", "need (the )?(sitemap|page list|source)"]
+}
