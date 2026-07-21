@@ -1,0 +1,6 @@
+{
+  "id": "should_not_use_02_llms_txt_drafting_request",
+  "category": "should_not_use",
+  "description": "Request is to draft an llms.txt file, not to review crawler access rules - belongs to llms-txt-generator per this skill's Scope note.",
+  "decline_signal_patterns": ["llms-txt-generator", "drafting llms\\.txt", "not (this|a) (crawler|access) (rule|skill)"]
+}

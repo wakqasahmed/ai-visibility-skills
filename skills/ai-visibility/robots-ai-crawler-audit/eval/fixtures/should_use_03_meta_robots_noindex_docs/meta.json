@@ -1,0 +1,6 @@
+{
+  "id": "should_use_03_meta_robots_noindex_docs",
+  "category": "should_use",
+  "description": "robots.txt and X-Robots-Tag are both clean, but a <meta name=\"robots\" content=\"noindex, nofollow\"> tag on the docs page blocks indexing at the HTML level - a self-inflicted regression, likely a CMS template default.",
+  "expects_full_report": true
+}
