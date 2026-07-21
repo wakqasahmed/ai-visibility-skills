@@ -1,0 +1,9 @@
+{
+  "category": "should_use",
+  "mode": "audit",
+  "description": "Pricing page has no meta description and no JSON-LD structured data — important machine-readable-context blocker.",
+  "expected_min_findings": 1,
+  "expected_max_findings": null,
+  "expected_severities": ["important"],
+  "expected_delegates": ["schema-markup-audit"]
+}
