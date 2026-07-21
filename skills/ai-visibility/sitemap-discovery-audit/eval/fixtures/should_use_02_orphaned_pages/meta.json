@@ -1,0 +1,7 @@
+{
+  "id": "should_use_02_orphaned_pages",
+  "category": "should_use",
+  "description": "Sitemap exists and is well-formed, but 18 published guide pages are orphaned from it — a coverage gap, not a missing-sitemap failure.",
+  "expected_min_findings": 1,
+  "expects_faceted_flag": false
+}

@@ -1,0 +1,6 @@
+{
+  "id": "should_not_use_04_direct_implementation",
+  "category": "should_not_use",
+  "description": "Ask is to directly edit and deploy sitemap.xml, not to audit discovery paths — this skill audits and reports, it does not implement or deploy fixes itself.",
+  "decline_signal_patterns": ["does not (edit|deploy|implement)", "not a request to audit", "implementation", "make the change (directly|yourself)"]
+}

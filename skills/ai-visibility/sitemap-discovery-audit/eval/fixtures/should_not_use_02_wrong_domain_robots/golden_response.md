@@ -1,0 +1,1 @@
+Bot-blocking in `robots.txt` and access headers is out of scope for sitemap-discovery-audit — this skill covers sitemap coverage, canonical URLs, and redirect/discovery paths only. Access rules (robots.txt disallow rules, bot-blocking headers) are handled by `robots-ai-crawler-audit`; use that skill to check and fix the GPTBot/ClaudeBot blocking.
