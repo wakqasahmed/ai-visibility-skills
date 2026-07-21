@@ -1,0 +1,8 @@
+{
+  "id": "should_use_02_noindex_page",
+  "category": "should_use",
+  "description": "Claim text is present and the URL returns 200, but the page is noindex — AI systems are unlikely to treat it as citable.",
+  "expected_claim_count": 1,
+  "expected_blocked_or_flagged_titles": ["99.9% uptime SLA on enterprise plan"],
+  "expected_sensitive_titles": []
+}

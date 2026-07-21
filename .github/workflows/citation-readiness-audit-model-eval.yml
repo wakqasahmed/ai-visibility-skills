@@ -1,0 +1,61 @@
+name: Citation Readiness Audit Model Eval
+
+on:
+  workflow_dispatch:
+    inputs:
+      trials:
+        description: "Trials per fixture per condition"
+        required: false
+        default: "4"
+      threshold:
+        description: "Minimum skill-enabled pass rate to pass the job"
+        required: false
+        default: "0.8"
+      model:
+        description: "Anthropic model id"
+        required: false
+        default: "claude-sonnet-4-5"
+  schedule:
+    - cron: "0 6 * * 1"
+
+jobs:
+  model-eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check for ANTHROPIC_API_KEY
+        id: check-secret
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "has_key=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::ANTHROPIC_API_KEY is not set — skipping the live model-harness eval. Add the secret in repo settings to enable this layer."
+          else
+            echo "has_key=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Install anthropic SDK
+        if: steps.check-secret.outputs.has_key == 'true'
+        run: pip install anthropic
+      - name: Run skill-enabled vs skill-disabled model eval
+        if: steps.check-secret.outputs.has_key == 'true'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          python3 skills/ai-visibility/citation-readiness-audit/eval/model_harness.py \
+            --trials "${{ github.event.inputs.trials || '4' }}" \
+            --threshold "${{ github.event.inputs.threshold || '0.8' }}" \
+            --model "${{ github.event.inputs.model || 'claude-sonnet-4-5' }}" \
+            --output citation-readiness-audit-model-eval-results.json
+      - name: Upload results
+        if: steps.check-secret.outputs.has_key == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: citation-readiness-audit-model-eval-results
+          path: citation-readiness-audit-model-eval-results.json
+      - name: Report skip
+        if: steps.check-secret.outputs.has_key != 'true'
+        run: echo "Skipped - ANTHROPIC_API_KEY secret not configured for this repository."

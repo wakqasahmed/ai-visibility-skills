@@ -1,0 +1,10 @@
+{
+  "id": "should_not_use_02_wrong_domain_pagespeed",
+  "category": "should_not_use",
+  "description": "Request is a Core Web Vitals / page-speed performance question, not an AI-citation-readiness question — wrong skill entirely.",
+  "decline_signal_patterns": [
+    "not (what this|a citation)",
+    "core web vitals|page[- ]?speed|lighthouse",
+    "different (skill|audit)"
+  ]
+}
