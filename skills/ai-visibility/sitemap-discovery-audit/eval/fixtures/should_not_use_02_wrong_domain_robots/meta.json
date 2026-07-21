@@ -1,0 +1,6 @@
+{
+  "id": "should_not_use_02_wrong_domain_robots",
+  "category": "should_not_use",
+  "description": "Request is about robots.txt/bot-access rules, not sitemap/discovery-path coverage — belongs to robots-ai-crawler-audit per SKILL.md's scope note.",
+  "decline_signal_patterns": ["robots-ai-crawler-audit", "access rules", "not (this|sitemap)", "out of scope"]
+}

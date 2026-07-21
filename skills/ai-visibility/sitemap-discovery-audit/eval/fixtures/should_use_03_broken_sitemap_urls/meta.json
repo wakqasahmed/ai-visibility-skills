@@ -1,0 +1,7 @@
+{
+  "id": "should_use_03_broken_sitemap_urls",
+  "category": "should_use",
+  "description": "Sitemap lists URLs that 404/500 when fetched — broken entries, distinct from coverage gaps.",
+  "expected_min_findings": 1,
+  "expects_faceted_flag": false
+}
