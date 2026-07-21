@@ -1,0 +1,7 @@
+{
+  "id": "should_use_01_robots_block",
+  "category": "should_use",
+  "description": "Single critical crawler-block finding with a re-runnable verification command already on file.",
+  "expected_ticket_count": 1,
+  "expected_blocked_ticket_titles": []
+}

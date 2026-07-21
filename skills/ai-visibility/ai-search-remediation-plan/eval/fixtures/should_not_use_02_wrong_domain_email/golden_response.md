@@ -1,0 +1,1 @@
+This is not an AI-visibility/AEO/GEO/crawler/schema/sitemap/citation audit finding — it's an email marketing campaign brief. This skill converts audit findings into remediation tickets; it does not plan promotional email campaigns. Use the `04-promotional-offer` email marketing skill instead.

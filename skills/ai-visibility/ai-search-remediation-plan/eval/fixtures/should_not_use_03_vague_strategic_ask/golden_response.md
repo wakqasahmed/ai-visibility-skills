@@ -1,0 +1,1 @@
+There are no concrete audit findings here to convert into tickets — this skill turns specific findings into execution-ready work, it does not generate a plan from scratch. Run `ai-visibility-audit` (or the relevant sibling audit skill) first, then bring the findings back here.

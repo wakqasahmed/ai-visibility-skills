@@ -1,0 +1,6 @@
+{
+  "id": "should_not_use_05_direct_implementation_request",
+  "category": "should_not_use",
+  "description": "Ask is for direct implementation/deployment, not planning — this skill produces tickets, it does not execute fixes itself.",
+  "decline_signal_patterns": ["does not (edit|deploy|implement)", "not a request to convert", "implementation"]
+}

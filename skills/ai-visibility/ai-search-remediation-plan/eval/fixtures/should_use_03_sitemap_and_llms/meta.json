@@ -1,0 +1,7 @@
+{
+  "id": "should_use_03_sitemap_and_llms",
+  "category": "should_use",
+  "description": "Two independent findings from two different source skills — must produce two independently-verifiable tickets, not one bundled ticket.",
+  "expected_ticket_count": 2,
+  "expected_blocked_ticket_titles": []
+}
