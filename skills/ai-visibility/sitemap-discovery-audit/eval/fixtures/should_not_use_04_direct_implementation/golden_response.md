@@ -1,0 +1,1 @@
+This is a request to directly edit and deploy `sitemap.xml`, not a request to audit sitemap coverage, canonical URLs, or discovery paths — sitemap-discovery-audit produces findings and priority fixes, it does not edit or deploy files itself. Add the 12 URLs to `sitemap.xml` and deploy the change directly, or ask for it as an implementation task rather than an audit.

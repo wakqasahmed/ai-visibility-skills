@@ -1,0 +1,9 @@
+{
+  "category": "should_use",
+  "mode": "audit",
+  "description": "FAQ answers are one or two words each, too thin for an answer engine to cite — optional-severity content-quality finding, discoverability otherwise clean.",
+  "expected_min_findings": 1,
+  "expected_max_findings": null,
+  "expected_severities": ["optional"],
+  "expected_delegates": ["answer-engine-content-audit"]
+}

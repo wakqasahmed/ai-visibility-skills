@@ -1,0 +1,6 @@
+{
+  "id": "should_use_01_client_side_pricing",
+  "category": "should_use",
+  "description": "Pricing page renders client-side only; raw HTML pull shows no pricing text at all. Single critical finding.",
+  "expected_finding_count": 1
+}

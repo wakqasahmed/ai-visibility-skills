@@ -1,0 +1,6 @@
+{
+  "id": "should_not_use_01_no_target_site",
+  "category": "should_not_use",
+  "description": "No site, domain, or URL given at all — nothing to fetch or audit. Correct behavior is to ask for the target, not fabricate findings.",
+  "decline_signal_patterns": ["no (site|url|domain)", "share the site", "cannot audit"]
+}

@@ -1,0 +1,6 @@
+{
+  "id": "should_not_use_03_clean_audit",
+  "category": "should_not_use",
+  "description": "Page already passes every check.md signal (pricing present, comparison language present, question-phrased headings, freshness date present) — correct behavior is to report a clean audit, not fabricate findings to look useful.",
+  "decline_signal_patterns": ["no content gaps", "nothing to report", "no gaps found"]
+}

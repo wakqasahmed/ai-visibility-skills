@@ -1,0 +1,10 @@
+{
+  "category": "should_not_use",
+  "mode": "decline",
+  "description": "Request is an email marketing campaign brief, not an AI-visibility audit ask — wrong skill entirely.",
+  "decline_signal_patterns": [
+    "not (an? )?(ai[- ]visibility|ai visibility) audit",
+    "email (marketing|campaign)",
+    "wrong skill|different skill|not the right (skill|tool)"
+  ]
+}

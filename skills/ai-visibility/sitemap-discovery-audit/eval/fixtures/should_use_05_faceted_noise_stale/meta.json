@@ -1,0 +1,7 @@
+{
+  "id": "should_use_05_faceted_noise_stale",
+  "category": "should_use",
+  "description": "Sitemap flooded with generated/faceted filter-combination URLs plus stale duplicate lastmod values — crawl-noise finding, distinct from a 404/canonical issue.",
+  "expected_min_findings": 1,
+  "expects_faceted_flag": true
+}

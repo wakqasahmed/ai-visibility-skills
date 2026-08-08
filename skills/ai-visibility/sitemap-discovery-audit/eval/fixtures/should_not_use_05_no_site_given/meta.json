@@ -1,0 +1,6 @@
+{
+  "id": "should_not_use_05_no_site_given",
+  "category": "should_not_use",
+  "description": "No site/domain given and no concrete sitemap to inspect — nothing actionable to audit yet; correct behavior is to ask for the site, not fabricate a report.",
+  "decline_signal_patterns": ["what site|which (site|domain|url)", "need (a|the) (site|domain|url)", "provide (a|the) (site|domain|url)"]
+}

@@ -1,0 +1,6 @@
+{
+  "id": "should_not_use_04_wrong_domain_seo",
+  "category": "should_not_use",
+  "description": "Wrong-domain request — traditional SEO/performance metrics (backlinks, keyword rank, Core Web Vitals), not AI-answer content gaps. Belongs to a different tool entirely.",
+  "decline_signal_patterns": ["not an? .*AI answer-engine", "traditional (technical )?SEO", "different (tool|skill)", "instead"]
+}

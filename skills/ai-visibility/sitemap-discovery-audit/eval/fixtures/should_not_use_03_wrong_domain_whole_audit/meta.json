@@ -1,0 +1,6 @@
+{
+  "id": "should_not_use_03_wrong_domain_whole_audit",
+  "category": "should_not_use",
+  "description": "Request is for whole-site AI-visibility triage across many concerns, not sitemap/discovery-path coverage specifically — belongs to ai-visibility-audit per SKILL.md's scope note.",
+  "decline_signal_patterns": ["ai-visibility-audit", "whole-site", "broader", "not (just )?(this|sitemap)"]
+}
