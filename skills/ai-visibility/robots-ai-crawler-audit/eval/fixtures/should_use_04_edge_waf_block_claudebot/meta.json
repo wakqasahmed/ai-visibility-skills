@@ -1,0 +1,6 @@
+{
+  "id": "should_use_04_edge_waf_block_claudebot",
+  "category": "should_use",
+  "description": "robots.txt has no explicit ClaudeBot rule and looks fully permissive, but a live fetch as ClaudeBot returns 403 while GPTBot and a default user-agent both return 200 - an edge/WAF block invisible to robots.txt inspection alone.",
+  "expects_full_report": true
+}

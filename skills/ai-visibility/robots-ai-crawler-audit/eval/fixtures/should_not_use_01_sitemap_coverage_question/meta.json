@@ -1,0 +1,6 @@
+{
+  "id": "should_not_use_01_sitemap_coverage_question",
+  "category": "should_not_use",
+  "description": "Request is about sitemap coverage/orphaned URLs, not crawler access rules - belongs to sitemap-discovery-audit per this skill's Scope note.",
+  "decline_signal_patterns": ["sitemap-discovery-audit", "sitemap coverage", "not (this|a) (crawler|access) (rule|skill)"]
+}

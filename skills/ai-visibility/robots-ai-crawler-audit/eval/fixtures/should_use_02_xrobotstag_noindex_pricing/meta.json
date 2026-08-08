@@ -1,0 +1,6 @@
+{
+  "id": "should_use_02_xrobotstag_noindex_pricing",
+  "category": "should_use",
+  "description": "robots.txt is permissive, but the pricing page serves an X-Robots-Tag: noindex header - a page-level block invisible to robots.txt-only inspection.",
+  "expects_full_report": true
+}

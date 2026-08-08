@@ -1,0 +1,6 @@
+{
+  "id": "should_use_05_crawl_delay_missing_ai_stanzas",
+  "category": "should_use",
+  "description": "Site is not blocked for named AI crawlers, but has no explicit per-bot stanzas and a 20s Crawl-delay applied to everyone - ambiguous policy that should be made explicit, with tradeoffs (visibility vs. cost vs. scraping risk) called out per SKILL.md guardrails.",
+  "expects_full_report": true
+}
