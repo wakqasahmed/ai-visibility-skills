@@ -1,0 +1,6 @@
+{
+  "id": "should_use_05_missing_support_docs",
+  "category": "should_use",
+  "description": "Two separate pages, two separate questions (support docs export; refund policy) — one missing entirely, one present but vague. Must produce two independently-verifiable findings tied to their own URLs.",
+  "expected_finding_count": 2
+}

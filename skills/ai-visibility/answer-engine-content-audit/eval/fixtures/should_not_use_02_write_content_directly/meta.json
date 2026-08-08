@@ -1,0 +1,6 @@
+{
+  "id": "should_not_use_02_write_content_directly",
+  "category": "should_not_use",
+  "description": "Ask is to directly ghostwrite a full blog post, not to audit for content gaps — this skill produces a gap report and recommendations, it does not draft finished articles.",
+  "decline_signal_patterns": ["not a request to audit", "does not ghostwrite", "run the audit first", "different skill"]
+}

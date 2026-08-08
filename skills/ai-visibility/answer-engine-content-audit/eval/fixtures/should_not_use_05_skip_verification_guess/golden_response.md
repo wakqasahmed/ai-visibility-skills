@@ -1,0 +1,1 @@
+Cannot report findings without pulling the actual rendered content first — claiming a content gap based on what "most SaaS sites" look like, without checking these specific pages, would be fabrication, not an audit. Run `curl` against https://acmeplan.example/docs and https://acmeplan.example/faq (or share the rendered text) and the audit can proceed on real evidence.

@@ -1,0 +1,1 @@
+No content gaps found on this page. Pricing figures are present in raw HTML ($19/$49/$99), comparison language appears 3 times, 4 headings are phrased as direct questions, and a freshness date is present (2026-06-01). Nothing to report — re-run this audit if the page changes or new buyer questions emerge.
