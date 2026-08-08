@@ -1,0 +1,1 @@
+This isn't yet actionable for a schema markup audit — there's no specific page, URL, or existing structured data to review. Share a page or URL and I can audit its schema.org/JSON-LD structured data specifically. Broader AI-visibility work (crawler access, content gaps, citations) is handled by other skills in this pack, not this one.

@@ -1,0 +1,8 @@
+{
+  "id": "should_use_04_missing_trust_signals",
+  "category": "should_use",
+  "description": "Claim's canonical URL is stable and the text matches, but the page has no author, no date, and no structured-data org identity — a trust/freshness gap on an otherwise citable claim.",
+  "expected_claim_count": 1,
+  "expected_blocked_or_flagged_titles": [],
+  "expected_sensitive_titles": []
+}

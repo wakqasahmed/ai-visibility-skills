@@ -1,0 +1,7 @@
+{
+  "category": "should_use",
+  "page_type": "FAQPage",
+  "description": "FAQPage schema's answer text (3-5 days) contradicts the visible answer (5-7 days), and a second visible Q&A pair is missing from the schema entirely",
+  "expect_mismatch": true,
+  "forbidden_properties": []
+}
