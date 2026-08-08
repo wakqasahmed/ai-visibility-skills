@@ -9,6 +9,7 @@ on:
 jobs:
   skills:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
       - name: List skills
@@ -17,6 +18,8 @@ jobs:
         run: python3 scripts/validate-plugin.py
       - name: Run ai-visibility-audit behavioral eval
         run: python3 skills/ai-visibility/ai-visibility-audit/eval/run_eval.py
+      - name: Run citation-readiness-audit deterministic contract eval
+        run: python3 skills/ai-visibility/citation-readiness-audit/eval/run_eval.py
       - name: Run ai-search-remediation-plan deterministic contract eval
         run: python3 skills/ai-visibility/ai-search-remediation-plan/eval/run_eval.py
       - name: Run schema-markup-audit deterministic contract eval
