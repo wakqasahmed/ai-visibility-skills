@@ -1,0 +1,10 @@
+{
+  "category": "should_not_use",
+  "mode": "decline",
+  "description": "User demands a guarantee of inclusion/ranking on AI platforms before any site is even provided — the skill's guardrails forbid promising platform outcomes, and there is no site to audit yet.",
+  "decline_signal_patterns": [
+    "cannot guarantee|can't guarantee|no guarantee|not guarantee",
+    "no (control|influence) over (how |whether )?(ChatGPT|AI Overviews|Google|Perplexity|Claude)",
+    "(need|share|provide) (a |the )?(url|site|domain)"
+  ]
+}

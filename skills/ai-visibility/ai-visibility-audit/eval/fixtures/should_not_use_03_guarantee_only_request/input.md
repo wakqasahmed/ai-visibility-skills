@@ -1,0 +1,1 @@
+We're paying a lot for this audit, so I need you to guarantee that after we fix everything you find, our site will be featured and ranked at the top of ChatGPT and Google AI Overviews answers. Can you confirm that guarantee before we proceed? We haven't given you a URL yet — just want the guarantee first.

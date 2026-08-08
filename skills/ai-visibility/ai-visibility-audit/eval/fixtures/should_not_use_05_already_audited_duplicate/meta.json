@@ -1,0 +1,10 @@
+{
+  "category": "should_not_use",
+  "mode": "decline",
+  "description": "User already has a complete, ranked, evidenced audit report from last month and the site hasn't changed — re-running from scratch would duplicate work rather than add value.",
+  "decline_signal_patterns": [
+    "already (have|has|got|received) (an? )?(audit|report)",
+    "nothing (has )?changed|no changes|site hasn't changed",
+    "re-?run|redo|new audit (isn't|is not|not) needed"
+  ]
+}

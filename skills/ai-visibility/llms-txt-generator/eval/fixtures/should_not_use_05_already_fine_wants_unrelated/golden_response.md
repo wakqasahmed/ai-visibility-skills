@@ -1,0 +1,1 @@
+Your `llms.txt` already returns HTTP 200 as `text/plain` — nothing to redraft there. The actual question, mobile homepage load time, is a page-speed/performance concern, not llms.txt content curation — that's outside the scope of this skill entirely. Ask about performance optimization directly rather than through this skill.

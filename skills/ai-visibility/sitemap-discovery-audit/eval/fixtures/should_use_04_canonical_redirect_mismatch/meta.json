@@ -1,0 +1,7 @@
+{
+  "id": "should_use_04_canonical_redirect_mismatch",
+  "category": "should_use",
+  "description": "Sitemap URLs 301-redirect to different URLs than their own canonical tags claim — post-migration canonical/redirect drift.",
+  "expected_min_findings": 1,
+  "expects_faceted_flag": false
+}

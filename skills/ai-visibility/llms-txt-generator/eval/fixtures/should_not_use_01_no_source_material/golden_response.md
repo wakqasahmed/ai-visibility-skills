@@ -1,0 +1,1 @@
+I can't draft a real llms.txt without any source material — no sitemap, homepage content, or page list has been provided, so there's nothing to inspect or verify. Making one up would mean including URLs that may not exist. Please share the homepage title/description and a sitemap (or page list) first — for example `curl -s "$SITE/sitemap.xml"` — and I'll draft the file from that.

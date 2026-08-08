@@ -1,0 +1,20 @@
+{
+  "id": "should_use_04_thin_pages_excluded",
+  "category": "should_use",
+  "description": "Sitemap includes thin tag-archive pages and duplicate print-view URLs that must be excluded from the draft, keeping only substantive canonical pages.",
+  "existing_llms_txt": false,
+  "expected_min_sections": 1,
+  "source_urls": [
+    "https://fieldnote.blog/",
+    "https://fieldnote.blog/archive",
+    "https://fieldnote.blog/about"
+  ],
+  "excluded_urls": [
+    "https://fieldnote.blog/tag/gardening",
+    "https://fieldnote.blog/tag/travel",
+    "https://fieldnote.blog/tag/food",
+    "https://fieldnote.blog/archive?print=1",
+    "https://fieldnote.blog/archive?print=1&lang=en"
+  ],
+  "missing_page_keywords": []
+}
