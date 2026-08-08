@@ -32,7 +32,7 @@ VALID_SEVERITIES = {"critical", "important", "optional"}
 
 ABSENCE_PATTERN_RE = re.compile(
     r"no match|no output|nothing returned|empty|blank|not found|404|zero results|no text"
-    r"|\b0\b|no mention|none\b|no comparison|no .*language|nowhere",
+    r"|\b0\b|no mention|none\b|no comparison|no [^\n]{0,60}?language|nowhere",
     re.IGNORECASE,
 )
 CHECK_COMMAND_RE = re.compile(r"curl|grep", re.IGNORECASE)

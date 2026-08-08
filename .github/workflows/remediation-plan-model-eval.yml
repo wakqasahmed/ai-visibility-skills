@@ -1,4 +1,4 @@
-name: Answer Engine Content Audit Model Eval
+name: Remediation Plan Model Eval
 
 on:
   workflow_dispatch:
@@ -18,13 +18,9 @@ on:
   schedule:
     - cron: "0 6 * * 1"
 
-permissions:
-  contents: read
-
 jobs:
   model-eval:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v5
@@ -49,17 +45,17 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          python3 skills/ai-visibility/answer-engine-content-audit/eval/model_harness.py \
+          python3 skills/ai-visibility/ai-search-remediation-plan/eval/model_harness.py \
             --trials "${{ github.event.inputs.trials || '4' }}" \
             --threshold "${{ github.event.inputs.threshold || '0.8' }}" \
             --model "${{ github.event.inputs.model || 'claude-sonnet-4-5' }}" \
-            --output answer-engine-content-audit-model-eval-results.json
+            --output remediation-plan-model-eval-results.json
       - name: Upload results
         if: steps.check-secret.outputs.has_key == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: answer-engine-content-audit-model-eval-results
-          path: answer-engine-content-audit-model-eval-results.json
+          name: remediation-plan-model-eval-results
+          path: remediation-plan-model-eval-results.json
       - name: Report skip
         if: steps.check-secret.outputs.has_key != 'true'
         run: echo "Skipped - ANTHROPIC_API_KEY secret not configured for this repository."

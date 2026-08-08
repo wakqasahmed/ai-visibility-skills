@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Gated, credentialed model-harness layer for answer-engine-content-audit.
+"""Gated, credentialed model-harness layer for ai-search-remediation-plan.
 
 Runs the real skill-enabled vs. skill-disabled ablation against a live Claude
 model, using the anthropic Python SDK. This is the only layer in this eval
@@ -26,7 +26,6 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import re
 import sys
 from pathlib import Path
 from statistics import mean
@@ -38,7 +37,6 @@ EVAL_DIR = Path(__file__).resolve().parent
 SKILL_DIR = EVAL_DIR.parent
 FIXTURES_DIR = EVAL_DIR / "fixtures"
 
-MODEL_ID_RE = re.compile(r"^claude-[a-z0-9][a-z0-9.-]*$")
 DEFAULT_MODEL = "claude-sonnet-4-5"
 DEFAULT_TRIALS = 4
 DEFAULT_THRESHOLD = 0.8
@@ -54,10 +52,9 @@ def build_enabled_system_prompt() -> str:
     return (
         "You must follow this agent skill exactly as written when it applies to the "
         "user's message. If the user's message is not something this skill applies "
-        "to (no target site given, a request to draft content directly, a clean "
-        "audit with nothing to report, a wrong-domain request, or a request to "
-        "guess/assume findings without checking real page content), say so plainly "
-        "instead of forcing the skill's output shape.\n\n"
+        "to (not an audit finding, already a ticket, not actionable, or a request "
+        "for something this skill does not do), say so plainly instead of forcing "
+        "the skill's output shape.\n\n"
         f"--- SKILL.md ---\n{skill_md}\n\n"
         f"--- references/checks.md ---\n{checks_md}"
     )
@@ -77,9 +74,13 @@ def load_fixtures() -> list:
 
 def score_response(meta: dict, response_text: str) -> list:
     if meta["category"] == "should_use":
-        result = contract.check_report_contract(
-            response_text, expected_finding_count=meta.get("expected_finding_count")
+        result = contract.check_plan_contract(
+            response_text, expected_ticket_count=meta.get("expected_ticket_count")
         )
+        blocked_titles = meta.get("expected_blocked_ticket_titles") or []
+        if blocked_titles:
+            blocked_result = contract.check_blocked_tickets_present(response_text, blocked_titles)
+            result.failures.extend(blocked_result.failures)
         return result.failures
     else:
         result = contract.check_decline_response(
@@ -126,10 +127,6 @@ def main() -> int:
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--output", type=Path, default=None, help="write JSON results here")
     args = parser.parse_args()
-
-    if not MODEL_ID_RE.match(args.model):
-        print(f"ERROR: --model '{args.model}' does not look like a valid Anthropic model id.")
-        return 1
 
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
