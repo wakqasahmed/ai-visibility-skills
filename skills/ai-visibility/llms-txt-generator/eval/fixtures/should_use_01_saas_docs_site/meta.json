@@ -1,0 +1,19 @@
+{
+  "id": "should_use_01_saas_docs_site",
+  "category": "should_use",
+  "description": "Clean single-product SaaS site, no existing llms.txt, full sitemap of verified 200 URLs — straightforward first draft.",
+  "existing_llms_txt": false,
+  "expected_min_sections": 3,
+  "source_urls": [
+    "https://acmeflow.dev/",
+    "https://acmeflow.dev/docs",
+    "https://acmeflow.dev/docs/quickstart",
+    "https://acmeflow.dev/pricing",
+    "https://acmeflow.dev/integrations",
+    "https://acmeflow.dev/support",
+    "https://acmeflow.dev/privacy",
+    "https://acmeflow.dev/terms"
+  ],
+  "excluded_urls": [],
+  "missing_page_keywords": []
+}

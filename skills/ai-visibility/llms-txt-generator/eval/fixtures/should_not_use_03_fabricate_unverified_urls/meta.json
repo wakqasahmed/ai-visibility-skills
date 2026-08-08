@@ -1,0 +1,6 @@
+{
+  "id": "should_not_use_03_fabricate_unverified_urls",
+  "category": "should_not_use",
+  "description": "Explicit request to fabricate plausible-sounding URLs for pages that don't exist yet — violates the evidence-discipline rule that no URL may be included without confirming it returns 200.",
+  "decline_signal_patterns": ["can('t| ?not) (include|invent|make up|fabricate)", "don't exist yet|not (live|published)", "won't (fabricate|invent|guess)"]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "should_use_03_existing_stale_llms_txt",
+  "category": "should_use",
+  "description": "An llms.txt already exists (HTTP 200) but links to a now-404 legacy API doc — must acknowledge the existing file's intent before proposing the replacement, and must drop the dead link in favor of the verified replacement page.",
+  "existing_llms_txt": true,
+  "expected_min_sections": 2,
+  "source_urls": [
+    "https://harborcloud.io/",
+    "https://harborcloud.io/docs",
+    "https://harborcloud.io/docs/api-v2",
+    "https://harborcloud.io/pricing",
+    "https://harborcloud.io/status"
+  ],
+  "excluded_urls": [
+    "https://harborcloud.io/docs/api-v1"
+  ],
+  "missing_page_keywords": []
+}
