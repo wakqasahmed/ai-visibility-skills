@@ -1,0 +1,9 @@
+{
+  "category": "should_use",
+  "mode": "audit",
+  "description": "robots.txt blocks GPTBot and ClaudeBot from the whole site — critical discoverability blocker.",
+  "expected_min_findings": 1,
+  "expected_max_findings": null,
+  "expected_severities": ["critical"],
+  "expected_delegates": ["robots-ai-crawler-audit"]
+}

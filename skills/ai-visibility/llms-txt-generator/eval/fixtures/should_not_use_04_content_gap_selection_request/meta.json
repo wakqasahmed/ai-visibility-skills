@@ -1,0 +1,6 @@
+{
+  "id": "should_not_use_04_content_gap_selection_request",
+  "category": "should_not_use",
+  "description": "Ask is to decide what content/pages should exist at all — that's answer-engine-content-audit's job per this skill's own scope note (SKILL.md line 10: 'choosing which pages deserve to exist'), not llms-txt-generator, which only curates links to pages that already exist.",
+  "decline_signal_patterns": ["answer-engine-content-audit", "already exist", "which pages (should |to )?(exist|create|build)"]
+}

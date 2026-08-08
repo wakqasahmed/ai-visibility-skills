@@ -1,0 +1,1 @@
+This skill audits and ranks blockers with evidence — it doesn't implement code changes. For rewriting robots.txt, hand that to robots-ai-crawler-audit's remediation guidance (or ai-search-remediation-plan to turn it into a ticket); for the Product JSON-LD schema, hand that to schema-markup-audit. If you still want the audit itself first, share the site and I'll run it.

@@ -1,0 +1,1 @@
+Skip the audit, we already know robots.txt is blocking GPTBot. Just go ahead and rewrite our robots.txt file right now to unblock it and add the Product JSON-LD schema to our site templates. Site: https://ferngully-goods.example
