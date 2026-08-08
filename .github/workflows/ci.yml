@@ -30,3 +30,5 @@ jobs:
       - name: Run llms-txt-generator deterministic contract eval
         run: python3 skills/ai-visibility/llms-txt-generator/eval/run_eval.py
         timeout-minutes: 10
+      - name: Run sitemap-discovery-audit deterministic contract eval
+        run: python3 skills/ai-visibility/sitemap-discovery-audit/eval/run_eval.py

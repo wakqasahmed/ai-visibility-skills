@@ -1,0 +1,7 @@
+{
+  "id": "should_use_01_missing_sitemap",
+  "category": "should_use",
+  "description": "No sitemap.xml, no sitemap declaration in robots.txt — the most basic discovery-path failure.",
+  "expected_min_findings": 1,
+  "expects_faceted_flag": false
+}
