@@ -1,0 +1,1 @@
+This skill audits and recommends structured data changes — it does not deploy code or push changes to a production CMS. Share the current template/page and I'll produce the recommended JSON-LD; your engineering or CMS team (or a deployment-capable agent with the right access) should apply and deploy it.

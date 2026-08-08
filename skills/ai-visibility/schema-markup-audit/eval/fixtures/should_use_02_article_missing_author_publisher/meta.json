@@ -1,0 +1,7 @@
+{
+  "category": "should_use",
+  "page_type": "Article",
+  "description": "Article JSON-LD is missing dateModified, author, and publisher, all visible on the page",
+  "expect_mismatch": false,
+  "forbidden_properties": []
+}

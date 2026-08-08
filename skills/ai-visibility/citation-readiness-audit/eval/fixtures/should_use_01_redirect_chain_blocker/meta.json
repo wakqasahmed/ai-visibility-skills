@@ -1,0 +1,8 @@
+{
+  "id": "should_use_01_redirect_chain_blocker",
+  "category": "should_use",
+  "description": "Single claim whose canonical URL is a multi-hop redirect chain, not a stable citable page.",
+  "expected_claim_count": 1,
+  "expected_blocked_or_flagged_titles": ["2-business-day US shipping"],
+  "expected_sensitive_titles": []
+}
