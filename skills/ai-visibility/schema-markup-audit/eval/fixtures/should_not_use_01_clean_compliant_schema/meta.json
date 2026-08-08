@@ -1,0 +1,9 @@
+{
+  "category": "should_not_use",
+  "description": "Schema already covers every required property for the page type and matches visible content exactly — nothing to audit or recommend",
+  "decline_signal_patterns": [
+    "no (changes|fixes|issues|gaps) (needed|found)",
+    "already (complete|compliant|matches)",
+    "nothing (to fix|missing)"
+  ]
+}
