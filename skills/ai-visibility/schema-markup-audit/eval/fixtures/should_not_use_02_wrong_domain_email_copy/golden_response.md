@@ -1,0 +1,1 @@
+This is an email marketing copywriting request, not related to structured data, schema.org, or JSON-LD — it's outside the scope of the schema-markup-audit skill. Use an email-marketing skill or copywriter for the sale campaign copy instead.
