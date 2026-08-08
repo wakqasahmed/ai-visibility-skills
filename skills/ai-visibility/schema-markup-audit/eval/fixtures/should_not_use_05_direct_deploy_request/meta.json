@@ -1,0 +1,9 @@
+{
+  "category": "should_not_use",
+  "description": "Ask is to directly implement and deploy a fix to production CMS templates, not to produce an audit/review — this skill reviews and recommends, it does not deploy",
+  "decline_signal_patterns": [
+    "does not (deploy|implement|push)|doesn't (deploy|implement|push)",
+    "review (and )?recommend|audits and recommends",
+    "not (able|equipped) to deploy"
+  ]
+}

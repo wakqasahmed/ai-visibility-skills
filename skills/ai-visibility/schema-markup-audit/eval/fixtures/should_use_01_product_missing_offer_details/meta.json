@@ -1,0 +1,7 @@
+{
+  "category": "should_use",
+  "page_type": "Product",
+  "description": "Product page has Product/Offer JSON-LD but is missing priceCurrency, availability, brand, and sku/gtin, all visible on the page",
+  "expect_mismatch": false,
+  "forbidden_properties": ["aggregateRating", "review"]
+}

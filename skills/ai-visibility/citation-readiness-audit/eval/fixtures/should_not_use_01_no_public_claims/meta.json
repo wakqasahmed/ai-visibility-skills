@@ -1,0 +1,10 @@
+{
+  "id": "should_not_use_01_no_public_claims",
+  "category": "should_not_use",
+  "description": "Site is entirely internal/authenticated with no public claims — nothing to audit for citation readiness.",
+  "decline_signal_patterns": [
+    "no public (pages|claims|content)",
+    "nothing (to audit|is public)",
+    "entirely (internal|authenticated|behind)"
+  ]
+}

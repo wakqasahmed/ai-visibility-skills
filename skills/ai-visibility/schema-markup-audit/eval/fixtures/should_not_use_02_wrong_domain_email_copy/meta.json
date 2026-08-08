@@ -1,0 +1,9 @@
+{
+  "category": "should_not_use",
+  "description": "Request is an email marketing copywriting brief, not a schema.org/JSON-LD/structured-data question — wrong skill entirely",
+  "decline_signal_patterns": [
+    "not (a|related to) (structured data|schema|json-ld)",
+    "outside (the scope|this skill)",
+    "email (marketing|campaign|copy)"
+  ]
+}
