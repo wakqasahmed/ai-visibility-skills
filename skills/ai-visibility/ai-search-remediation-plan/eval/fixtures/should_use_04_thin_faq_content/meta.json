@@ -1,0 +1,7 @@
+{
+  "id": "should_use_04_thin_faq_content",
+  "category": "should_use",
+  "description": "Single optional-severity content-quality finding, no blocker.",
+  "expected_ticket_count": 1,
+  "expected_blocked_ticket_titles": []
+}

@@ -1,0 +1,6 @@
+{
+  "id": "should_not_use_01_clean_audit",
+  "category": "should_not_use",
+  "description": "Audit came back clean — no findings to convert. Correct behavior is to say so, not fabricate tickets to look useful.",
+  "decline_signal_patterns": ["no remediation plan", "zero findings", "nothing to convert"]
+}
