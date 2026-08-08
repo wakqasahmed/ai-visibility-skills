@@ -1,0 +1,7 @@
+{
+  "id": "should_use_02_missing_schema",
+  "category": "should_use",
+  "description": "Single important structured-data finding, no blocker.",
+  "expected_ticket_count": 1,
+  "expected_blocked_ticket_titles": []
+}

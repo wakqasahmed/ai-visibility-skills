@@ -1,0 +1,6 @@
+{
+  "id": "should_not_use_03_vague_strategic_ask",
+  "category": "should_not_use",
+  "description": "No concrete finding, just a vague strategic ask — nothing actionable to ticket yet; correct behavior is to request an audit first, not fabricate tickets from thin air.",
+  "decline_signal_patterns": ["no (concrete )?(audit )?findings", "run .*audit", "audit first"]
+}

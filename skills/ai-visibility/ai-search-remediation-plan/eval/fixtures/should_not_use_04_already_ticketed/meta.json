@@ -1,0 +1,6 @@
+{
+  "id": "should_not_use_04_already_ticketed",
+  "category": "should_not_use",
+  "description": "Input is already a well-formed, in-progress ticket, not a raw audit finding — re-ticketing it would create a duplicate.",
+  "decline_signal_patterns": ["already .*ticket", "duplicate", "no remediation plan needed"]
+}
