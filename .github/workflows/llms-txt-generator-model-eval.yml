@@ -51,7 +51,7 @@ jobs:
           EVAL_THRESHOLD: ${{ github.event.inputs.threshold || '0.8' }}
           EVAL_MODEL: ${{ github.event.inputs.model || 'claude-sonnet-4-5' }}
         run: |
-          python3 skills/ai-visibility/llms-txt-generator/eval/model_harness.py \
+          python3 eval/ai-visibility/llms-txt-generator/model_harness.py \
             --trials "$EVAL_TRIALS" \
             --threshold "$EVAL_THRESHOLD" \
             --model "$EVAL_MODEL" \

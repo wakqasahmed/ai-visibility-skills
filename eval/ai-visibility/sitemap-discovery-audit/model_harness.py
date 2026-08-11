@@ -34,7 +34,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import contract  # noqa: E402
 
 EVAL_DIR = Path(__file__).resolve().parent
-SKILL_DIR = EVAL_DIR.parent
+SKILL_DIR = EVAL_DIR.parent.parent.parent / "skills" / "ai-visibility" / EVAL_DIR.name
 FIXTURES_DIR = EVAL_DIR / "fixtures"
 
 DEFAULT_MODEL = "claude-sonnet-4-5"

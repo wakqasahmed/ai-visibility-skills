@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Gated, credentialed model-harness layer for answer-engine-content-audit.
+"""Gated, credentialed model-harness layer for llms-txt-generator.
 
 Runs the real skill-enabled vs. skill-disabled ablation against a live Claude
 model, using the anthropic Python SDK. This is the only layer in this eval
@@ -26,7 +26,6 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import re
 import sys
 from pathlib import Path
 from statistics import mean
@@ -35,10 +34,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import contract  # noqa: E402
 
 EVAL_DIR = Path(__file__).resolve().parent
-SKILL_DIR = EVAL_DIR.parent
+SKILL_DIR = EVAL_DIR.parent.parent.parent / "skills" / "ai-visibility" / EVAL_DIR.name
 FIXTURES_DIR = EVAL_DIR / "fixtures"
 
-MODEL_ID_RE = re.compile(r"^claude-[a-z0-9][a-z0-9.-]*$")
 DEFAULT_MODEL = "claude-sonnet-4-5"
 DEFAULT_TRIALS = 4
 DEFAULT_THRESHOLD = 0.8
@@ -54,10 +52,10 @@ def build_enabled_system_prompt() -> str:
     return (
         "You must follow this agent skill exactly as written when it applies to the "
         "user's message. If the user's message is not something this skill applies "
-        "to (no target site given, a request to draft content directly, a clean "
-        "audit with nothing to report, a wrong-domain request, or a request to "
-        "guess/assume findings without checking real page content), say so plainly "
-        "instead of forcing the skill's output shape.\n\n"
+        "to (no source material to draft from, a wrong-domain request, a request to "
+        "fabricate unverified URLs, a content-gap-selection question, or something "
+        "unrelated to llms.txt entirely), say so plainly instead of forcing the "
+        "skill's output shape.\n\n"
         f"--- SKILL.md ---\n{skill_md}\n\n"
         f"--- references/checks.md ---\n{checks_md}"
     )
@@ -77,10 +75,29 @@ def load_fixtures() -> list:
 
 def score_response(meta: dict, response_text: str) -> list:
     if meta["category"] == "should_use":
-        result = contract.check_report_contract(
-            response_text, expected_finding_count=meta.get("expected_finding_count")
+        failures = []
+        structure_result = contract.check_draft_structure(
+            response_text, expected_min_sections=meta.get("expected_min_sections", 1)
         )
-        return result.failures
+        failures.extend(structure_result.failures)
+
+        source_urls = meta.get("source_urls") or []
+        failures.extend(contract.check_no_fabricated_urls(response_text, source_urls).failures)
+
+        excluded_urls = meta.get("excluded_urls") or []
+        if excluded_urls:
+            failures.extend(contract.check_no_excluded_urls(response_text, excluded_urls).failures)
+
+        failures.extend(contract.check_output_sections_present(response_text).failures)
+
+        if meta.get("existing_llms_txt"):
+            failures.extend(contract.check_acknowledges_existing_file(response_text).failures)
+
+        missing_keywords = meta.get("missing_page_keywords") or []
+        if missing_keywords:
+            failures.extend(contract.check_missing_pages_mentioned(response_text, missing_keywords).failures)
+
+        return failures
     else:
         result = contract.check_decline_response(
             response_text, meta.get("decline_signal_patterns") or []
@@ -126,10 +143,6 @@ def main() -> int:
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--output", type=Path, default=None, help="write JSON results here")
     args = parser.parse_args()
-
-    if not MODEL_ID_RE.match(args.model):
-        print(f"ERROR: --model '{args.model}' does not look like a valid Anthropic model id.")
-        return 1
 
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:

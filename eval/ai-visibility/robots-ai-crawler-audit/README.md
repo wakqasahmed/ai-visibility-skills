@@ -88,7 +88,7 @@ and asserts it satisfies `contract.py`'s rules, and that the fixture set has
 at least 5 should-use and 5 should-not-use cases.
 
 ```bash
-python3 skills/ai-visibility/robots-ai-crawler-audit/eval/run_eval.py
+python3 eval/ai-visibility/robots-ai-crawler-audit/run_eval.py
 ```
 
 Exits `0` with `PASS: ...` when every fixture's golden output satisfies the
@@ -123,7 +123,7 @@ nothing is available to the model except what the fixture declares.
 ```bash
 pip install anthropic
 export ANTHROPIC_API_KEY=sk-ant-...
-python3 skills/ai-visibility/robots-ai-crawler-audit/eval/model_harness.py \
+python3 eval/ai-visibility/robots-ai-crawler-audit/model_harness.py \
   --trials 4 --threshold 0.8 --model claude-sonnet-4-5 \
   --output /tmp/robots-ai-crawler-audit-eval-results.json
 ```

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Gated, credentialed model-harness layer for schema-markup-audit.
+"""Gated, credentialed model-harness layer for answer-engine-content-audit.
 
 Runs the real skill-enabled vs. skill-disabled ablation against a live Claude
 model, using the anthropic Python SDK. This is the only layer in this eval
@@ -26,6 +26,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 from pathlib import Path
 from statistics import mean
@@ -34,9 +35,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import contract  # noqa: E402
 
 EVAL_DIR = Path(__file__).resolve().parent
-SKILL_DIR = EVAL_DIR.parent
+SKILL_DIR = EVAL_DIR.parent.parent.parent / "skills" / "ai-visibility" / EVAL_DIR.name
 FIXTURES_DIR = EVAL_DIR / "fixtures"
 
+MODEL_ID_RE = re.compile(r"^claude-[a-z0-9][a-z0-9.-]*$")
 DEFAULT_MODEL = "claude-sonnet-4-5"
 DEFAULT_TRIALS = 4
 DEFAULT_THRESHOLD = 0.8
@@ -52,10 +54,10 @@ def build_enabled_system_prompt() -> str:
     return (
         "You must follow this agent skill exactly as written when it applies to the "
         "user's message. If the user's message is not something this skill applies "
-        "to (not a page/schema audit request, no concrete schema question, a request "
-        "to fabricate unsupportable schema claims, or a request for something this "
-        "skill does not do such as directly deploying code), say so plainly instead "
-        "of forcing the skill's output shape.\n\n"
+        "to (no target site given, a request to draft content directly, a clean "
+        "audit with nothing to report, a wrong-domain request, or a request to "
+        "guess/assume findings without checking real page content), say so plainly "
+        "instead of forcing the skill's output shape.\n\n"
         f"--- SKILL.md ---\n{skill_md}\n\n"
         f"--- references/checks.md ---\n{checks_md}"
     )
@@ -75,11 +77,8 @@ def load_fixtures() -> list:
 
 def score_response(meta: dict, response_text: str) -> list:
     if meta["category"] == "should_use":
-        result = contract.check_audit_contract(
-            response_text,
-            page_type=meta["page_type"],
-            expect_mismatch=meta.get("expect_mismatch", False),
-            forbidden_properties=meta.get("forbidden_properties"),
+        result = contract.check_report_contract(
+            response_text, expected_finding_count=meta.get("expected_finding_count")
         )
         return result.failures
     else:
@@ -127,6 +126,10 @@ def main() -> int:
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--output", type=Path, default=None, help="write JSON results here")
     args = parser.parse_args()
+
+    if not MODEL_ID_RE.match(args.model):
+        print(f"ERROR: --model '{args.model}' does not look like a valid Anthropic model id.")
+        return 1
 
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:

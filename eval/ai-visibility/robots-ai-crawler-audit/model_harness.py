@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Gated, credentialed model-harness layer for ai-visibility-audit.
+"""Gated, credentialed model-harness layer for robots-ai-crawler-audit.
 
 Runs the real skill-enabled vs. skill-disabled ablation against a live Claude
 model, using the anthropic Python SDK. This is the only layer in this eval
@@ -12,9 +12,10 @@ runs and verifies this.
 
 Each fixture is fed to the model in a clean, single-turn request containing
 only the fixture's input.md content plus (skill-enabled condition) the
-skill's own SKILL.md text — no other context, chat history, tools, or
-network access. The same contract.py validator used by run_outcome_eval.py
-scores the model's response, so both layers agree on what "correct" means.
+skill's own SKILL.md and references/checks.md text - no other context,
+chat history, tools, or network access. The same contract.py validator used
+by run_eval.py scores the model's response, so both layers agree on what
+"correct" means.
 
 Usage:
     ANTHROPIC_API_KEY=sk-ant-... python3 model_harness.py \\
@@ -33,7 +34,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import contract  # noqa: E402
 
 EVAL_DIR = Path(__file__).resolve().parent
-SKILL_DIR = EVAL_DIR.parent
+SKILL_DIR = EVAL_DIR.parent.parent.parent / "skills" / "ai-visibility" / EVAL_DIR.name
 FIXTURES_DIR = EVAL_DIR / "fixtures"
 
 DEFAULT_MODEL = "claude-sonnet-4-5"
@@ -47,14 +48,17 @@ DISABLED_SYSTEM_PROMPT = (
 
 def build_enabled_system_prompt() -> str:
     skill_md = (SKILL_DIR / "SKILL.md").read_text()
+    checks_md = (SKILL_DIR / "references" / "checks.md").read_text()
+    guardrails_md = (SKILL_DIR.parent / "references" / "guardrails.md").read_text()
     return (
         "You must follow this agent skill exactly as written when it applies to the "
         "user's message. If the user's message is not something this skill applies "
-        "to (not an AI-visibility audit ask, already audited with nothing changed, a "
-        "demand for a platform-inclusion guarantee with no site given, or a request "
-        "to directly implement fixes rather than audit), say so plainly instead of "
-        "forcing the skill's audit-report output shape.\n\n"
-        f"--- SKILL.md ---\n{skill_md}"
+        "to (not a crawler-access-rule review, wrong skill's job, a vague ask with "
+        "no evidence to check, or a request this skill should refuse per its "
+        "guardrails), say so plainly instead of forcing the skill's output shape.\n\n"
+        f"--- SKILL.md ---\n{skill_md}\n\n"
+        f"--- references/checks.md ---\n{checks_md}\n\n"
+        f"--- ../references/guardrails.md (shared guardrails) ---\n{guardrails_md}"
     )
 
 
@@ -71,14 +75,8 @@ def load_fixtures() -> list:
 
 
 def score_response(meta: dict, response_text: str) -> list:
-    if meta["mode"] == "audit":
-        result = contract.check_audit_contract(
-            response_text,
-            min_findings=meta.get("expected_min_findings", 1),
-            max_findings=meta.get("expected_max_findings"),
-            required_severities=meta.get("expected_severities") or None,
-            required_delegates=meta.get("expected_delegates") or None,
-        )
+    if meta["category"] == "should_use":
+        result = contract.check_audit_contract(response_text)
         return result.failures
     else:
         result = contract.check_decline_response(
@@ -110,7 +108,6 @@ def run_condition(client, model: str, fixtures: list, trials: int, enabled: bool
         pass_rate = mean(1.0 if t["passed"] else 0.0 for t in trial_results)
         per_fixture[meta["_dir"].name] = {
             "category": meta["category"],
-            "mode": meta["mode"],
             "pass_rate": pass_rate,
             "trials": trial_results,
         }

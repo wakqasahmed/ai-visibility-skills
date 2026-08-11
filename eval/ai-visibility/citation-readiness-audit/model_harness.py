@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Gated, credentialed model-harness layer for robots-ai-crawler-audit.
+"""Gated, credentialed model-harness layer for citation-readiness-audit.
 
 Runs the real skill-enabled vs. skill-disabled ablation against a live Claude
 model, using the anthropic Python SDK. This is the only layer in this eval
@@ -12,7 +12,7 @@ runs and verifies this.
 
 Each fixture is fed to the model in a clean, single-turn request containing
 only the fixture's input.md content plus (skill-enabled condition) the
-skill's own SKILL.md and references/checks.md text - no other context,
+skill's own SKILL.md and references/checks.md text — no other context,
 chat history, tools, or network access. The same contract.py validator used
 by run_eval.py scores the model's response, so both layers agree on what
 "correct" means.
@@ -34,7 +34,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import contract  # noqa: E402
 
 EVAL_DIR = Path(__file__).resolve().parent
-SKILL_DIR = EVAL_DIR.parent
+SKILL_DIR = EVAL_DIR.parent.parent.parent / "skills" / "ai-visibility" / EVAL_DIR.name
 FIXTURES_DIR = EVAL_DIR / "fixtures"
 
 DEFAULT_MODEL = "claude-sonnet-4-5"
@@ -49,16 +49,15 @@ DISABLED_SYSTEM_PROMPT = (
 def build_enabled_system_prompt() -> str:
     skill_md = (SKILL_DIR / "SKILL.md").read_text()
     checks_md = (SKILL_DIR / "references" / "checks.md").read_text()
-    guardrails_md = (SKILL_DIR.parent / "references" / "guardrails.md").read_text()
     return (
         "You must follow this agent skill exactly as written when it applies to the "
         "user's message. If the user's message is not something this skill applies "
-        "to (not a crawler-access-rule review, wrong skill's job, a vague ask with "
-        "no evidence to check, or a request this skill should refuse per its "
-        "guardrails), say so plainly instead of forcing the skill's output shape.\n\n"
+        "to (no public claims to audit, wrong domain, a request to guarantee an AI "
+        "outcome, a request to fabricate content, a request to expose private paths, "
+        "or a direct implementation/rewrite request instead of an audit), say so "
+        "plainly instead of forcing the skill's output shape.\n\n"
         f"--- SKILL.md ---\n{skill_md}\n\n"
-        f"--- references/checks.md ---\n{checks_md}\n\n"
-        f"--- ../references/guardrails.md (shared guardrails) ---\n{guardrails_md}"
+        f"--- references/checks.md ---\n{checks_md}"
     )
 
 
@@ -76,7 +75,12 @@ def load_fixtures() -> list:
 
 def score_response(meta: dict, response_text: str) -> list:
     if meta["category"] == "should_use":
-        result = contract.check_audit_contract(response_text)
+        result = contract.check_audit_contract(
+            response_text,
+            expected_claim_count=meta.get("expected_claim_count"),
+            expected_blocked_or_flagged_titles=meta.get("expected_blocked_or_flagged_titles") or [],
+            expected_sensitive_titles=meta.get("expected_sensitive_titles") or [],
+        )
         return result.failures
     else:
         result = contract.check_decline_response(

@@ -50,7 +50,7 @@ this update — see the header comment in `run_eval.py` for what it does and
 does not prove.
 
 ```bash
-python3 skills/ai-visibility/ai-visibility-audit/eval/run_eval.py
+python3 eval/ai-visibility/ai-visibility-audit/run_eval.py
 ```
 
 ## Layer 2 — deterministic outcome-contract check (`run_outcome_eval.py`)
@@ -62,7 +62,7 @@ rules, and that the fixture set has at least 5 `should_use` and 5
 `should_not_use` cases.
 
 ```bash
-python3 skills/ai-visibility/ai-visibility-audit/eval/run_outcome_eval.py
+python3 eval/ai-visibility/ai-visibility-audit/run_outcome_eval.py
 ```
 
 Exits `0` with `PASS: ...` when every fixture's golden output satisfies the
@@ -133,7 +133,7 @@ nothing is available to the model except what the fixture declares.
 ```bash
 pip install anthropic
 export ANTHROPIC_API_KEY=sk-ant-...
-python3 skills/ai-visibility/ai-visibility-audit/eval/model_harness.py \
+python3 eval/ai-visibility/ai-visibility-audit/model_harness.py \
   --trials 4 --threshold 0.8 --model claude-sonnet-4-5 \
   --output /tmp/ai-visibility-audit-eval-results.json
 ```

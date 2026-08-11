@@ -45,7 +45,7 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          python3 skills/ai-visibility/robots-ai-crawler-audit/eval/model_harness.py \
+          python3 eval/ai-visibility/robots-ai-crawler-audit/model_harness.py \
             --trials "${{ github.event.inputs.trials || '4' }}" \
             --threshold "${{ github.event.inputs.threshold || '0.8' }}" \
             --model "${{ github.event.inputs.model || 'claude-sonnet-4-5' }}" \

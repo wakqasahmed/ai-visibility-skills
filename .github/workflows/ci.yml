@@ -17,22 +17,22 @@ jobs:
       - name: Validate plugin paths
         run: python3 scripts/validate-plugin.py
       - name: Run ai-visibility-audit behavioral eval
-        run: python3 skills/ai-visibility/ai-visibility-audit/eval/run_eval.py
+        run: python3 eval/ai-visibility/ai-visibility-audit/run_eval.py
       - name: Run robots-ai-crawler-audit deterministic contract eval
-        run: python3 skills/ai-visibility/robots-ai-crawler-audit/eval/run_eval.py
+        run: python3 eval/ai-visibility/robots-ai-crawler-audit/run_eval.py
       - name: Run answer-engine-content-audit deterministic contract eval
-        run: python3 skills/ai-visibility/answer-engine-content-audit/eval/run_eval.py
+        run: python3 eval/ai-visibility/answer-engine-content-audit/run_eval.py
       - name: Run ai-visibility-audit deterministic outcome-contract eval
-        run: python3 skills/ai-visibility/ai-visibility-audit/eval/run_outcome_eval.py
+        run: python3 eval/ai-visibility/ai-visibility-audit/run_outcome_eval.py
       - name: Run citation-readiness-audit deterministic contract eval
-        run: python3 skills/ai-visibility/citation-readiness-audit/eval/run_eval.py
+        run: python3 eval/ai-visibility/citation-readiness-audit/run_eval.py
       - name: Run ai-search-remediation-plan deterministic contract eval
-        run: python3 skills/ai-visibility/ai-search-remediation-plan/eval/run_eval.py
+        run: python3 eval/ai-visibility/ai-search-remediation-plan/run_eval.py
       - name: Run schema-markup-audit deterministic contract eval
-        run: python3 skills/ai-visibility/schema-markup-audit/eval/run_eval.py
+        run: python3 eval/ai-visibility/schema-markup-audit/run_eval.py
         timeout-minutes: 10
       - name: Run llms-txt-generator deterministic contract eval
-        run: python3 skills/ai-visibility/llms-txt-generator/eval/run_eval.py
+        run: python3 eval/ai-visibility/llms-txt-generator/run_eval.py
         timeout-minutes: 10
       - name: Run sitemap-discovery-audit deterministic contract eval
-        run: python3 skills/ai-visibility/sitemap-discovery-audit/eval/run_eval.py
+        run: python3 eval/ai-visibility/sitemap-discovery-audit/run_eval.py

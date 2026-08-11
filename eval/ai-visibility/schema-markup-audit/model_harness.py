@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Gated, credentialed model-harness layer for citation-readiness-audit.
+"""Gated, credentialed model-harness layer for schema-markup-audit.
 
 Runs the real skill-enabled vs. skill-disabled ablation against a live Claude
 model, using the anthropic Python SDK. This is the only layer in this eval
@@ -34,7 +34,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import contract  # noqa: E402
 
 EVAL_DIR = Path(__file__).resolve().parent
-SKILL_DIR = EVAL_DIR.parent
+SKILL_DIR = EVAL_DIR.parent.parent.parent / "skills" / "ai-visibility" / EVAL_DIR.name
 FIXTURES_DIR = EVAL_DIR / "fixtures"
 
 DEFAULT_MODEL = "claude-sonnet-4-5"
@@ -52,10 +52,10 @@ def build_enabled_system_prompt() -> str:
     return (
         "You must follow this agent skill exactly as written when it applies to the "
         "user's message. If the user's message is not something this skill applies "
-        "to (no public claims to audit, wrong domain, a request to guarantee an AI "
-        "outcome, a request to fabricate content, a request to expose private paths, "
-        "or a direct implementation/rewrite request instead of an audit), say so "
-        "plainly instead of forcing the skill's output shape.\n\n"
+        "to (not a page/schema audit request, no concrete schema question, a request "
+        "to fabricate unsupportable schema claims, or a request for something this "
+        "skill does not do such as directly deploying code), say so plainly instead "
+        "of forcing the skill's output shape.\n\n"
         f"--- SKILL.md ---\n{skill_md}\n\n"
         f"--- references/checks.md ---\n{checks_md}"
     )
@@ -77,9 +77,9 @@ def score_response(meta: dict, response_text: str) -> list:
     if meta["category"] == "should_use":
         result = contract.check_audit_contract(
             response_text,
-            expected_claim_count=meta.get("expected_claim_count"),
-            expected_blocked_or_flagged_titles=meta.get("expected_blocked_or_flagged_titles") or [],
-            expected_sensitive_titles=meta.get("expected_sensitive_titles") or [],
+            page_type=meta["page_type"],
+            expect_mismatch=meta.get("expect_mismatch", False),
+            forbidden_properties=meta.get("forbidden_properties"),
         )
         return result.failures
     else:

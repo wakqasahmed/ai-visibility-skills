@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Gated, credentialed model-harness layer for llms-txt-generator.
+"""Gated, credentialed model-harness layer for ai-search-remediation-plan.
 
 Runs the real skill-enabled vs. skill-disabled ablation against a live Claude
 model, using the anthropic Python SDK. This is the only layer in this eval
@@ -34,7 +34,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import contract  # noqa: E402
 
 EVAL_DIR = Path(__file__).resolve().parent
-SKILL_DIR = EVAL_DIR.parent
+SKILL_DIR = EVAL_DIR.parent.parent.parent / "skills" / "ai-visibility" / EVAL_DIR.name
 FIXTURES_DIR = EVAL_DIR / "fixtures"
 
 DEFAULT_MODEL = "claude-sonnet-4-5"
@@ -52,10 +52,9 @@ def build_enabled_system_prompt() -> str:
     return (
         "You must follow this agent skill exactly as written when it applies to the "
         "user's message. If the user's message is not something this skill applies "
-        "to (no source material to draft from, a wrong-domain request, a request to "
-        "fabricate unverified URLs, a content-gap-selection question, or something "
-        "unrelated to llms.txt entirely), say so plainly instead of forcing the "
-        "skill's output shape.\n\n"
+        "to (not an audit finding, already a ticket, not actionable, or a request "
+        "for something this skill does not do), say so plainly instead of forcing "
+        "the skill's output shape.\n\n"
         f"--- SKILL.md ---\n{skill_md}\n\n"
         f"--- references/checks.md ---\n{checks_md}"
     )
@@ -75,29 +74,14 @@ def load_fixtures() -> list:
 
 def score_response(meta: dict, response_text: str) -> list:
     if meta["category"] == "should_use":
-        failures = []
-        structure_result = contract.check_draft_structure(
-            response_text, expected_min_sections=meta.get("expected_min_sections", 1)
+        result = contract.check_plan_contract(
+            response_text, expected_ticket_count=meta.get("expected_ticket_count")
         )
-        failures.extend(structure_result.failures)
-
-        source_urls = meta.get("source_urls") or []
-        failures.extend(contract.check_no_fabricated_urls(response_text, source_urls).failures)
-
-        excluded_urls = meta.get("excluded_urls") or []
-        if excluded_urls:
-            failures.extend(contract.check_no_excluded_urls(response_text, excluded_urls).failures)
-
-        failures.extend(contract.check_output_sections_present(response_text).failures)
-
-        if meta.get("existing_llms_txt"):
-            failures.extend(contract.check_acknowledges_existing_file(response_text).failures)
-
-        missing_keywords = meta.get("missing_page_keywords") or []
-        if missing_keywords:
-            failures.extend(contract.check_missing_pages_mentioned(response_text, missing_keywords).failures)
-
-        return failures
+        blocked_titles = meta.get("expected_blocked_ticket_titles") or []
+        if blocked_titles:
+            blocked_result = contract.check_blocked_tickets_present(response_text, blocked_titles)
+            result.failures.extend(blocked_result.failures)
+        return result.failures
     else:
         result = contract.check_decline_response(
             response_text, meta.get("decline_signal_patterns") or []

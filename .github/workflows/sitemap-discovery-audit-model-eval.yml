@@ -52,7 +52,7 @@ jobs:
           THRESHOLD: ${{ github.event.inputs.threshold || '0.8' }}
           MODEL: ${{ github.event.inputs.model || 'claude-sonnet-4-5' }}
         run: |
-          python3 skills/ai-visibility/sitemap-discovery-audit/eval/model_harness.py \
+          python3 eval/ai-visibility/sitemap-discovery-audit/model_harness.py \
             --trials "$TRIALS" \
             --threshold "$THRESHOLD" \
             --model "$MODEL" \
