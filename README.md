@@ -2,11 +2,56 @@
 
 Canonical source for AI visibility, AEO, GEO, crawler, sitemap, schema, and citation-readiness skills.
 
+**In plain terms:** you ask whether a site is visible to AI search and answer engines (ChatGPT, Perplexity, Google AI Overviews) and the matching skill runs the relevant audit — crawler access, structured data, citation readiness, content gaps — then turns findings into a prioritized remediation checklist instead of a vague "improve your SEO."
+
 ## Install
+
+Pick whichever fits how you work. All three end up in the same place: the skill files sitting where your agent looks for them.
+
+### 1. Everything, via npx (recommended)
 
 ```bash
 npx skills@latest add wakqasahmed/ai-visibility-skills
 ```
+
+This installs every skill in the pack for whichever agent you're using (Claude Code, Cursor, Codex, and 70+ others — see the [`skills` CLI](https://github.com/vercel-labs/skills)). Add `-g` to install once for every project instead of per-project, or `-a claude-code` to target one agent specifically.
+
+### 2. Just one skill
+
+Don't need the whole pack? Install a single skill by its name (skill names match their folder, e.g. `ai-visibility-audit`):
+
+```bash
+npx skills@latest add wakqasahmed/ai-visibility-skills --skill ai-visibility-audit
+```
+
+Or point straight at one skill's folder on GitHub:
+
+```bash
+npx skills add https://github.com/wakqasahmed/ai-visibility-skills/tree/main/skills/ai-visibility/ai-visibility-audit
+```
+
+### 3. No Node/npx available — manual zip install
+
+1. On this repo's GitHub page: **Code → Download ZIP**.
+2. Unzip it.
+3. Copy whichever `skills/ai-visibility/<name>/` folder(s) you want into your agent's own skills directory (for Claude Code, that's `.claude/skills/` in your project, or `~/.claude/skills/` for a global install; other agents use their own equivalent path).
+
+No installer, no dependency — just files your agent already knows how to read.
+
+## Use it — step by step
+
+**Start with `ai-visibility-audit`** for a general "can AI find and cite this site" check, then use the specific audits below once you know which dimension needs work.
+
+| Skill | What it covers |
+|---|---|
+| [`ai-search-remediation-plan`](skills/ai-visibility/ai-search-remediation-plan/SKILL.md) | Convert AI visibility, AEO, GEO, crawler, schema, sitemap, and citation audit findings into prioritized implementation tickets or a practical remediation checklist. |
+| [`ai-visibility-audit`](skills/ai-visibility/ai-visibility-audit/SKILL.md) | Audit whether ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews, and other AI agents can discover, understand, cite, and recommend a website. |
+| [`answer-engine-content-audit`](skills/ai-visibility/answer-engine-content-audit/SKILL.md) | Find content gaps that prevent AI answer engines from explaining, comparing, recommending, or supporting a company, product, service, or site. |
+| [`citation-readiness-audit`](skills/ai-visibility/citation-readiness-audit/SKILL.md) | Audit whether a website has stable, specific, trustworthy pages that AI systems can cite for claims, pricing, policies, docs, support answers, and company identity. |
+| [`llms-txt-generator`](skills/ai-visibility/llms-txt-generator/SKILL.md) | Draft or review an `llms.txt` file from a site's public pages, docs, sitemap, products, policies, and support content. |
+| [`robots-ai-crawler-audit`](skills/ai-visibility/robots-ai-crawler-audit/SKILL.md) | Review robots.txt, meta robots, headers, and AI crawler rules for search and AI-agent access. |
+| [`schema-markup-audit`](skills/ai-visibility/schema-markup-audit/SKILL.md) | Audit schema.org JSON-LD and structured data for AI search, answer engines, rich results, and agent understanding. |
+| [`sitemap-discovery-audit`](skills/ai-visibility/sitemap-discovery-audit/SKILL.md) | Audit sitemap coverage, canonical URLs, indexable pages, redirects, and crawl discovery paths. |
 
 ## Contents
 
