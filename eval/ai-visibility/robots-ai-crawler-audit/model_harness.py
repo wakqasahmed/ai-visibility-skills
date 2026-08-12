@@ -58,7 +58,7 @@ def build_enabled_system_prompt() -> str:
         "guardrails), say so plainly instead of forcing the skill's output shape.\n\n"
         f"--- SKILL.md ---\n{skill_md}\n\n"
         f"--- references/checks.md ---\n{checks_md}\n\n"
-        f"--- ../references/guardrails.md (shared guardrails) ---\n{guardrails_md}"
+        f"--- skills/ai-visibility/references/guardrails.md (shared guardrails) ---\n{guardrails_md}"
     )
 
 

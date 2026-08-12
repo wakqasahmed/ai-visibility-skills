@@ -1,8 +1,10 @@
 """Shared outcome validator for answer-engine-content-audit.
 
-Encodes the non-negotiable rules from ../references/checks.md, ../SKILL.md's
-Output/Guardrails sections, and ../../references/guardrails.md's "No fabrication"
-rule as machine-checkable functions, independent of who produced the text being
+Encodes the non-negotiable rules from
+skills/ai-visibility/answer-engine-content-audit/references/checks.md,
+skills/ai-visibility/answer-engine-content-audit/SKILL.md's
+Output/Guardrails sections, and skills/ai-visibility/references/guardrails.md's
+"No fabrication" rule as machine-checkable functions, independent of who produced the text being
 checked (a hand-authored golden fixture, or a live model response). Both
 run_eval.py (deterministic, golden-fixture layer) and model_harness.py (gated,
 live-model layer) import this module so the two layers score outcomes the same

@@ -1,6 +1,7 @@
 """Shared outcome validator for ai-visibility-audit.
 
-Encodes the non-negotiable rules from ../SKILL.md's "Output"/"Guardrails"
+Encodes the non-negotiable rules from
+skills/ai-visibility/ai-visibility-audit/SKILL.md's "Output"/"Guardrails"
 sections as machine-checkable functions, independent of who produced the
 report being checked (a hand-authored golden fixture, or a live model
 response). Both run_outcome_eval.py (deterministic, golden-fixture layer) and
@@ -11,8 +12,9 @@ This module contains no network calls, no model calls, and no fixture-specific
 logic — it only parses/scores audit-report text and decline-response text.
 
 Note: this is a *separate* validator from the pre-existing
-scripts/../run_eval.py + fixture/, which hand-reimplements the commands in
-references/checks.md against a single frozen snapshot. That script proves
+run_eval.py + fixture/, which hand-reimplements the commands in
+skills/ai-visibility/ai-visibility-audit/references/checks.md against a
+single frozen snapshot. That script proves
 the checks.md commands are internally consistent; this module proves the
 skill's *reporting contract* (severity/evidence/delegation/no-guarantee,
 plus should-not-use restraint) holds across a broader scenario set.

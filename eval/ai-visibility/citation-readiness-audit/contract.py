@@ -1,7 +1,9 @@
 """Shared outcome validator for citation-readiness-audit.
 
-Encodes the non-negotiable rules from ../references/checks.md's "Evidence
-discipline" section and ../SKILL.md's Output/Guardrails sections as
+Encodes the non-negotiable rules from
+skills/ai-visibility/citation-readiness-audit/references/checks.md's "Evidence
+discipline" section and skills/ai-visibility/citation-readiness-audit/SKILL.md's
+Output/Guardrails sections as
 machine-checkable functions, independent of who produced the text being
 checked (a hand-authored golden fixture, or a live model response). Both
 run_eval.py (deterministic, golden-fixture layer) and model_harness.py

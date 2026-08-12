@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Behavioral eval for the ai-visibility-audit skill.
 
-Runs the checks documented in ../references/checks.md against the frozen
+Runs the checks documented in skills/ai-visibility/ai-visibility-audit/references/checks.md against the frozen
 fixture in fixture/ (no live network calls — robots.txt and index.html are
 read from disk instead of curl'd), builds a ranked findings report the same
 shape the skill is expected to produce, then asserts the report satisfies

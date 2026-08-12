@@ -43,7 +43,7 @@ finding bullets and still never uses guarantee language.
 ## Layer 1 — checks.md regression snapshot (`run_eval.py` + `fixture/`)
 
 Pre-existing (issue #3). A hand-maintained Python reimplementation of the
-commands in `../references/checks.md`, run against one frozen `fixture/`
+commands in `skills/ai-visibility/ai-visibility-audit/references/checks.md`, run against one frozen `fixture/`
 snapshot (robots.txt blocking GPTBot, missing JSON-LD, thin FAQ answers) and
 asserted against severity/evidence/delegation/guardrail rules. Unchanged by
 this update — see the header comment in `run_eval.py` for what it does and

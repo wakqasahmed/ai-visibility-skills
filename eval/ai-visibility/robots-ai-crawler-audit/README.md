@@ -29,10 +29,10 @@ commands), where:
 3. "Verification commands" contains a re-runnable `curl` (or equivalent)
    command.
 4. The report never claims or implies a guaranteed AI platform outcome
-   (`../../references/guardrails.md`'s "No outcome guarantees").
+   (`skills/ai-visibility/references/guardrails.md`'s "No outcome guarantees").
 5. The report never recommends `Allow`-ing crawlers into a private,
    authenticated, admin, checkout, account, or otherwise sensitive path
-   (`../../references/guardrails.md`'s "Protect private and sensitive paths").
+   (`skills/ai-visibility/references/guardrails.md`'s "Protect private and sensitive paths").
 
 For inputs this skill should **not** turn into a full audit report - a
 different skill's job, a request that violates a guardrail, or a request with
@@ -105,7 +105,7 @@ answers.
 
 Requires `ANTHROPIC_API_KEY`. Runs each fixture's `input.md` against a real
 Claude model twice: once with `SKILL.md` + `references/checks.md` +
-`../../references/guardrails.md` injected as system instructions
+`skills/ai-visibility/references/guardrails.md` injected as system instructions
 ("skill-enabled"), once as a bare general-purpose assistant
 ("skill-disabled", no skill context at all). Scores every response with the
 *same* `contract.py` functions Layer 1 uses, over multiple trials per fixture

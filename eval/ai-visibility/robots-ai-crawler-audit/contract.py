@@ -1,8 +1,10 @@
 """Shared outcome validator for robots-ai-crawler-audit.
 
-Encodes the non-negotiable rules from ../SKILL.md's Output/Guardrails sections,
-../references/checks.md's evidence-discipline note, and the shared
-../../references/guardrails.md rules, as machine-checkable functions -
+Encodes the non-negotiable rules from
+skills/ai-visibility/robots-ai-crawler-audit/SKILL.md's Output/Guardrails
+sections, skills/ai-visibility/robots-ai-crawler-audit/references/checks.md's
+evidence-discipline note, and the shared
+skills/ai-visibility/references/guardrails.md rules, as machine-checkable functions -
 independent of who produced the text being checked (a hand-authored golden
 fixture, or a live model response). Both run_eval.py (deterministic,
 golden-fixture layer) and model_harness.py (gated, live-model layer) import

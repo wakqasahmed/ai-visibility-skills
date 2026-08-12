@@ -1,6 +1,8 @@
 """Shared outcome validator for ai-search-remediation-plan.
 
-Encodes the non-negotiable rules from ../references/checks.md and ../SKILL.md's
+Encodes the non-negotiable rules from
+skills/ai-visibility/ai-search-remediation-plan/references/checks.md and
+skills/ai-visibility/ai-search-remediation-plan/SKILL.md's
 Guardrails as machine-checkable functions, independent of who produced the text
 being checked (a hand-authored golden fixture, or a live model response). Both
 run_eval.py (deterministic, golden-fixture layer) and model_harness.py (gated,

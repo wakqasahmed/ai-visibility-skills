@@ -1,7 +1,9 @@
 """Shared outcome validator for llms-txt-generator.
 
-Encodes the non-negotiable rules from ../SKILL.md (Workflow, Output, Guardrails,
-scope boundaries) and ../references/checks.md (structure/format convention,
+Encodes the non-negotiable rules from
+skills/ai-visibility/llms-txt-generator/SKILL.md (Workflow, Output, Guardrails,
+scope boundaries) and skills/ai-visibility/llms-txt-generator/references/checks.md
+(structure/format convention,
 evidence discipline against fabricated links) as machine-checkable functions,
 independent of who produced the text being checked (a hand-authored golden
 fixture, or a live model response). Both run_eval.py (deterministic,
