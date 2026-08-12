@@ -18,7 +18,7 @@ Changes merged to this repository are automatically synchronized to [wakqasahmed
 
 ## Outcome-eval harness status
 
-`ai-search-remediation-plan` ([#22](https://github.com/wakqasahmed/ai-visibility-skills/issues/22)) has a real, working outcome-eval harness — a deterministic layer that runs free on every PR, plus a gated model-harness layer (`skills/ai-visibility/ai-search-remediation-plan/eval/model_harness.py`) that calls the Anthropic API directly to measure skill-enabled vs. skill-disabled behavior. It correctly no-ops without `ANTHROPIC_API_KEY` set as a repo secret — see [#36](https://github.com/wakqasahmed/ai-visibility-skills/issues/36) for exact setup steps. One real run of this harness costs roughly $1–2 in API calls.
+`ai-search-remediation-plan` ([#22](https://github.com/wakqasahmed/ai-visibility-skills/issues/22)) has a real, working outcome-eval harness — a deterministic layer that runs free on every PR, plus a gated model-harness layer (`eval/ai-visibility/ai-search-remediation-plan/model_harness.py`) that calls the Anthropic API directly to measure skill-enabled vs. skill-disabled behavior. It correctly no-ops without `ANTHROPIC_API_KEY` set as a repo secret — see [#36](https://github.com/wakqasahmed/ai-visibility-skills/issues/36) for exact setup steps. One real run of this harness costs roughly $1–2 in API calls.
 
 The other 7 skills ([#21](https://github.com/wakqasahmed/ai-visibility-skills/issues/21), [#23](https://github.com/wakqasahmed/ai-visibility-skills/issues/23)–[#28](https://github.com/wakqasahmed/ai-visibility-skills/issues/28)) don't have this yet.
 
