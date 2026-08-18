@@ -16,6 +16,8 @@ jobs:
         run: scripts/list-skills.sh | grep -q "skills/ai-visibility/ai-visibility-audit/SKILL.md"
       - name: Validate plugin paths
         run: python3 scripts/validate-plugin.py
+      - name: Validate citation ledger
+        run: python3 scripts/validate-citations.py
       - name: Run ai-visibility-audit behavioral eval
         run: python3 eval/ai-visibility/ai-visibility-audit/run_eval.py
       - name: Run robots-ai-crawler-audit deterministic contract eval
