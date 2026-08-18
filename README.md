@@ -53,6 +53,13 @@ No installer, no dependency — just files your agent already knows how to read.
 | [`schema-markup-audit`](skills/ai-visibility/schema-markup-audit/SKILL.md) | Audit schema.org JSON-LD and structured data for AI search, answer engines, rich results, and agent understanding. |
 | [`sitemap-discovery-audit`](skills/ai-visibility/sitemap-discovery-audit/SKILL.md) | Audit sitemap coverage, canonical URLs, indexable pages, redirects, and crawl discovery paths. |
 
+## Example prompts
+
+[`docs/EXAMPLE_PROMPTS.md`](docs/EXAMPLE_PROMPTS.md) walks through illustrative prompts
+for several of these skills — the prompt text, which skill(s) it invokes, and the report
+shape that skill's own `SKILL.md` promises. These are usage examples, not verified test
+runs; none of them have been executed against a live site and recorded here yet.
+
 ## Contents
 
 The installable skills live in [`skills/ai-visibility/`](skills/ai-visibility/).
