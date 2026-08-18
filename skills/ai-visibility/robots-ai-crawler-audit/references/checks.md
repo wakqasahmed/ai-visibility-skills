@@ -19,6 +19,15 @@ curl -s "$SITE/robots.txt" | awk 'BEGIN{IGNORECASE=1} /^user-agent:/{ua=$0} /^di
 
 ## Known AI crawler user-agents to check for explicit rules
 
+Per each platform's own crawler documentation: GPTBot, OAI-SearchBot, and ChatGPT-User
+are OpenAI's [OPENAI-BOTS-01]; ClaudeBot, Claude-Web, and anthropic-ai are Anthropic's
+[ANTHROPIC-BOTS-01]; PerplexityBot is Perplexity's [PERPLEXITY-BOTS-01]; Google-Extended
+is Google's AI-training opt-out token [GOOGLE-EXTENDED-01]; Applebot-Extended is Apple's
+AI-training opt-out token [APPLE-BOTS-01]; CCBot is Common Crawl's [COMMONCRAWL-CCBOT-01];
+Amazonbot is Amazon's [AMAZON-BOTS-01]. Bytespider (ByteDance) has no verified first-party
+crawler-documentation page as of this review — treat any robots.txt rule for it as
+unconfirmed against an authoritative source.
+
 ```bash
 for ua in GPTBot ChatGPT-User OAI-SearchBot ClaudeBot Claude-Web anthropic-ai PerplexityBot Google-Extended Applebot-Extended Bytespider CCBot Amazonbot; do
   printf "%-20s\n" "$ua"

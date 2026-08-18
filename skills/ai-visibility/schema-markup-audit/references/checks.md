@@ -26,13 +26,13 @@ for block in sys.stdin.read().split('\n'):
 
 ## Property checklists by page type
 
-- **Product**: `name`, `image`, `description`, `sku` or `gtin`, `brand`, `offers.price`, `offers.priceCurrency`, `offers.availability`; variants via `hasVariant` or per-variant offers; `aggregateRating`/`review` only if visible on page.
-- **Organization**: `name`, `url`, `logo`, `sameAs` (social/profile links), `contactPoint`; one canonical Organization entity site-wide, not one per page.
-- **Article/BlogPosting**: `headline`, `datePublished`, `dateModified`, `author` (Person with `name`, ideally `url`), `publisher`.
-- **FAQPage**: each `Question`/`acceptedAnswer` pair must match visible on-page Q&A verbatim.
-- **BreadcrumbList**: `itemListElement` positions match the visible trail; URLs absolute and canonical.
-- **LocalBusiness**: `name`, `address` (PostalAddress), `geo`, `openingHoursSpecification`, `telephone`; type as specific as truthful (`Restaurant`, not `LocalBusiness`).
-- **SoftwareApplication**: `name`, `applicationCategory`, `operatingSystem`, `offers` (including free = price 0).
+- **Product** [SCHEMA-PRODUCT-01]: `name`, `image`, `description`, `sku` or `gtin`, `brand`, `offers.price`, `offers.priceCurrency`, `offers.availability`; variants via `hasVariant` or per-variant offers; `aggregateRating`/`review` only if visible on page.
+- **Organization** [SCHEMA-ORGANIZATION-01]: `name`, `url`, `logo`, `sameAs` (social/profile links), `contactPoint`; one canonical Organization entity site-wide, not one per page.
+- **Article/BlogPosting** [SCHEMA-ARTICLE-01]: `headline`, `datePublished`, `dateModified`, `author` (Person with `name`, ideally `url`), `publisher`.
+- **FAQPage** [SCHEMA-FAQPAGE-01]: each `Question`/`acceptedAnswer` pair must match visible on-page Q&A verbatim.
+- **BreadcrumbList** [SCHEMA-BREADCRUMBLIST-01]: `itemListElement` positions match the visible trail; URLs absolute and canonical.
+- **LocalBusiness** [SCHEMA-LOCALBUSINESS-01]: `name`, `address` (PostalAddress), `geo`, `openingHoursSpecification`, `telephone`; type as specific as truthful (`Restaurant`, not `LocalBusiness`).
+- **SoftwareApplication** [SCHEMA-SOFTWAREAPPLICATION-01]: `name`, `applicationCategory`, `operatingSystem`, `offers` (including free = price 0).
 
 ## Verification
 

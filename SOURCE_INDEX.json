@@ -1,0 +1,17 @@
+{
+  "OPENAI-BOTS-01": "https://developers.openai.com/api/docs/bots",
+  "ANTHROPIC-BOTS-01": "https://support.claude.com/en/articles/8896518",
+  "PERPLEXITY-BOTS-01": "https://docs.perplexity.ai/guides/bots",
+  "GOOGLE-EXTENDED-01": "https://developers.google.com/search/docs/crawling-indexing/overview-google-crawlers",
+  "APPLE-BOTS-01": "https://support.apple.com/en-us/119829",
+  "COMMONCRAWL-CCBOT-01": "https://commoncrawl.org/ccbot",
+  "AMAZON-BOTS-01": "https://developer.amazon.com/amazonbot",
+  "SCHEMA-PRODUCT-01": "https://schema.org/Product",
+  "SCHEMA-ORGANIZATION-01": "https://schema.org/Organization",
+  "SCHEMA-ARTICLE-01": "https://schema.org/Article",
+  "SCHEMA-FAQPAGE-01": "https://schema.org/FAQPage",
+  "SCHEMA-BREADCRUMBLIST-01": "https://schema.org/BreadcrumbList",
+  "SCHEMA-LOCALBUSINESS-01": "https://schema.org/LocalBusiness",
+  "SCHEMA-SOFTWAREAPPLICATION-01": "https://schema.org/SoftwareApplication",
+  "LLMSTXT-01": "https://llmstxt.org"
+}

@@ -36,7 +36,7 @@ curl -s -o /dev/null -w "%{http_code}\n" "$SITE/llms.txt"
 curl -s "$SITE/llms.txt" | head -5
 ```
 
-Confirm the file starts with an H1 and short summary (the established llms.txt convention), then grouped H2 sections with markdown links, per https://llmstxt.org.
+Confirm the file starts with an H1 and short summary (the established llms.txt convention [LLMSTXT-01]), then grouped H2 sections with markdown links, per https://llmstxt.org [LLMSTXT-01].
 
 ```bash
 curl -s "$SITE/llms.txt" | grep -c '^## '
