@@ -1,5 +1,8 @@
 {
   "name": "ai-visibility-skills",
+  "description": "Provider-agnostic agent skills for AI visibility, AEO, and GEO audits",
+  "version": "0.1.0",
+  "author": "Wakqas Ahmed",
   "skills": [
     "./skills/ai-visibility/ai-visibility-audit",
     "./skills/ai-visibility/llms-txt-generator",
