@@ -38,6 +38,25 @@ npx skills add https://github.com/wakqasahmed/ai-visibility-skills/tree/main/ski
 
 No installer, no dependency — just files your agent already knows how to read.
 
+### 4. Git clone
+
+Whole pack:
+
+```bash
+git clone https://github.com/wakqasahmed/ai-visibility-skills.git
+cp -r ai-visibility-skills/skills/ai-visibility/* /path/to/your/agent/skills/
+```
+
+Just one skill, via sparse-checkout (skips downloading the rest of the repo):
+
+```bash
+git clone --filter=blob:none --sparse https://github.com/wakqasahmed/ai-visibility-skills.git
+cd ai-visibility-skills
+git sparse-checkout set skills/ai-visibility/ai-visibility-audit
+```
+
+Then copy that skill's folder into your agent's skills directory as in method 3.
+
 ## Use it — step by step
 
 **Start with `ai-visibility-audit`** for a general "can AI find and cite this site" check, then use the specific audits below once you know which dimension needs work.
@@ -59,6 +78,22 @@ No installer, no dependency — just files your agent already knows how to read.
 for several of these skills — the prompt text, which skill(s) it invokes, and the report
 shape that skill's own `SKILL.md` promises. These are usage examples, not verified test
 runs; none of them have been executed against a live site and recorded here yet.
+
+**What actually happens when `ai-visibility-audit` runs:**
+
+1. It classifies the site (SaaS, ecommerce, docs, etc.) and runs its own discoverability and machine-readable-context checks directly, citing command output as evidence (see `references/checks.md`).
+2. For anything past that first pass, it delegates by name instead of re-implementing the check: crawler rules to `robots-ai-crawler-audit`, sitemap coverage to `sitemap-discovery-audit`, structured data to `schema-markup-audit`, `llms.txt` drafting to `llms-txt-generator`, content gaps to `answer-engine-content-audit`, citation trust to `citation-readiness-audit`.
+3. It ranks the combined findings into critical / important / optional blockers.
+4. It hands the ranked list to `ai-search-remediation-plan`, which turns them into a prioritized ticket list or remediation checklist.
+
+## Design principle
+
+Each skill in this pack states **what to check and how to report evidence** for one narrow dimension of AI visibility, then names another skill by reference for anything outside that dimension — it does not reimplement that other skill's checks inline. `robots-ai-crawler-audit`'s own scope line makes this explicit: *"Sitemap coverage belongs to `sitemap-discovery-audit`; drafting `llms.txt` belongs to `llms-txt-generator`; whole-site triage belongs to `ai-visibility-audit`."* `ai-visibility-audit` runs the same pattern from the top: it does its own discoverability pass, then its "Delegation" section hands each deeper check to the specialist skill that owns it instead of duplicating that logic.
+
+- **Bad:** a skill that, on finding a citation-readiness problem, starts parsing JSON-LD and grading schema completeness inline — that's `schema-markup-audit`'s job, and now there are two divergent implementations of the same check to keep in sync.
+- **Good:** the skill says "structured data needs a deeper pass — see `schema-markup-audit`" and cites what that skill covers, staying in its own lane.
+
+This keeps each skill small and keeps the check logic in exactly one place, so a fix to how sitemaps are audited only has to happen inside `sitemap-discovery-audit`.
 
 ## Contents
 
