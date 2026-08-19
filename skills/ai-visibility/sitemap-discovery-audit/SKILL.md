@@ -15,7 +15,8 @@ Scope: discovery paths only. Access rules (robots, headers, bot blocks) belong t
 2. Inspect sitemap indexes, URL sets, lastmod values, and obvious stale entries.
 3. Compare sitemap URLs with navigation, important landing pages, docs, products, policies, and support pages.
 4. Check representative URLs for status codes, redirects, canonical tags, and noindex.
-5. Identify missing, duplicate, blocked, broken, or low-value sitemap entries.
+5. Sweep internal links found on-page (not just sitemap entries) for broken/dead links — a link can 404 whether or not it is ever listed in the sitemap.
+6. Identify missing, duplicate, blocked, broken, or low-value sitemap entries.
 
 ## Output
 
@@ -24,6 +25,8 @@ Scope: discovery paths only. Access rules (robots, headers, bot blocks) belong t
 - Broken or blocked URLs
 - Canonical and redirect issues
 - Priority fixes
+
+"Broken or blocked URLs" covers both sitemap-listed entries and internal links discovered by crawling on-page navigation/body links — a broken-link sweep is not limited to what the sitemap happens to list.
 
 ## Guardrails
 

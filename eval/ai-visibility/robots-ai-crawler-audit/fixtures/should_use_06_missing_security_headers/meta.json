@@ -1,0 +1,6 @@
+{
+  "id": "should_use_06_missing_security_headers",
+  "category": "should_use",
+  "description": "robots.txt and meta robots are clean, but the product page's response is missing Strict-Transport-Security, X-Content-Type-Options, and X-Frame-Options headers - a technical-SEO/trust gap distinct from crawler-access rules.",
+  "expects_full_report": true
+}

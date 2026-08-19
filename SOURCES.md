@@ -1,6 +1,6 @@
 # Source and Claim Ledger
 
-Last reviewed: 2026-08-18
+Last reviewed: 2026-08-19
 
 Each normative sentence in the skills cites one or more IDs below. Open the linked first-party source to verify the associated instruction. Source pages can change; re-check before production use.
 
@@ -24,3 +24,5 @@ Each normative sentence in the skills cites one or more IDs below. Open the link
 | `GOOGLE-IMAGE-SEO-01` | Google | [Image SEO best practices](https://developers.google.com/search/docs/appearance/google-images) | Alt text is the most important attribute for describing an image to Google; it should be descriptive and contextual rather than generic or keyword-stuffed; standard `<img>`/`<picture>`/`srcset` markup is indexable while CSS background images are not. |
 | `GOOGLE-IMAGE-SITEMAP-01` | Google | [Image sitemaps](https://developers.google.com/search/docs/crawling-indexing/sitemaps/image-sitemaps) | An image sitemap declares images via `<image:image>`/`<image:loc>` tags nested inside each `<url>` entry, using the `xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"` namespace, up to 1,000 `<image:image>` entries per `<url>`; image URLs may be hosted on a different domain than the page. |
 | `SCHEMA-IMAGEOBJECT-01` | Schema.org | [ImageObject](https://schema.org/ImageObject) | Defines the `ImageObject` type (`caption`, `embeddedTextCaption`, `exifData`, `representativeOfPage`, plus inherited `MediaObject`/`CreativeWork` properties); an entity's `image` property "can be a URL or a fully described `ImageObject`," with the fully described form used to carry metadata a bare URL cannot. |
+| `AHREFS-TITLE-LENGTH-01` | Ahrefs | [Title Tag SEO: How to Write Titles That Rank & Get Clicks](https://ahrefs.com/blog/title-tag-seo/) | Google renders titles based on pixel width (truncating or rewriting titles over roughly 600px) rather than a fixed character count, but as practical guidance "anything under 60 characters is fine" and it's "best practice to keep title tags between 50 and 60 characters to reduce the risk of truncation." |
+| `AHREFS-META-DESCRIPTION-01` | Ahrefs | [Meta Description: Tips & Examples to Help You Rank Better](https://ahrefs.com/blog/meta-description/) | Google truncates meta description snippets based on pixel width rather than a fixed character count; the current truncation point is roughly 920px (~160 characters) on desktop and 680px (~120 characters) on mobile, so a description should front-load its point well before that limit. |
