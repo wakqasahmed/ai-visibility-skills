@@ -12,7 +12,7 @@ Scope: access rules only. Sitemap coverage belongs to `sitemap-discovery-audit`;
 ## Workflow
 
 1. Fetch `/robots.txt`.
-2. Identify global disallow rules, sitemap declarations, crawl delays, and user-agent specific rules.
+2. Identify global disallow rules, sitemap declarations, crawl delays, and user-agent specific rules. On ecommerce/marketplace sites, check specifically whether product, category, and policy paths are blocked — these are usually the pages a shopper or AI agent needs to read.
 3. Check page-level `noindex`, `nofollow`, canonical tags, and `X-Robots-Tag` headers on key URLs.
 4. Look for AI crawler-specific rules for major bots where visible.
 5. Compare access rules against the user's visibility goals.

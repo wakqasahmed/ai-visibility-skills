@@ -23,5 +23,5 @@ data), not assumed or invented to fill a gap.
 ## Protect private and sensitive paths
 
 Do not recommend exposing, listing, or opening private, authenticated, admin, staging,
-checkout, account, or customer-specific pages/paths to crawlers or AI agents. Only
-recommend surfacing public, non-sensitive content.
+checkout, cart, order, account, or customer-specific pages/paths to crawlers or AI agents.
+Only recommend surfacing public, non-sensitive content.
