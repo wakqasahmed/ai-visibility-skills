@@ -2,7 +2,7 @@
   "name": "ai-visibility-skill-pack",
   "version": "0.1.0",
   "last_reviewed": "2026-08-18",
-  "skill_count": 8,
-  "skills": ["ai-visibility-audit", "llms-txt-generator", "robots-ai-crawler-audit", "schema-markup-audit", "sitemap-discovery-audit", "answer-engine-content-audit", "citation-readiness-audit", "ai-search-remediation-plan"],
-  "source_count": 15
+  "skill_count": 9,
+  "skills": ["ai-visibility-audit", "llms-txt-generator", "robots-ai-crawler-audit", "schema-markup-audit", "sitemap-discovery-audit", "answer-engine-content-audit", "citation-readiness-audit", "ai-search-remediation-plan", "image-audit"],
+  "source_count": 18
 }

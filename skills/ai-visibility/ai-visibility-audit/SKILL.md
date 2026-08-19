@@ -28,6 +28,7 @@ This is the orchestrator: it finds and ranks blockers, then hands deep dives to 
 - Structured data depth → `schema-markup-audit`
 - Drafting `llms.txt` → `llms-txt-generator`
 - Content gaps → `answer-engine-content-audit`; citation trust → `citation-readiness-audit`
+- Image alt text, image sitemap coverage, `ImageObject` schema, and image fetchability → `image-audit`
 - Turning findings into tickets → `ai-search-remediation-plan`
 
 ## Output

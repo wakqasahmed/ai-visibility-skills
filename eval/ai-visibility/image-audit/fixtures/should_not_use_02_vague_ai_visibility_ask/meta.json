@@ -1,0 +1,5 @@
+{
+  "category": "should_not_use",
+  "description": "No concrete page, URL, or fetched markup is given - just a broad 'why aren't our images showing up' ask with nothing specific to audit yet",
+  "decline_signal_patterns": ["no (specific|concrete) page|url", "share (a page|the url|specific pages)", "not (yet )?actionable|nothing (specific|concrete) to audit"]
+}

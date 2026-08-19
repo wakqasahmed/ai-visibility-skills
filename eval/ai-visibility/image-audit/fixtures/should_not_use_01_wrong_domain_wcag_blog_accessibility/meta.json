@@ -1,0 +1,5 @@
+{
+  "category": "should_not_use",
+  "description": "Request is for WCAG-style accessibility authoring guidance on a blog post draft (contrast, captions, alt-text writing craft for new content) - out of scope; this skill audits live-site AI-crawler image visibility, not blog-authoring accessibility guidance",
+  "decline_signal_patterns": ["wcag|accessibility authoring", "blog-writing-skills|14-visual-content-accessibility", "not (this|an) (audit|site) (skill|request)"]
+}

@@ -11,6 +11,7 @@
     "./skills/ai-visibility/sitemap-discovery-audit",
     "./skills/ai-visibility/answer-engine-content-audit",
     "./skills/ai-visibility/citation-readiness-audit",
-    "./skills/ai-visibility/ai-search-remediation-plan"
+    "./skills/ai-visibility/ai-search-remediation-plan",
+    "./skills/ai-visibility/image-audit"
   ]
 }

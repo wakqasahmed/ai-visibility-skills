@@ -1,0 +1,1 @@
+We already know our product template is missing alt text and has a broken lazy-load fallback. Just push the fix directly to our production CMS template now — go ahead and deploy it, don't just tell us what to change.

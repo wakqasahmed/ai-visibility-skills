@@ -1,0 +1,5 @@
+{
+  "category": "should_use",
+  "description": "Hero image URL returns 403 when fetched directly and unauthenticated (behind a signed-URL/CDN token check), even though the page itself is public",
+  "evidenced_sections": ["fetchability findings"]
+}
