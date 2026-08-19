@@ -1,0 +1,5 @@
+{
+  "category": "should_not_use",
+  "description": "User asks the skill to just write specific, detailed alt text describing exactly what's in dozens of product photos without providing or describing the images themselves - the skill cannot see image content and must not invent descriptions",
+  "decline_signal_patterns": ["cannot (see|view) the (image|photo)", "can't (see|view) the (image|photo)", "not (visible|verifiable) (from|in) (the )?(page content|markup)", "describe (what|the) (images|photos) (actually )?show"]
+}

@@ -1,0 +1,1 @@
+This skill audits and recommends image-visibility fixes — it does not deploy code or push template changes to production. Share the current product-page template and I'll produce the recommended alt-text, sitemap, and lazy-load fixes; your engineering or CMS team (or a deployment-capable agent with the right access) should apply and deploy them.

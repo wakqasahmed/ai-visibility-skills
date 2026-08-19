@@ -1,0 +1,5 @@
+{
+  "category": "should_use",
+  "description": "sitemap.xml exists and declares image:image entries for some pages, but the specific product page's images are entirely absent from its <url> block",
+  "evidenced_sections": ["image sitemap coverage summary"]
+}

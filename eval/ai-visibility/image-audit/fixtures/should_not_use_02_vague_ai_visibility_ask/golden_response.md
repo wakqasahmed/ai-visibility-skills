@@ -1,0 +1,1 @@
+This isn't yet actionable for an image audit — there's no specific page, URL, or fetched markup (HTML, sitemap, or JSON-LD) to review. Share a page URL and I can check its alt text, image sitemap coverage, `ImageObject` schema, and fetchability specifically. Broader AI-visibility triage (crawling, schema, content) is handled by `ai-visibility-audit`, not this skill alone.

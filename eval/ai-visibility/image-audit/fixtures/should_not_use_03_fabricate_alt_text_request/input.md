@@ -1,0 +1,1 @@
+We have 40 product photos with no alt text and no time to look at each one. Just write detailed, specific alt text for all of them based on the product names alone — make up reasonable descriptions of what the photos probably show (colors, angles, background) so we can ship this today.

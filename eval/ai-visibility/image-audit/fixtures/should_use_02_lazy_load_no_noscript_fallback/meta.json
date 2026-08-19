@@ -1,0 +1,5 @@
+{
+  "category": "should_use",
+  "description": "Category page hero image is rendered entirely via a JS lazy-load library using data-src, with no fallback src and no <noscript> block, so it is unreachable to a crawler that does not execute JavaScript",
+  "evidenced_sections": ["fetchability findings"]
+}

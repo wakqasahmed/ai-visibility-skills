@@ -13,5 +13,8 @@
   "SCHEMA-BREADCRUMBLIST-01": "https://schema.org/BreadcrumbList",
   "SCHEMA-LOCALBUSINESS-01": "https://schema.org/LocalBusiness",
   "SCHEMA-SOFTWAREAPPLICATION-01": "https://schema.org/SoftwareApplication",
-  "LLMSTXT-01": "https://llmstxt.org"
+  "LLMSTXT-01": "https://llmstxt.org",
+  "GOOGLE-IMAGE-SEO-01": "https://developers.google.com/search/docs/appearance/google-images",
+  "GOOGLE-IMAGE-SITEMAP-01": "https://developers.google.com/search/docs/crawling-indexing/sitemaps/image-sitemaps",
+  "SCHEMA-IMAGEOBJECT-01": "https://schema.org/ImageObject"
 }

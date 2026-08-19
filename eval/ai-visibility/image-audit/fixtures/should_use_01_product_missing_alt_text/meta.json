@@ -1,0 +1,5 @@
+{
+  "category": "should_use",
+  "description": "Product page images (main product photo and two thumbnail variants) have no alt attribute at all, while an unrelated decorative icon correctly uses alt=\"\"",
+  "evidenced_sections": ["alt text coverage and quality summary"]
+}

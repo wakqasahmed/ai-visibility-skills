@@ -1,0 +1,5 @@
+{
+  "category": "should_not_use",
+  "description": "Ask is to directly implement and deploy alt-text and lazy-load template fixes to production, not to produce an audit - this skill reviews and recommends, it does not deploy",
+  "decline_signal_patterns": ["does not (deploy|implement|push)|doesn't (deploy|implement|push)", "review (and )?recommend|audits and recommends", "not (able|equipped) to deploy"]
+}

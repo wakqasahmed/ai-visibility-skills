@@ -1,0 +1,6 @@
+{
+  "category": "should_use",
+  "description": "Product JSON-LD's image property is a bare URL string, even though the page has a visible photo credit that could populate a full ImageObject",
+  "evidenced_sections": ["imageobject schema presence and completeness"],
+  "forbidden_patterns": ["\"caption\":\\s*\"[^\"]*studio\"", "photographer unknown"]
+}
