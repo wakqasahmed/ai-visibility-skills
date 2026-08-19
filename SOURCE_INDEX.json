@@ -16,5 +16,7 @@
   "LLMSTXT-01": "https://llmstxt.org",
   "GOOGLE-IMAGE-SEO-01": "https://developers.google.com/search/docs/appearance/google-images",
   "GOOGLE-IMAGE-SITEMAP-01": "https://developers.google.com/search/docs/crawling-indexing/sitemaps/image-sitemaps",
-  "SCHEMA-IMAGEOBJECT-01": "https://schema.org/ImageObject"
+  "SCHEMA-IMAGEOBJECT-01": "https://schema.org/ImageObject",
+  "AHREFS-TITLE-LENGTH-01": "https://ahrefs.com/blog/title-tag-seo/",
+  "AHREFS-META-DESCRIPTION-01": "https://ahrefs.com/blog/meta-description/"
 }

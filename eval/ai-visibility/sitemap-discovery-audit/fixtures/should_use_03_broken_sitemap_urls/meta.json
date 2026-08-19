@@ -1,7 +1,7 @@
 {
   "id": "should_use_03_broken_sitemap_urls",
   "category": "should_use",
-  "description": "Sitemap lists URLs that 404/500 when fetched — broken entries, distinct from coverage gaps.",
+  "description": "Sitemap lists URLs that 404/500 when fetched, plus a broader internal-link sweep finds a non-sitemap footer link that also 404s — broken entries, distinct from coverage gaps.",
   "expected_min_findings": 1,
   "expects_faceted_flag": false
 }

@@ -47,7 +47,7 @@ decline/defer response that does **not** contain `## Finding: ` headings.
 
 ## Fixtures
 
-`fixtures/` has 10 scenarios, 5 should-use and 5 should-not-use/near-miss:
+`fixtures/` has 11 scenarios, 6 should-use and 5 should-not-use/near-miss:
 
 **Should-use** (audit requests this skill should turn into finding(s)):
 
@@ -58,6 +58,7 @@ decline/defer response that does **not** contain `## Finding: ` headings.
 | `should_use_03_missing_comparison_and_stale` | two findings on one page (no comparison language; no freshness signal) — must produce two independent findings, not one bundled finding |
 | `should_use_04_vague_faq_answers` | FAQ answers exist and render server-side but are one-word stubs — `vague`, tests that `Observed` carries a real weak excerpt rather than an absence pattern |
 | `should_use_05_missing_support_docs` | two separate pages/questions (data export docs missing; refund policy vague) — must tie findings to their own URLs |
+| `should_use_06_title_meta_length_thresholds` | product page title is 118 characters (over the ~50-60 char threshold) and has no meta description tag — two findings, one `vague` and one `missing` |
 
 **Should-not-use / near-miss** (should be declined or deferred, not forced into a fabricated report):
 

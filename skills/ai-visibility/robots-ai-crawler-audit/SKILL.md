@@ -14,15 +14,17 @@ Scope: access rules only. Sitemap coverage belongs to `sitemap-discovery-audit`;
 1. Fetch `/robots.txt`.
 2. Identify global disallow rules, sitemap declarations, crawl delays, and user-agent specific rules. On ecommerce/marketplace sites, check specifically whether product, category, and policy paths are blocked — these are usually the pages a shopper or AI agent needs to read.
 3. Check page-level `noindex`, `nofollow`, canonical tags, and `X-Robots-Tag` headers on key URLs.
-4. Look for AI crawler-specific rules for major bots where visible.
-5. Compare access rules against the user's visibility goals.
-6. Recommend exact changes only when the desired access policy is clear.
+4. Check response security headers (`Strict-Transport-Security`, `X-Content-Type-Options`, `X-Frame-Options`) on key URLs — a real technical-SEO/trust signal, and missing ones can also indicate a misconfigured origin worth flagging alongside crawler-access findings.
+5. Look for AI crawler-specific rules for major bots where visible.
+6. Compare access rules against the user's visibility goals.
+7. Recommend exact changes only when the desired access policy is clear.
 
 ## Output
 
 - Current crawler policy summary
 - Blocked high-value paths
 - AI crawler implications
+- Security header gaps (HSTS, X-Content-Type-Options, X-Frame-Options)
 - Recommended robots.txt changes
 - Verification commands
 

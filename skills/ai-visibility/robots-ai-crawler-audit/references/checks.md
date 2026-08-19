@@ -78,6 +78,37 @@ curl -sI "$URL" | grep -i "x-robots-tag"
 curl -s "$URL" | grep -oiE '<link[^>]+rel="canonical"[^>]*>'
 ```
 
+## Security headers
+
+Missing security headers are a real technical-SEO/trust signal (and can affect
+whether a browser or crawler treats the response as safe to render/index):
+
+```bash
+curl -sI "$URL" | grep -i "strict-transport-security"
+curl -sI "$URL" | grep -i "x-content-type-options"
+curl -sI "$URL" | grep -i "x-frame-options"
+```
+
+```bash
+for h in "strict-transport-security" "x-content-type-options" "x-frame-options"; do
+  value=$(curl -sI "$URL" | grep -i "^$h:")
+  if [ -z "$value" ]; then
+    echo "MISSING: $h"
+  else
+    echo "PRESENT: $value"
+  fi
+done
+```
+
+Read the result as: `Strict-Transport-Security` absent means the site never
+tells browsers to force HTTPS on future visits (downgrade/mixed-content risk);
+`X-Content-Type-Options: nosniff` absent means browsers may MIME-sniff a
+response into an unintended content type; `X-Frame-Options` absent (and no
+equivalent `frame-ancestors` in a `Content-Security-Policy` header) means the
+page can be framed by another site (clickjacking risk). Report each missing
+header by name with the exact `curl -sI` command run — do not infer a header
+is present or absent without checking it.
+
 ## Evidence discipline
 
 Record each finding as: URL or bot checked, command run, observed output, and whether it blocks or helps AI crawler access. Do not infer a block without an observed status code or explicit robots.txt rule.

@@ -57,7 +57,7 @@ sections.
 |---|---|
 | `should_use_01_missing_sitemap` | no `sitemap.xml` at all, no `Sitemap:` line in `robots.txt` — the most basic discovery failure |
 | `should_use_02_orphaned_pages` | sitemap exists and is well-formed, but 18 published pages are orphaned from it — a coverage gap, not a missing-sitemap failure |
-| `should_use_03_broken_sitemap_urls` | sitemap lists URLs that 404/500 — broken entries, distinct from coverage gaps |
+| `should_use_03_broken_sitemap_urls` | sitemap lists URLs that 404/500, plus a broader internal-link sweep finds a non-sitemap footer link that also 404s — broken entries, distinct from coverage gaps |
 | `should_use_04_canonical_redirect_mismatch` | post-migration: sitemap URLs 301-redirect to different URLs than their own stale self-referencing canonical tags claim |
 | `should_use_05_faceted_noise_stale` | sitemap flooded with faceted/generated filter-combination URLs plus stale duplicate `lastmod` values — crawl-noise finding |
 

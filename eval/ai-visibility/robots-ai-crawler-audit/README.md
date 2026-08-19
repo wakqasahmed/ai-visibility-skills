@@ -45,7 +45,7 @@ least one expected decline signal.
 
 ## Fixtures
 
-`fixtures/` has 10 scenarios, 5 should-use and 5 should-not-use/near-miss:
+`fixtures/` has 11 scenarios, 6 should-use and 5 should-not-use/near-miss:
 
 **Should-use** (crawler-access scenarios this skill should turn into a full report):
 
@@ -56,6 +56,7 @@ least one expected decline signal.
 | `should_use_03_meta_robots_noindex_docs` | `robots.txt` and headers are clean, but a `<meta name="robots" content="noindex, nofollow">` tag blocks a docs page | HTML-level block, likely a CMS template default |
 | `should_use_04_edge_waf_block_claudebot` | `robots.txt` has no explicit ClaudeBot rule, but a live fetch as ClaudeBot returns 403 while GPTBot and a default UA return 200 | edge/WAF block invisible to `robots.txt` alone |
 | `should_use_05_crawl_delay_missing_ai_stanzas` | No named AI-bot stanzas, a blanket `Crawl-delay: 20` for everyone | not a block - ambiguous policy needing explicit stanzas, with cost/scraping tradeoffs called out |
+| `should_use_06_missing_security_headers` | `robots.txt`/meta robots are clean, but the product page's response is missing `Strict-Transport-Security`, `X-Content-Type-Options`, and `X-Frame-Options` | not a crawler-access block - a security-header/technical-trust gap on an otherwise crawlable page |
 
 **Should-not-use / near-miss** (should be declined, redirected, or deferred, not forced into a fabricated report):
 
