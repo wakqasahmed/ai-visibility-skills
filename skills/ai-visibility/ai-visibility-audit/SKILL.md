@@ -40,7 +40,7 @@ This is the orchestrator: it finds and ranks blockers, then hands deep dives to 
 
 ## Guardrails
 
-See [Shared Guardrails](../references/guardrails.md) for the cross-cutting rule on not
+See [Shared Guardrails](references/guardrails.md) for the cross-cutting rule on not
 claiming AI platform outcome guarantees.
 
 - Distinguish observed page evidence from inferred recommendations.

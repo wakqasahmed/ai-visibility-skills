@@ -28,7 +28,7 @@ Scope: access rules only. Sitemap coverage belongs to `sitemap-discovery-audit`;
 
 ## Guardrails
 
-See [Shared Guardrails](../references/guardrails.md) for the cross-cutting rules on not
+See [Shared Guardrails](references/guardrails.md) for the cross-cutting rules on not
 exposing private/sensitive paths and not claiming AI platform outcome guarantees.
 
 - Call out tradeoffs between visibility, cost, scraping risk, and content control.
