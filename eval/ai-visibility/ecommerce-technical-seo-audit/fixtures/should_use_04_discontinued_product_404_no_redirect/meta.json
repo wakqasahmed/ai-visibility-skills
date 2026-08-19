@@ -1,0 +1,5 @@
+{
+  "category": "should_use",
+  "description": "A discontinued product returns a bare 404 with no redirect, even though a clearly relevant in-stock replacement product exists on the site",
+  "evidenced_sections": ["discontinued-product handling findings"]
+}

@@ -1,0 +1,5 @@
+{
+  "category": "should_not_use",
+  "description": "User explicitly asks for every product and category page in a 50,000-SKU catalog to be crawled and checked - this skill is a 3-5 page spot-check, not an exhaustive crawl",
+  "decline_signal_patterns": ["spot-check|sample", "3-5|3 to 5|small sample", "full[- ]catalog|entire catalog|every (product|category)", "verified-audit|paid|exhaustive"]
+}

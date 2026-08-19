@@ -1,0 +1,5 @@
+{
+  "category": "should_use",
+  "description": "A discontinued product 301-redirects to the site homepage instead of a relevant replacement product or category, risking a soft-404 evaluation",
+  "evidenced_sections": ["discontinued-product handling findings"]
+}

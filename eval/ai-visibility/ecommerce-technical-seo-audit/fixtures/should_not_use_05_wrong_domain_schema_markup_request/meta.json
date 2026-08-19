@@ -1,0 +1,5 @@
+{
+  "category": "should_not_use",
+  "description": "User asks for a full Product/Offer JSON-LD schema audit - a different skill's job (schema-markup-audit), out of this skill's catalog-spot-check scope",
+  "decline_signal_patterns": ["schema-markup-audit", "structured data|json-ld", "out of (this skill's )?scope|different skill"]
+}

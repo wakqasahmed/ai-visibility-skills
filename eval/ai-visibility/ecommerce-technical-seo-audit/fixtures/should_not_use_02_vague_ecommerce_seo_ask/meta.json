@@ -1,0 +1,5 @@
+{
+  "category": "should_not_use",
+  "description": "No specific page, category, or product URL is given - just a broad 'our ecommerce SEO feels off' ask with nothing concrete to sample yet",
+  "decline_signal_patterns": ["no (specific|concrete) (page|url|categor)", "share (a|the|some) (page|url|categor)", "not (yet )?actionable|nothing (specific|concrete) to (check|audit|sample)"]
+}
