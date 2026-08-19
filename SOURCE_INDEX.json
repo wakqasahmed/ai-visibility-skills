@@ -18,5 +18,12 @@
   "GOOGLE-IMAGE-SITEMAP-01": "https://developers.google.com/search/docs/crawling-indexing/sitemaps/image-sitemaps",
   "SCHEMA-IMAGEOBJECT-01": "https://schema.org/ImageObject",
   "AHREFS-TITLE-LENGTH-01": "https://ahrefs.com/blog/title-tag-seo/",
-  "AHREFS-META-DESCRIPTION-01": "https://ahrefs.com/blog/meta-description/"
+  "AHREFS-META-DESCRIPTION-01": "https://ahrefs.com/blog/meta-description/",
+  "YOAST-THIN-CONTENT-01": "https://yoast.com/what-is-thin-content/",
+  "DIGITALOFT-CATEGORY-WORDCOUNT-01": "https://digitaloft.co.uk/category-page-content-length/",
+  "GOOGLE-FACETED-NAV-01": "https://developers.google.com/crawling/docs/faceted-navigation",
+  "AHREFS-ORPHAN-PAGE-01": "https://ahrefs.com/seo/glossary/orphan-page",
+  "BACKLINKO-ORPHAN-PAGES-01": "https://backlinko.com/orphan-pages",
+  "CONDUCTOR-DISCONTINUED-01": "https://www.conductor.com/academy/discontinued-products/",
+  "GOOGLE-SOFT-404-01": "https://developers.google.com/search/docs/crawling-indexing/http-network-errors"
 }

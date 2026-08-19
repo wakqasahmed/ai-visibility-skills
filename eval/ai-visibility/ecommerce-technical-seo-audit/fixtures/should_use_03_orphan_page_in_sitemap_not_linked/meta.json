@@ -1,0 +1,5 @@
+{
+  "category": "should_use",
+  "description": "A sampled product URL appears in sitemap.xml but is not reachable from homepage, category-grid, or supplied internal-link crawl output",
+  "evidenced_sections": ["orphan page findings"]
+}

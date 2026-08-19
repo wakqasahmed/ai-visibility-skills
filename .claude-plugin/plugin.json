@@ -12,6 +12,7 @@
     "./skills/ai-visibility/answer-engine-content-audit",
     "./skills/ai-visibility/citation-readiness-audit",
     "./skills/ai-visibility/ai-search-remediation-plan",
-    "./skills/ai-visibility/image-audit"
+    "./skills/ai-visibility/image-audit",
+    "./skills/ai-visibility/ecommerce-technical-seo-audit"
   ]
 }

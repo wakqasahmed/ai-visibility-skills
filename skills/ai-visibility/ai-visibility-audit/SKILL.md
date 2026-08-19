@@ -29,6 +29,7 @@ This is the orchestrator: it finds and ranks blockers, then hands deep dives to 
 - Drafting `llms.txt` → `llms-txt-generator`
 - Content gaps → `answer-engine-content-audit`; citation trust → `citation-readiness-audit`
 - Image alt text, image sitemap coverage, `ImageObject` schema, and image fetchability → `image-audit`
+- For an ecommerce site: catalog-specific spot-checks (thin category/collection pages, faceted-navigation duplicate URLs, orphan pages, discontinued-product 404/redirect handling) → `ecommerce-technical-seo-audit`
 - Turning findings into tickets → `ai-search-remediation-plan`
 
 ## Output
