@@ -25,7 +25,7 @@ Assess whether a site answers the questions AI systems need to answer for users.
 
 ## Guardrails
 
-See [Shared Guardrails](../references/guardrails.md) for the cross-cutting rule on not
+See [Shared Guardrails](references/guardrails.md) for the cross-cutting rule on not
 fabricating unverifiable content.
 
 - Prefer specific page edits over generic content advice.

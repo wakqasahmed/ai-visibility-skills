@@ -27,7 +27,7 @@ Scope: drafting and reviewing the file itself. Whether crawlers can reach it bel
 
 ## Guardrails
 
-See [Shared Guardrails](../references/guardrails.md) for the cross-cutting rules on not
+See [Shared Guardrails](references/guardrails.md) for the cross-cutting rules on not
 fabricating content and not exposing private/sensitive paths.
 
 - Keep descriptions factual and brief.
