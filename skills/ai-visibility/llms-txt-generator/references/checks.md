@@ -52,6 +52,25 @@ for u in $(curl -s "$SITE/llms.txt" | grep -oE '\(https?://[^)]+\)' | tr -d '()'
 done
 ```
 
+## [EXPERIMENTAL] Emerging Agent Discovery Checks (Draft Standards)
+
+These checks evaluate emerging draft conventions surfaced by `isitagentready.com` and agent discovery working groups. They are strictly marked `[EXPERIMENTAL]` in reports and are informational — absence of these files/headers does NOT hurt standard search indexing or core `llms.txt` discovery:
+
+1. **Markdown Content Negotiation (`Accept: text/markdown`) [MARKDOWN-NEGOTIATION-01]**:
+   Check if the server serves clean Markdown representations directly via HTTP content negotiation:
+   ```bash
+   curl -s -i -H "Accept: text/markdown" "$SITE" | grep -i "content-type"
+   curl -s -i -H "Accept: text/markdown" "$SITE" | head -20
+   ```
+2. **Agential Resource Discovery (`ARD`) and `auth.md` Manifests [ARD-MANIFEST-01]**:
+   Check if the site publishes machine-readable agent permission manifests at standard discovery locations:
+   ```bash
+   curl -s -o /dev/null -w "%{http_code}\n" "$SITE/auth.md"
+   curl -s -o /dev/null -w "%{http_code}\n" "$SITE/.well-known/ard.json"
+   ```
+
+When reporting these findings, always include an `[EXPERIMENTAL]` label and note that adoption is optional and draft-stage.
+
 ## Evidence discipline
 
 Record each finding as: URL checked, command run, observed output, and whether it confirms a source page's existence or a broken link in the draft. Do not include a URL in `llms.txt` that hasn't been verified to return 200.

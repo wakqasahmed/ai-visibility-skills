@@ -1,0 +1,6 @@
+{
+  "id": "should_use_07_experimental_content_signals_and_dns_aid",
+  "category": "should_use",
+  "description": "Audit robots.txt, security headers, and emerging experimental Content Signals, Web Bot Auth, and DNS-AID records, reporting experimental findings clearly.",
+  "expects_full_report": true
+}

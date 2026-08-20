@@ -38,6 +38,7 @@ This is the orchestrator: it finds and ranks blockers, then hands deep dives to 
 - Top 5 blockers
 - Evidence with URLs
 - Quick wins
+- [EXPERIMENTAL] Emerging Agent Signals (DNS-AID, Content Signals, Web Bot Auth, Markdown negotiation, Auth.md/ARD) — clearly labeled as optional draft standards
 - Implementation tickets or next actions
 
 ## Guardrails

@@ -109,6 +109,32 @@ page can be framed by another site (clickjacking risk). Report each missing
 header by name with the exact `curl -sI` command run — do not infer a header
 is present or absent without checking it.
 
+## [EXPERIMENTAL] Emerging Agent Protocol Checks (Draft Standards)
+
+These checks evaluate emerging draft standards surfaced by `isitagentready.com` and protocol working groups. They are strictly marked `[EXPERIMENTAL]` in reports and are informational — absence of these records does NOT hurt search engine indexing or established crawler access:
+
+1. **Content Signals in `robots.txt` or headers [CONTENT-SIGNALS-01]**:
+   Check if the site declares fine-grained AI training, search, or inference permissions via draft `Content-Signal` directives:
+   ```bash
+   curl -s "$SITE/robots.txt" | grep -i "content-signal"
+   curl -sI "$URL" | grep -i "content-signal"
+   ```
+2. **Web Bot Auth deployment [WEB-BOT-AUTH-01]**:
+   Check if the origin advertises cryptographic bot authentication endpoints or RFC 9421 message signature headers:
+   ```bash
+   curl -s -o /dev/null -w "%{http_code}\n" "$SITE/.well-known/bot-auth"
+   curl -sI "$URL" | grep -iE "(bot-auth|signature-input|signature)"
+   ```
+3. **DNS-AID (DNS for AI Discovery) TXT records [DNS-AID-01]**:
+   Check if the domain advertises AI readiness or discovery endpoints in DNS TXT records:
+   ```bash
+   DOMAIN=$(echo "$SITE" | sed -e 's|^https\?://||' -e 's|/.*||')
+   nslookup -type=TXT "_aid.$DOMAIN"
+   nslookup -type=TXT "_ai.$DOMAIN"
+   ```
+
+When reporting these findings, always include an `[EXPERIMENTAL]` label and note that adoption is optional and draft-stage.
+
 ## Evidence discipline
 
 Record each finding as: URL or bot checked, command run, observed output, and whether it blocks or helps AI crawler access. Do not infer a block without an observed status code or explicit robots.txt rule.

@@ -222,3 +222,31 @@ Fed into `ai-search-remediation-plan`, which turns those findings into:
 - Verification commands or manual checks
 - Owner decisions and blockers
 
+---
+
+## Example 11 — full audit including experimental emerging agent discovery signals
+
+**Skills invoked:** [`ai-visibility-audit`](../skills/ai-visibility/ai-visibility-audit/SKILL.md)
+
+**Prompt:**
+
+> "Audit `https://example-store.com` for AI search visibility, and also probe emerging draft
+> agent discovery standards (DNS-AID, Content Signals in robots.txt, Web Bot Auth, Markdown
+> content negotiation, and Auth.md/ARD manifests). Clearly mark any draft protocol findings."
+
+**Expected output shape:**
+
+- Overall score: ready, partially ready, or blocked
+- Top 5 blockers
+- Evidence with URLs
+- Quick wins
+- **`## [EXPERIMENTAL] Emerging Agent Signals (Draft Standards)`**:
+  - Content Signals status (`Content-Signal:` in `robots.txt`)
+  - Web Bot Auth status (`/.well-known/bot-auth` / HTTP signatures)
+  - DNS-AID TXT records (`_aid.example-store.com`)
+  - Markdown content negotiation (`Accept: text/markdown` response)
+  - Agential Resource Discovery manifests (`/auth.md`, `/.well-known/ard.json`)
+  - Explicit disclaimer: *"Note: These checks evaluate emerging draft standards. Absence of these signals does not block search indexing or established AI crawler access."*
+- Implementation tickets or next actions
+
+
