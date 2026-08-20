@@ -74,6 +74,13 @@ Then copy that skill's folder into your agent's skills directory as in method 3.
 | [`schema-markup-audit`](skills/ai-visibility/schema-markup-audit/SKILL.md) | Audit schema.org JSON-LD and structured data for AI search, answer engines, rich results, and agent understanding. |
 | [`sitemap-discovery-audit`](skills/ai-visibility/sitemap-discovery-audit/SKILL.md) | Audit sitemap coverage, canonical URLs, indexable pages, redirects, and crawl discovery paths. |
 
+## Running an audit on your own machine
+
+[`docs/RUNNING_AN_AUDIT.md`](docs/RUNNING_AN_AUDIT.md) walks through installing this pack
+and running a skill against a real site from your own terminal — including the two most
+common false positives (a `200` on `llms.txt`/`sitemap.xml` that's actually a soft-block or
+an SPA fallback shell, not a real file).
+
 ## Example prompts
 
 [`docs/EXAMPLE_PROMPTS.md`](docs/EXAMPLE_PROMPTS.md) walks through illustrative prompts
