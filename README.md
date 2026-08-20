@@ -94,7 +94,7 @@ To generate consistent, executive-ready deliverables, all audits follow the stan
 
 You can render any markdown audit report into a styled HTML and print-perfect PDF using the built-in CLI:
 ```bash
-python scripts/render-audit-pdf.py reports/zaavia-net-ai-visibility-audit.md
+python scripts/render-audit-pdf.py output/zaavia-net-ai-visibility-audit.md
 ```
 See [`docs/AUDIT_REPORTING_GUIDE.md`](docs/AUDIT_REPORTING_GUIDE.md) for full formatting rules and design features.
 

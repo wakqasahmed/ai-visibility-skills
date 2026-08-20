@@ -28,10 +28,10 @@ The repository includes a zero-dependency CLI tool [`scripts/render-audit-pdf.py
 
 ```bash
 # Render to matching HTML and PDF in the same directory:
-python scripts/render-audit-pdf.py reports/my-audit.md
+python scripts/render-audit-pdf.py output/my-audit.md
 
 # Or specify a custom PDF output path:
-python scripts/render-audit-pdf.py reports/my-audit.md dist/client-report.pdf
+python scripts/render-audit-pdf.py output/my-audit.md dist/client-report.pdf
 ```
 
 ### Supported Features
@@ -44,7 +44,8 @@ python scripts/render-audit-pdf.py reports/my-audit.md dist/client-report.pdf
 
 ## 3. Saving and Storing Reports
 
-Store generated client/site audit reports in the `reports/` directory:
-- `reports/<domain>-ai-visibility-audit.md`
-- `reports/<domain>-ai-visibility-audit.html`
-- `reports/<domain>-ai-visibility-audit.pdf`
+Store generated client/site audit reports in the `output/` directory (which is automatically git-ignored to prevent site-specific audits and binary PDFs from polluting the repo history):
+- `output/<domain>-ai-visibility-audit.md`
+- `output/<domain>-ai-visibility-audit.html`
+- `output/<domain>-ai-visibility-audit.pdf`
+
