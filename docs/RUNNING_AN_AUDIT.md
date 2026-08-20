@@ -59,6 +59,10 @@ A `200` status code on `llms.txt` or `sitemap.xml` does not mean the file exists
 
 Always ask your agent to show you the actual response headers and the first few hundred characters of the body, not just the status code.
 
-## 6. What good output looks like
-
 A thorough run reports, per finding: the exact command run, the observed output, and what it means — not an inferred conclusion without evidence. Expect a mix, not a single verdict: a site can have a clean, well-reasoned `robots.txt` and still fail on content visibility (e.g. client-side-rendered pages that a non-JS-executing crawler can't read), or vice versa. Don't expect (or manufacture) a single pass/fail score — the report should separate access (can a crawler reach the page) from content (does the page, as delivered to that crawler, actually say anything).
+
+## 7. Understanding [EXPERIMENTAL] findings
+
+Audits may check emerging draft protocols (Content Signals in `robots.txt`, Web Bot Auth cryptographic verification, DNS-AID TXT records, Markdown content-negotiation `Accept: text/markdown`, and Auth.md/ARD manifests). When present, these findings are always labeled with **`[EXPERIMENTAL]`** in reports and remediation plans. 
+
+These represent draft specifications and future-readiness signals. Missing an experimental signal does **not** harm search engine discovery, crawler indexing, or AI platform visibility today.

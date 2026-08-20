@@ -1,0 +1,13 @@
+{
+  "id": "should_use_06_experimental_markdown_negotiation_and_ard",
+  "category": "should_use",
+  "description": "Drafting llms.txt while checking experimental Accept: text/markdown negotiation and auth.md/ard.json manifest",
+  "existing_llms_txt": false,
+  "expected_min_sections": 3,
+  "source_urls": [
+    "https://developer-hub.io/",
+    "https://developer-hub.io/docs",
+    "https://developer-hub.io/api",
+    "https://developer-hub.io/pricing"
+  ]
+}

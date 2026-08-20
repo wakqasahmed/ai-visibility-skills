@@ -17,7 +17,8 @@ Scope: access rules only. Sitemap coverage belongs to `sitemap-discovery-audit`;
 4. Check response security headers (`Strict-Transport-Security`, `X-Content-Type-Options`, `X-Frame-Options`) on key URLs — a real technical-SEO/trust signal, and missing ones can also indicate a misconfigured origin worth flagging alongside crawler-access findings.
 5. Look for AI crawler-specific rules for major bots where visible.
 6. Compare access rules against the user's visibility goals.
-7. Recommend exact changes only when the desired access policy is clear.
+7. [EXPERIMENTAL] Check for emerging draft signals (Content Signals directives in robots.txt, Web Bot Auth endpoints/headers, and DNS-AID TXT records) — see `references/checks.md`. Clearly mark any findings in this category as experimental draft standards that do not block core search/crawler indexing.
+8. Recommend exact changes only when the desired access policy is clear.
 
 ## Output
 
@@ -25,6 +26,7 @@ Scope: access rules only. Sitemap coverage belongs to `sitemap-discovery-audit`;
 - Blocked high-value paths
 - AI crawler implications
 - Security header gaps (HSTS, X-Content-Type-Options, X-Frame-Options)
+- [EXPERIMENTAL] Emerging protocol signals (Content Signals, Web Bot Auth, DNS-AID) — clearly labeled as optional draft standards
 - Recommended robots.txt changes
 - Verification commands
 

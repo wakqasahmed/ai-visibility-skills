@@ -16,6 +16,7 @@ Scope: drafting and reviewing the file itself. Whether crawlers can reach it bel
 3. Group links by intent: overview, products/services, docs, support, policies, changelog, pricing, and contact.
 4. Draft `llms.txt` with short descriptions for each section.
 5. Note missing pages that would make the file more useful.
+6. [EXPERIMENTAL] Check for emerging machine-readable discovery conventions (Markdown content-negotiation via `Accept: text/markdown` and Agential Resource Discovery manifests `/auth.md` or `/.well-known/ard.json`) — see `references/checks.md`. Clearly mark any findings as experimental draft standards.
 
 ## Output
 
@@ -23,6 +24,7 @@ Scope: drafting and reviewing the file itself. Whether crawlers can reach it bel
 - Placement path: `/llms.txt`
 - Source URLs used
 - Missing recommended URLs or pages
+- [EXPERIMENTAL] Alternate discovery signals (Markdown content-negotiation, Auth.md / ARD manifest) — clearly labeled as optional draft standards
 - Verification steps
 
 ## Guardrails

@@ -15,6 +15,8 @@ failing to passing once the fix ships. Reuse the relevant skill's `references/ch
 - `llms.txt` fixes → `llms-txt-generator/references/checks.md`
 - Content gap fixes → `answer-engine-content-audit/references/checks.md`
 - Citation/trust fixes → `citation-readiness-audit/references/checks.md`
+- Image visibility fixes → `image-audit/references/checks.md`
+- Ecommerce catalog fixes → `ecommerce-technical-seo-audit/references/checks.md`
 
 Example ticket acceptance criterion, copied verbatim from the source check:
 
@@ -40,6 +42,10 @@ grep -inE 'credential|access|legal|policy owner|cms access|approval' remediation
 
 Any ticket matching this pattern must carry an explicit "blocked on" note rather than a
 verification command, since it can't be closed by running a check.
+
+## [EXPERIMENTAL] Emerging Draft Protocol Ticket Guidance
+
+Any ticket generated for emerging draft standards (DNS-AID, Content Signals, Web Bot Auth, Markdown negotiation, Auth.md/ARD manifests) must be explicitly titled with `[EXPERIMENTAL - DRAFT SPEC]` and assigned `Priority: Optional (Draft Standard)`. Ensure tickets state clearly that implementation is optional and non-blocking for core search/crawler discovery.
 
 ## Evidence discipline
 
