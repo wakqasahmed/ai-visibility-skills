@@ -88,6 +88,16 @@ for several of these skills — the prompt text, which skill(s) it invokes, and 
 shape that skill's own `SKILL.md` promises. These are usage examples, not verified test
 runs; none of them have been executed against a live site and recorded here yet.
 
+## Audit reporting and PDF export
+
+To generate consistent, executive-ready deliverables, all audits follow the standardized template in [`docs/templates/AUDIT_REPORT_TEMPLATE.md`](docs/templates/AUDIT_REPORT_TEMPLATE.md). 
+
+You can render any markdown audit report into a styled HTML and print-perfect PDF using the built-in CLI:
+```bash
+python scripts/render-audit-pdf.py reports/zaavia-net-ai-visibility-audit.md
+```
+See [`docs/AUDIT_REPORTING_GUIDE.md`](docs/AUDIT_REPORTING_GUIDE.md) for full formatting rules and design features.
+
 **What actually happens when `ai-visibility-audit` runs:**
 
 1. It classifies the site (SaaS, ecommerce, docs, etc.) and runs its own discoverability and machine-readable-context checks directly, citing command output as evidence (see `references/checks.md`).
