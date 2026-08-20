@@ -15,6 +15,7 @@ import os
 import sys
 import re
 import html
+import math
 import subprocess
 import shutil
 from pathlib import Path
@@ -31,8 +32,8 @@ def find_browser_executable() -> str | None:
         candidates.extend([
             os.path.join(prog_files, "Google\\Chrome\\Application\\chrome.exe"),
             os.path.join(prog_files_x86, "Google\\Chrome\\Application\\chrome.exe"),
-            os.path.join(prog_files_x86, "Microsoft\\Edge\\Application\\msedge.exe"),
             os.path.join(prog_files, "Microsoft\\Edge\\Application\\msedge.exe"),
+            os.path.join(prog_files_x86, "Microsoft\\Edge\\Application\\msedge.exe"),
             os.path.join(local_app, "Google\\Chrome\\Application\\chrome.exe"),
             os.path.join(local_app, "Microsoft\\Edge\\Application\\msedge.exe"),
             os.path.join(prog_files, "BraveSoftware\\Brave-Browser\\Application\\brave.exe"),
@@ -56,6 +57,68 @@ def find_browser_executable() -> str | None:
     return None
 
 
+def generate_gauge_card(raw_score: str, label_text: str, status_text: str) -> str:
+    """Generates a Lighthouse-style circular score gauge card."""
+    # Clean score value (strip markdown links or brackets if any)
+    score_clean = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', raw_score).strip().strip('`').strip('*')
+    label_clean = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', label_text).strip().strip('*')
+    status_clean = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', status_text).strip().strip('`')
+
+    is_fraction = "/" in score_clean
+    try:
+        if is_fraction:
+            num, den = score_clean.split("/")
+            pct = (float(num) / float(den)) * 100
+            score_display = score_clean
+            color = "#8b5cf6"  # Purple for draft / experimental
+            bg_color = "#f5f3ff"
+        else:
+            pct = float(score_clean)
+            score_display = str(int(pct))
+            if pct >= 90:
+                color = "#0cce6b"  # Lighthouse green
+                bg_color = "#f0fdf4"
+            elif pct >= 50:
+                color = "#ffa400"  # Lighthouse orange
+                bg_color = "#fffbeb"
+            else:
+                color = "#ff4e42"  # Lighthouse red
+                bg_color = "#fef2f2"
+    except Exception:
+        pct = 0
+        score_display = score_clean
+        color = "#64748b"
+        bg_color = "#f8fafc"
+
+    r = 26
+    c = 2 * math.pi * r
+    offset = c * (1.0 - (max(0.0, min(100.0, pct)) / 100.0))
+
+    badge_class = "badge-low"
+    if any(k in status_clean.upper() for k in ["PASS", "READY", "100"]):
+        badge_class = "badge-pass"
+    elif any(k in status_clean.upper() for k in ["FAIL", "BLOCKED", "0"]):
+        badge_class = "badge-fail"
+    elif "PARTIAL" in status_clean.upper():
+        badge_class = "badge-partial"
+    elif any(k in status_clean.upper() for k in ["EXP", "DRAFT"]):
+        badge_class = "badge-exp"
+
+    return f"""
+    <div class="score-card" style="background: {bg_color}; border-color: {color}44;">
+        <div class="gauge-container">
+            <svg viewBox="0 0 68 68" class="gauge-svg">
+                <circle cx="34" cy="34" r="{r}" class="gauge-bg" />
+                <circle cx="34" cy="34" r="{r}" class="gauge-fill" style="stroke: {color}; stroke-dasharray: {c:.2f}; stroke-dashoffset: {offset:.2f};" />
+            </svg>
+            <div class="gauge-score" style="color: {color};">{html.escape(score_display)}</div>
+        </div>
+        <div class="gauge-label">{html.escape(label_clean)}</div>
+        <div class="gauge-status"><span class="badge {badge_class}">{html.escape(status_clean)}</span></div>
+    </div>
+    """
+
+
 def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report") -> str:
     """Parses markdown audit report into semantic HTML with rich CSS styling."""
     lines = md_content.splitlines()
@@ -68,45 +131,9 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
     in_list = False
     list_tag = "ul"
 
-    def flush_table():
-        nonlocal in_table, table_buffer
-        if not in_table or not table_buffer:
-            in_table = False
-            table_buffer = []
-            return ""
-        
-        rows = [r.strip() for r in table_buffer if r.strip()]
-        if not rows:
-            in_table = False
-            table_buffer = []
-            return ""
-
-        out = ['<div class="table-container"><table>']
-        # Header row
-        header_cols = [c.strip() for c in rows[0].strip('|').split('|')]
-        out.append('<thead><tr>')
-        for col in header_cols:
-            out.append(f'<th>{format_inline(col)}</th>')
-        out.append('</tr></thead><tbody>')
-
-        # Data rows (skip separator row at index 1)
-        for row_str in rows[2:]:
-            cols = [c.strip() for c in row_str.strip('|').split('|')]
-            out.append('<tr>')
-            for col in cols:
-                out.append(f'<td>{format_inline(col)}</td>')
-            out.append('</tr>')
-
-        out.append('</tbody></table></div>')
-        in_table = False
-        table_buffer = []
-        return '\n'.join(out)
-
     def format_inline(text: str) -> str:
-        # Badges & labels
         text = html.escape(text)
         
-        # Restore intentional bold and code markers
         # Replace status badges
         text = re.sub(r'`CRITICAL`', r'<span class="badge badge-critical">CRITICAL</span>', text, flags=re.I)
         text = re.sub(r'`HIGH`', r'<span class="badge badge-high">HIGH</span>', text, flags=re.I)
@@ -128,6 +155,59 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
         # Links
         text = re.sub(r'\[([^\]]+)\]\((https?://[^)]+)\)', r'<a href="\2" target="_blank">\1</a>', text)
         return text
+
+    def flush_table():
+        nonlocal in_table, table_buffer
+        if not in_table or not table_buffer:
+            in_table = False
+            table_buffer = []
+            return ""
+        
+        rows = [r.strip() for r in table_buffer if r.strip()]
+        if not rows:
+            in_table = False
+            table_buffer = []
+            return ""
+
+        # Check if this table is a Lighthouse Scorecard Table:
+        # Detected when header row cells are numerical scores e.g. [100], 0, 50, 0/5
+        header_raw_cols = [c.strip() for c in rows[0].strip('|').split('|')]
+        is_scorecard = len(header_raw_cols) >= 3 and any(
+            re.search(r'(\[\d+\]|\b\d{1,3}\b|\b\d/\d\b)', c) for c in header_raw_cols
+        ) and len(rows) >= 3
+
+        if is_scorecard:
+            # Row 0 = Scores, Row 2 = Labels, Row 3 = Status (if exists)
+            scores = header_raw_cols
+            labels = [c.strip() for c in rows[2].strip('|').split('|')] if len(rows) > 2 else [""] * len(scores)
+            statuses = [c.strip() for c in rows[3].strip('|').split('|')] if len(rows) > 3 else [""] * len(scores)
+
+            out = ['<div class="score-gauge-grid avoid-break">']
+            for s, l, st in zip(scores, labels, statuses):
+                out.append(generate_gauge_card(s, l, st))
+            out.append('</div>')
+            in_table = False
+            table_buffer = []
+            return '\n'.join(out)
+
+        out = ['<div class="table-container avoid-break"><table>']
+        out.append('<thead><tr>')
+        for col in header_raw_cols:
+            out.append(f'<th>{format_inline(col)}</th>')
+        out.append('</tr></thead><tbody>')
+
+        # Data rows (skip separator row at index 1)
+        for row_str in rows[2:]:
+            cols = [c.strip() for c in row_str.strip('|').split('|')]
+            out.append('<tr>')
+            for col in cols:
+                out.append(f'<td>{format_inline(col)}</td>')
+            out.append('</tr>')
+
+        out.append('</tbody></table></div>')
+        in_table = False
+        table_buffer = []
+        return '\n'.join(out)
 
     i = 0
     while i < len(lines):
@@ -204,7 +284,6 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
                 html_lines.append(f"</{list_tag}>")
                 in_list = False
             quote_text = stripped[1:].strip()
-            # gather following lines if part of same quote
             while i + 1 < len(lines) and lines[i+1].strip().startswith(">"):
                 i += 1
                 quote_text += " " + lines[i].strip()[1:].strip()
@@ -237,7 +316,6 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
 
         # Regular Paragraph
         if stripped:
-            # Check for metadata lines like **Target Domain:**
             if stripped.startswith("**Target") or stripped.startswith("**Audit Date") or stripped.startswith("**Site Classification") or stripped.startswith("**Overall Readiness"):
                 html_lines.append(f'<p class="meta-line">{format_inline(stripped)}</p>')
             else:
@@ -276,7 +354,7 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
 
 @page {{
     size: A4 portrait;
-    margin: 16mm 14mm 16mm 14mm;
+    margin: 15mm 13mm 15mm 13mm;
     @top-left {{
         content: "AI Visibility Audit Report";
         font-family: 'Inter', sans-serif;
@@ -309,8 +387,8 @@ body {{
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     color: var(--text-main);
     background: var(--bg-main);
-    line-height: 1.55;
-    font-size: 10pt;
+    line-height: 1.5;
+    font-size: 9.5pt;
     padding: 0;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
@@ -323,9 +401,9 @@ body {{
 
 /* Header Styling */
 .doc-header {{
-    border-bottom: 2px solid #2563eb;
-    padding-bottom: 12px;
-    margin-bottom: 16px;
+    border-bottom: 2.5px solid #2563eb;
+    padding-bottom: 10px;
+    margin-bottom: 14px;
 }}
 
 .brand-pill {{
@@ -343,7 +421,7 @@ body {{
 }}
 
 .doc-title {{
-    font-size: 19pt;
+    font-size: 18pt;
     font-weight: 800;
     color: #0f172a;
     letter-spacing: -0.02em;
@@ -352,11 +430,11 @@ body {{
 
 /* Section Titles */
 .section-title {{
-    font-size: 13pt;
+    font-size: 12.5pt;
     font-weight: 700;
     color: #1e293b;
-    margin-top: 20px;
-    margin-bottom: 10px;
+    margin-top: 18px;
+    margin-bottom: 8px;
     padding-bottom: 4px;
     border-bottom: 1px solid var(--border-color);
     page-break-after: avoid;
@@ -364,17 +442,17 @@ body {{
 }}
 
 .subsection-title {{
-    font-size: 11pt;
+    font-size: 10.5pt;
     font-weight: 600;
     color: #334155;
-    margin-top: 14px;
+    margin-top: 12px;
     margin-bottom: 6px;
     page-break-after: avoid;
     break-after: avoid;
 }}
 
 .card-title {{
-    font-size: 10.5pt;
+    font-size: 10pt;
     font-weight: 600;
     color: #1e293b;
     margin-top: 10px;
@@ -382,35 +460,109 @@ body {{
 }}
 
 p {{
-    margin-bottom: 8px;
+    margin-bottom: 7px;
     color: var(--text-main);
 }}
 
 .meta-line {{
-    font-size: 9.5pt;
+    font-size: 9pt;
     color: #334155;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
 }}
 
 .divider {{
     border: 0;
     height: 1px;
     background: var(--border-color);
-    margin: 16px 0;
+    margin: 14px 0;
+}}
+
+/* Scorecard Gauges */
+.score-gauge-grid {{
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin: 12px 0 16px 0;
+}}
+
+.score-card {{
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px 6px 8px 6px;
+    text-align: center;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}}
+
+.gauge-container {{
+    position: relative;
+    width: 60px;
+    height: 60px;
+    margin: 0 auto;
+}}
+
+.gauge-svg {{
+    width: 60px;
+    height: 60px;
+    transform: rotate(-90deg);
+}}
+
+.gauge-bg {{
+    fill: none;
+    stroke: #e2e8f0;
+    stroke-width: 5;
+}}
+
+.gauge-fill {{
+    fill: none;
+    stroke-width: 5.5;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.3s ease;
+}}
+
+.gauge-score {{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11pt;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+}}
+
+.gauge-label {{
+    font-size: 8pt;
+    font-weight: 700;
+    color: #1e293b;
+    margin-top: 6px;
+    line-height: 1.15;
+    min-height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}}
+
+.gauge-status {{
+    margin-top: 4px;
 }}
 
 /* Tables */
 .table-container {{
-    margin: 12px 0 16px 0;
+    margin: 10px 0 14px 0;
     overflow-x: auto;
-    page-break-inside: avoid;
-    break-inside: avoid;
 }}
 
 table {{
     width: 100%;
     border-collapse: collapse;
-    font-size: 9pt;
+    font-size: 8.5pt;
     text-align: left;
 }}
 
@@ -418,15 +570,15 @@ th {{
     background: #f1f5f9;
     color: #1e293b;
     font-weight: 600;
-    padding: 7px 10px;
+    padding: 6px 8px;
     border: 1px solid #cbd5e1;
-    font-size: 8.5pt;
+    font-size: 8pt;
     text-transform: uppercase;
     letter-spacing: 0.03em;
 }}
 
 td {{
-    padding: 7px 10px;
+    padding: 6px 8px;
     border: 1px solid var(--border-color);
     color: #334155;
     vertical-align: top;
@@ -439,9 +591,9 @@ tr:nth-child(even) td {{
 /* Badges */
 .badge {{
     display: inline-block;
-    font-size: 7.5pt;
+    font-size: 7pt;
     font-weight: 700;
-    padding: 2px 7px;
+    padding: 2px 6px;
     border-radius: 9999px;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -458,30 +610,28 @@ tr:nth-child(even) td {{
 .badge-ready {{ background: #dcfce7; color: #166534; border: 1px solid #86efac; }}
 .badge-partial {{ background: #fef9c3; color: #854d0e; border: 1px solid #fde047; }}
 .badge-blocked {{ background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }}
-.badge-exp {{ background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; font-size: 7pt; }}
+.badge-exp {{ background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; font-size: 6.5pt; }}
 
 /* Code Blocks */
 .code-block {{
     background: var(--code-bg);
     border-radius: 6px;
-    margin: 10px 0 14px 0;
+    margin: 8px 0 12px 0;
     overflow: hidden;
-    page-break-inside: avoid;
-    break-inside: avoid;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }}
 
 .code-header {{
     background: #1e293b;
-    padding: 4px 10px;
+    padding: 4px 8px;
     display: flex;
     align-items: center;
     border-bottom: 1px solid #334155;
 }}
 
 .code-dot {{
-    width: 7px;
-    height: 7px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     margin-right: 4px;
 }}
@@ -491,23 +641,23 @@ tr:nth-child(even) td {{
 
 .code-lang {{
     font-family: 'JetBrains Mono', monospace;
-    font-size: 7pt;
+    font-size: 6.5pt;
     color: #94a3b8;
     margin-left: auto;
     text-transform: uppercase;
 }}
 
 pre {{
-    padding: 10px 12px;
+    padding: 8px 10px;
     overflow-x: auto;
     margin: 0;
 }}
 
 code {{
     font-family: 'JetBrains Mono', monospace;
-    font-size: 8.5pt;
+    font-size: 8pt;
     color: var(--code-text);
-    line-height: 1.45;
+    line-height: 1.4;
 }}
 
 p code, li code, td code {{
@@ -516,7 +666,7 @@ p code, li code, td code {{
     padding: 1px 4px;
     border-radius: 3px;
     border: 1px solid #e2e8f0;
-    font-size: 8.5pt;
+    font-size: 8pt;
     font-weight: 500;
 }}
 
@@ -524,36 +674,34 @@ p code, li code, td code {{
 .callout {{
     background: #f8fafc;
     border-left: 3.5px solid #3b82f6;
-    padding: 10px 12px;
+    padding: 8px 10px;
     border-radius: 0 6px 6px 0;
-    margin: 12px 0 16px 0;
+    margin: 10px 0 12px 0;
     display: flex;
     align-items: flex-start;
-    page-break-inside: avoid;
-    break-inside: avoid;
 }}
 
 .callout-icon {{
-    font-size: 12pt;
-    margin-right: 8px;
+    font-size: 11pt;
+    margin-right: 6px;
     line-height: 1;
 }}
 
 .callout-body {{
-    font-size: 9pt;
+    font-size: 8.5pt;
     color: #334155;
     flex: 1;
 }}
 
 /* Lists */
 ul, ol {{
-    margin: 8px 0 12px 20px;
+    margin: 6px 0 10px 18px;
     color: #334155;
-    font-size: 9.5pt;
+    font-size: 9pt;
 }}
 
 li {{
-    margin-bottom: 4px;
+    margin-bottom: 3px;
 }}
 
 a {{
@@ -565,7 +713,7 @@ a:hover {{
     text-decoration: underline;
 }}
 
-/* Page Break Helpers */
+/* Page Break Control */
 .avoid-break {{
     page-break-inside: avoid;
     break-inside: avoid;

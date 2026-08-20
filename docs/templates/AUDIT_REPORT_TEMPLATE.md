@@ -11,7 +11,14 @@
 
 {{EXECUTIVE_SUMMARY_TEXT}}
 
-### Core Signals Scorecard
+### AI Visibility Scorecard
+
+| [{{CRAWLER_SCORE}}]({{TARGET_URL}}) | [{{SCHEMA_SCORE}}]({{TARGET_URL}}) | [{{SITEMAP_SCORE}}]({{TARGET_URL}}) | [{{CONTENT_SCORE}}]({{TARGET_URL}}) | [{{AGENTIC_SCORE}}]({{TARGET_URL}}) |
+|:---:|:---:|:---:|:---:|:---:|
+| **Crawler Access** | **Structured Data** | **Sitemap & Discovery** | **On-Page Context** | **Agentic Probes [EXPERIMENTAL]** |
+| `{{CRAWLER_BADGE}}` | `{{SCHEMA_BADGE}}` | `{{SITEMAP_BADGE}}` | `{{CONTENT_BADGE}}` | `{{AGENTIC_BADGE}}` |
+
+### Core Signals Breakdown
 
 | Dimension | Status | Key Finding | Specialist Delegate |
 |---|---|---|---|
