@@ -98,3 +98,127 @@ Fed into `ai-search-remediation-plan`, which turns those findings into:
 - Acceptance criteria
 - Verification commands or manual checks
 - Owner decisions and blockers
+
+---
+
+## Example 5 — sitemap and crawl discovery audit
+
+**Skill invoked:** [`sitemap-discovery-audit`](../skills/ai-visibility/sitemap-discovery-audit/SKILL.md)
+
+**Prompt:**
+
+> "Audit our sitemaps and discovery paths on `https://example-store.com` — are all
+> high-value pages included, and are there broken links, redirect loops, or non-canonical
+> URLs in the sitemap or on-page links?"
+
+**Expected output shape:**
+
+- Sitemap paths found
+- Coverage gaps
+- Broken or blocked URLs
+- Canonical and redirect issues
+- Priority fixes
+
+---
+
+## Example 6 — answer engine content gap audit
+
+**Skill invoked:** [`answer-engine-content-audit`](../skills/ai-visibility/answer-engine-content-audit/SKILL.md)
+
+**Prompt:**
+
+> "Audit `https://example-store.com` for content gaps that prevent AI answer engines
+> (Perplexity, ChatGPT Search, Google AI Overviews) from answering customer questions about
+> our pricing, product comparisons, and support policies."
+
+**Expected output shape:**
+
+- Question-to-URL map
+- Missing high-intent answers
+- Weak or vague answers
+- Title/meta description length findings (see `references/checks.md`)
+- Recommended page updates
+- New page ideas with priority
+
+---
+
+## Example 7 — citation readiness and trust audit
+
+**Skill invoked:** [`citation-readiness-audit`](../skills/ai-visibility/citation-readiness-audit/SKILL.md)
+
+**Prompt:**
+
+> "Audit `https://example-store.com` to see if our product claims, pricing, and company
+> information are structured and sourced well enough for AI engines to cite them reliably."
+
+**Expected output shape:**
+
+- Claims and canonical URLs
+- Citation blockers
+- Trust and freshness gaps
+- Recommended page fixes
+- Claims to remove or substantiate
+
+---
+
+## Example 8 — image discoverability and fetchability audit
+
+**Skill invoked:** [`image-audit`](../skills/ai-visibility/image-audit/SKILL.md)
+
+**Prompt:**
+
+> "Check whether the product and hero images on `https://example-store.com/products/wireless-headphones`
+> are visible to AI crawlers and multimodal agents — check alt text quality, image sitemap coverage,
+> ImageObject schema, and whether lazy loading requires JavaScript without a noscript fallback."
+
+**Expected output shape:**
+
+- Alt text coverage and quality summary (key pages sampled, missing/weak count)
+- Image sitemap coverage summary (declared vs. found on page)
+- `ImageObject` schema presence and completeness
+- Fetchability findings (JS-only lazy-load without fallback, auth/geo-blocked images)
+- Recommended fixes
+- Verification commands
+
+---
+
+## Example 9 — ecommerce catalog technical SEO spot-check
+
+**Skill invoked:** [`ecommerce-technical-seo-audit`](../skills/ai-visibility/ecommerce-technical-seo-audit/SKILL.md)
+
+**Prompt:**
+
+> "Spot-check 3-5 category and product pages on `https://example-store.com` for ecommerce
+> technical-SEO issues: thin category descriptions, faceted-navigation URL duplicates without
+> canonicals, orphan products, and how discontinued items are handled."
+
+**Expected output shape:**
+
+- Sample scope (exact pages/URLs checked, and that this is a sample, not the full catalog)
+- Thin category/collection page findings (word count, duplication)
+- Faceted-navigation duplicate URL findings
+- Orphan page findings
+- Discontinued-product handling findings
+- Recommended fixes
+- Verification commands
+
+---
+
+## Example 10 — standalone remediation plan generation
+
+**Skill invoked:** [`ai-search-remediation-plan`](../skills/ai-visibility/ai-search-remediation-plan/SKILL.md)
+
+**Prompt:**
+
+> "Here are the raw findings from our AI visibility and crawler audit on `https://example-store.com`.
+> Turn them into prioritized, independently verifiable engineering tickets with exact acceptance
+> criteria and re-runnable commands."
+
+**Expected output shape:**
+
+- Priority roadmap
+- Issue-sized tasks
+- Acceptance criteria
+- Verification commands or manual checks
+- Owner decisions and blockers
+

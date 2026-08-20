@@ -15,6 +15,8 @@ failing to passing once the fix ships. Reuse the relevant skill's `references/ch
 - `llms.txt` fixes → `llms-txt-generator/references/checks.md`
 - Content gap fixes → `answer-engine-content-audit/references/checks.md`
 - Citation/trust fixes → `citation-readiness-audit/references/checks.md`
+- Image visibility fixes → `image-audit/references/checks.md`
+- Ecommerce catalog fixes → `ecommerce-technical-seo-audit/references/checks.md`
 
 Example ticket acceptance criterion, copied verbatim from the source check:
 

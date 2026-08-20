@@ -114,13 +114,11 @@ Changes merged to this repository are automatically synchronized to [wakqasahmed
 
 ## Outcome-eval harness status
 
-`ai-search-remediation-plan` ([#22](https://github.com/wakqasahmed/ai-visibility-skills/issues/22)) has a real, working outcome-eval harness — a deterministic layer that runs free on every PR, plus a gated model-harness layer (`eval/ai-visibility/ai-search-remediation-plan/model_harness.py`) that calls the Anthropic API directly to measure skill-enabled vs. skill-disabled behavior. It correctly no-ops without `ANTHROPIC_API_KEY` set as a repo secret — see [#36](https://github.com/wakqasahmed/ai-visibility-skills/issues/36) for exact setup steps. One real run of this harness costs roughly $1–2 in API calls.
-
-The other 7 skills ([#21](https://github.com/wakqasahmed/ai-visibility-skills/issues/21), [#23](https://github.com/wakqasahmed/ai-visibility-skills/issues/23)–[#28](https://github.com/wakqasahmed/ai-visibility-skills/issues/28)) don't have this yet.
+All 10 skills in this pack have a real, working outcome-eval harness — a deterministic contract layer that runs free on every PR via GitHub Actions (`.github/workflows/ci.yml`), plus a gated model-harness layer (`eval/ai-visibility/<skill-name>/model_harness.py`) that calls the Anthropic API directly to measure skill-enabled vs. skill-disabled behavior. Each model-eval workflow (`.github/workflows/*-model-eval.yml`) correctly no-ops without `ANTHROPIC_API_KEY` set as a repo secret — see [#36](https://github.com/wakqasahmed/ai-visibility-skills/issues/36) for setup steps. One full run of a model harness costs roughly $1–2 in API calls.
 
 ### Fund the real harness runs
 
-This skill's deterministic checks run free on every PR. Proving its outcome-eval harness with real, metered model calls costs money:
+Deterministic checks run free on every PR. Proving the outcome-eval harnesses with real, metered model calls costs money:
 
 - **Bitcoin (BTC):** `bc1p5xqamscrz7nu0d8jdmj748rj75sk8khtyxypn3qvsdjms4t4uw2qsjn0he`
 - **Ethereum (ETH) / any ERC-20 including stablecoins:** `0x59bc573e414D62d44461234dEf438247dfc3Cf6A`
