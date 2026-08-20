@@ -11,12 +11,15 @@
 
 {{EXECUTIVE_SUMMARY_TEXT}}
 
-### AI Visibility Scorecard
+### Core AI Visibility Scorecard (8 Essential Dimensions)
 
-| [{{CRAWLER_SCORE}}]({{TARGET_URL}}) | [{{SCHEMA_SCORE}}]({{TARGET_URL}}) | [{{SITEMAP_SCORE}}]({{TARGET_URL}}) | [{{CONTENT_SCORE}}]({{TARGET_URL}}) | [{{AGENTIC_SCORE}}]({{TARGET_URL}}) |
-|:---:|:---:|:---:|:---:|:---:|
-| **Crawler Access** | **Structured Data** | **Sitemap & Discovery** | **On-Page Context** | **Agentic Probes [EXPERIMENTAL]** |
-| `{{CRAWLER_BADGE}}` | `{{SCHEMA_BADGE}}` | `{{SITEMAP_BADGE}}` | `{{CONTENT_BADGE}}` | `{{AGENTIC_BADGE}}` |
+| [{{CRAWLER_SCORE}}]({{TARGET_URL}}) | [{{SITEMAP_SCORE}}]({{TARGET_URL}}) | [{{SCHEMA_SCORE}}]({{TARGET_URL}}) | [{{CONTENT_SCORE}}]({{TARGET_URL}}) |
+|:---:|:---:|:---:|:---:|
+| **Crawler Access** | **Sitemap & Discovery** | **Structured Data** | **On-Page Context** |
+| `{{CRAWLER_BADGE}}` | `{{SITEMAP_BADGE}}` | `{{SCHEMA_BADGE}}` | `{{CONTENT_BADGE}}` |
+| [{{CITATION_SCORE}}]({{TARGET_URL}}) | [{{SECURITY_SCORE}}]({{TARGET_URL}}) | [{{IMAGE_SCORE}}]({{TARGET_URL}}) | [{{LLMSTXT_SCORE}}]({{TARGET_URL}}) |
+| **Citation & Trust** | **Security Headers** | **Image Alt Text** | **llms.txt** |
+| `{{CITATION_BADGE}}` | `{{SECURITY_BADGE}}` | `{{IMAGE_BADGE}}` | `{{LLMSTXT_BADGE}}` |
 
 ### Core Signals Breakdown
 
@@ -108,6 +111,13 @@
 ## 🧪 [EXPERIMENTAL] Emerging Agent Signals (Draft Standards)
 
 > *Note: These checks evaluate emerging draft standards surfaced by `isitagentready.com` and agent discovery working groups. Absence of these signals does **not** harm search engine discovery, crawler indexing, or AI platform visibility today.*
+
+### Emerging Protocols Adoption Scorecard
+
+| [{{AGENTIC_SCORE}}]({{TARGET_URL}}) |
+|:---:|
+| **Draft Protocols Implemented** |
+| `{{AGENTIC_BADGE}}` |
 
 - **Markdown Content Negotiation (`Accept: text/markdown`):** `{{MD_NEGOTIATION_STATUS}}` — {{MD_NEGOTIATION_NOTE}}
 - **Content Signals in `robots.txt`:** `{{CONTENT_SIGNALS_STATUS}}` — {{CONTENT_SIGNALS_NOTE}}

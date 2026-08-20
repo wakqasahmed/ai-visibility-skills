@@ -32,8 +32,8 @@ def find_browser_executable() -> str | None:
         candidates.extend([
             os.path.join(prog_files, "Google\\Chrome\\Application\\chrome.exe"),
             os.path.join(prog_files_x86, "Google\\Chrome\\Application\\chrome.exe"),
-            os.path.join(prog_files, "Microsoft\\Edge\\Application\\msedge.exe"),
             os.path.join(prog_files_x86, "Microsoft\\Edge\\Application\\msedge.exe"),
+            os.path.join(prog_files, "Microsoft\\Edge\\Application\\msedge.exe"),
             os.path.join(local_app, "Google\\Chrome\\Application\\chrome.exe"),
             os.path.join(local_app, "Microsoft\\Edge\\Application\\msedge.exe"),
             os.path.join(prog_files, "BraveSoftware\\Brave-Browser\\Application\\brave.exe"),
@@ -90,7 +90,7 @@ def generate_gauge_card(raw_score: str, label_text: str, status_text: str) -> st
         color = "#64748b"
         bg_color = "#f8fafc"
 
-    r = 26
+    r = 23
     c = 2 * math.pi * r
     offset = c * (1.0 - (max(0.0, min(100.0, pct)) / 100.0))
 
@@ -101,15 +101,15 @@ def generate_gauge_card(raw_score: str, label_text: str, status_text: str) -> st
         badge_class = "badge-fail"
     elif "PARTIAL" in status_clean.upper():
         badge_class = "badge-partial"
-    elif any(k in status_clean.upper() for k in ["EXP", "DRAFT"]):
+    elif any(k in status_clean.upper() for k in ["EXP", "DRAFT", "OPTIONAL"]):
         badge_class = "badge-exp"
 
     return f"""
-    <div class="score-card" style="background: {bg_color}; border-color: {color}44;">
+    <div class="score-card" style="background: {bg_color}; border-color: {color}33;">
         <div class="gauge-container">
-            <svg viewBox="0 0 68 68" class="gauge-svg">
-                <circle cx="34" cy="34" r="{r}" class="gauge-bg" />
-                <circle cx="34" cy="34" r="{r}" class="gauge-fill" style="stroke: {color}; stroke-dasharray: {c:.2f}; stroke-dashoffset: {offset:.2f};" />
+            <svg viewBox="0 0 58 58" class="gauge-svg">
+                <circle cx="29" cy="29" r="{r}" class="gauge-bg" />
+                <circle cx="29" cy="29" r="{r}" class="gauge-fill" style="stroke: {color}; stroke-dasharray: {c:.2f}; stroke-dashoffset: {offset:.2f};" />
             </svg>
             <div class="gauge-score" style="color: {color};">{html.escape(score_display)}</div>
         </div>
@@ -172,12 +172,11 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
         # Check if this table is a Lighthouse Scorecard Table:
         # Detected when header row cells are numerical scores e.g. [100], 0, 50, 0/5
         header_raw_cols = [c.strip() for c in rows[0].strip('|').split('|')]
-        is_scorecard = len(header_raw_cols) >= 3 and any(
+        is_scorecard = len(header_raw_cols) >= 1 and any(
             re.search(r'(\[\d+\]|\b\d{1,3}\b|\b\d/\d\b)', c) for c in header_raw_cols
         ) and len(rows) >= 3
 
         if is_scorecard:
-            # Row 0 = Scores, Row 2 = Labels, Row 3 = Status (if exists)
             scores = header_raw_cols
             labels = [c.strip() for c in rows[2].strip('|').split('|')] if len(rows) > 2 else [""] * len(scores)
             statuses = [c.strip() for c in rows[3].strip('|').split('|')] if len(rows) > 3 else [""] * len(scores)
@@ -354,7 +353,7 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
 
 @page {{
     size: A4 portrait;
-    margin: 15mm 13mm 15mm 13mm;
+    margin: 14mm 12mm 14mm 12mm;
     @top-left {{
         content: "AI Visibility Audit Report";
         font-family: 'Inter', sans-serif;
@@ -387,8 +386,8 @@ body {{
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     color: var(--text-main);
     background: var(--bg-main);
-    line-height: 1.5;
-    font-size: 9.5pt;
+    line-height: 1.48;
+    font-size: 9pt;
     padding: 0;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
@@ -403,7 +402,7 @@ body {{
 .doc-header {{
     border-bottom: 2.5px solid #2563eb;
     padding-bottom: 10px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
 }}
 
 .brand-pill {{
@@ -417,11 +416,11 @@ body {{
     border: 1px solid #bfdbfe;
     padding: 2px 8px;
     border-radius: 4px;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
 }}
 
 .doc-title {{
-    font-size: 18pt;
+    font-size: 17pt;
     font-weight: 800;
     color: #0f172a;
     letter-spacing: -0.02em;
@@ -430,10 +429,10 @@ body {{
 
 /* Section Titles */
 .section-title {{
-    font-size: 12.5pt;
+    font-size: 12pt;
     font-weight: 700;
     color: #1e293b;
-    margin-top: 18px;
+    margin-top: 16px;
     margin-bottom: 8px;
     padding-bottom: 4px;
     border-bottom: 1px solid var(--border-color);
@@ -442,30 +441,30 @@ body {{
 }}
 
 .subsection-title {{
-    font-size: 10.5pt;
+    font-size: 10pt;
     font-weight: 600;
     color: #334155;
-    margin-top: 12px;
-    margin-bottom: 6px;
+    margin-top: 11px;
+    margin-bottom: 5px;
     page-break-after: avoid;
     break-after: avoid;
 }}
 
 .card-title {{
-    font-size: 10pt;
+    font-size: 9.5pt;
     font-weight: 600;
     color: #1e293b;
-    margin-top: 10px;
-    margin-bottom: 4px;
+    margin-top: 8px;
+    margin-bottom: 3px;
 }}
 
 p {{
-    margin-bottom: 7px;
+    margin-bottom: 6px;
     color: var(--text-main);
 }}
 
 .meta-line {{
-    font-size: 9pt;
+    font-size: 8.5pt;
     color: #334155;
     margin-bottom: 3px;
 }}
@@ -474,23 +473,23 @@ p {{
     border: 0;
     height: 1px;
     background: var(--border-color);
-    margin: 14px 0;
+    margin: 12px 0;
 }}
 
 /* Scorecard Gauges */
 .score-gauge-grid {{
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
-    margin: 12px 0 16px 0;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 7px;
+    margin: 10px 0 14px 0;
 }}
 
 .score-card {{
     border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 10px 6px 8px 6px;
+    border-radius: 7px;
+    padding: 8px 4px 6px 4px;
     text-align: center;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -498,26 +497,26 @@ p {{
 
 .gauge-container {{
     position: relative;
-    width: 60px;
-    height: 60px;
+    width: 52px;
+    height: 52px;
     margin: 0 auto;
 }}
 
 .gauge-svg {{
-    width: 60px;
-    height: 60px;
+    width: 52px;
+    height: 52px;
     transform: rotate(-90deg);
 }}
 
 .gauge-bg {{
     fill: none;
     stroke: #e2e8f0;
-    stroke-width: 5;
+    stroke-width: 4.5;
 }}
 
 .gauge-fill {{
     fill: none;
-    stroke-width: 5.5;
+    stroke-width: 4.8;
     stroke-linecap: round;
     transition: stroke-dashoffset 0.3s ease;
 }}
@@ -526,43 +525,43 @@ p {{
     position: absolute;
     top: 0;
     left: 0;
-    width: 60px;
-    height: 60px;
+    width: 52px;
+    height: 52px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 11pt;
+    font-size: 10pt;
     font-weight: 800;
     letter-spacing: -0.04em;
 }}
 
 .gauge-label {{
-    font-size: 8pt;
+    font-size: 7.5pt;
     font-weight: 700;
     color: #1e293b;
-    margin-top: 6px;
+    margin-top: 5px;
     line-height: 1.15;
-    min-height: 20px;
+    min-height: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
 }}
 
 .gauge-status {{
-    margin-top: 4px;
+    margin-top: 3px;
 }}
 
 /* Tables */
 .table-container {{
-    margin: 10px 0 14px 0;
+    margin: 9px 0 13px 0;
     overflow-x: auto;
 }}
 
 table {{
     width: 100%;
     border-collapse: collapse;
-    font-size: 8.5pt;
+    font-size: 8pt;
     text-align: left;
 }}
 
@@ -570,15 +569,15 @@ th {{
     background: #f1f5f9;
     color: #1e293b;
     font-weight: 600;
-    padding: 6px 8px;
+    padding: 5px 7px;
     border: 1px solid #cbd5e1;
-    font-size: 8pt;
+    font-size: 7.5pt;
     text-transform: uppercase;
     letter-spacing: 0.03em;
 }}
 
 td {{
-    padding: 6px 8px;
+    padding: 5px 7px;
     border: 1px solid var(--border-color);
     color: #334155;
     vertical-align: top;
@@ -591,9 +590,9 @@ tr:nth-child(even) td {{
 /* Badges */
 .badge {{
     display: inline-block;
-    font-size: 7pt;
+    font-size: 6.5pt;
     font-weight: 700;
-    padding: 2px 6px;
+    padding: 1.5px 5px;
     border-radius: 9999px;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -610,30 +609,30 @@ tr:nth-child(even) td {{
 .badge-ready {{ background: #dcfce7; color: #166534; border: 1px solid #86efac; }}
 .badge-partial {{ background: #fef9c3; color: #854d0e; border: 1px solid #fde047; }}
 .badge-blocked {{ background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }}
-.badge-exp {{ background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; font-size: 6.5pt; }}
+.badge-exp {{ background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; font-size: 6pt; }}
 
 /* Code Blocks */
 .code-block {{
     background: var(--code-bg);
-    border-radius: 6px;
-    margin: 8px 0 12px 0;
+    border-radius: 5px;
+    margin: 7px 0 10px 0;
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }}
 
 .code-header {{
     background: #1e293b;
-    padding: 4px 8px;
+    padding: 3px 7px;
     display: flex;
     align-items: center;
     border-bottom: 1px solid #334155;
 }}
 
 .code-dot {{
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
-    margin-right: 4px;
+    margin-right: 3px;
 }}
 .dot-red {{ background: #ef4444; }}
 .dot-yellow {{ background: #f59e0b; }}
@@ -641,32 +640,32 @@ tr:nth-child(even) td {{
 
 .code-lang {{
     font-family: 'JetBrains Mono', monospace;
-    font-size: 6.5pt;
+    font-size: 6pt;
     color: #94a3b8;
     margin-left: auto;
     text-transform: uppercase;
 }}
 
 pre {{
-    padding: 8px 10px;
+    padding: 7px 9px;
     overflow-x: auto;
     margin: 0;
 }}
 
 code {{
     font-family: 'JetBrains Mono', monospace;
-    font-size: 8pt;
+    font-size: 7.5pt;
     color: var(--code-text);
-    line-height: 1.4;
+    line-height: 1.38;
 }}
 
 p code, li code, td code {{
     background: #f1f5f9;
     color: #0f172a;
-    padding: 1px 4px;
+    padding: 1px 3px;
     border-radius: 3px;
     border: 1px solid #e2e8f0;
-    font-size: 8pt;
+    font-size: 7.5pt;
     font-weight: 500;
 }}
 
@@ -674,34 +673,34 @@ p code, li code, td code {{
 .callout {{
     background: #f8fafc;
     border-left: 3.5px solid #3b82f6;
-    padding: 8px 10px;
-    border-radius: 0 6px 6px 0;
-    margin: 10px 0 12px 0;
+    padding: 7px 9px;
+    border-radius: 0 5px 5px 0;
+    margin: 9px 0 11px 0;
     display: flex;
     align-items: flex-start;
 }}
 
 .callout-icon {{
-    font-size: 11pt;
-    margin-right: 6px;
+    font-size: 10pt;
+    margin-right: 5px;
     line-height: 1;
 }}
 
 .callout-body {{
-    font-size: 8.5pt;
+    font-size: 8pt;
     color: #334155;
     flex: 1;
 }}
 
 /* Lists */
 ul, ol {{
-    margin: 6px 0 10px 18px;
+    margin: 5px 0 9px 16px;
     color: #334155;
-    font-size: 9pt;
+    font-size: 8.5pt;
 }}
 
 li {{
-    margin-bottom: 3px;
+    margin-bottom: 2.5px;
 }}
 
 a {{
