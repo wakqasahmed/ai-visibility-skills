@@ -4,7 +4,7 @@ This walks through installing this pack and running a real skill against a real 
 
 ## 1. Prerequisites
 
-- An AI coding agent that supports Agent Skills and can run shell commands (Claude Code is the reference target here; other Agent-Skills-compatible agents work the same way).
+- An AI coding agent that supports Agent Skills and can run shell commands (e.g., Claude Code, Antigravity, Cursor, Codex; other Agent-Skills-compatible agents work the same way).
 - Either `node`/`npx` available, or just `git` — both install paths below work; the git path needs no Node.
 
 ## 2. Install the skill pack
@@ -17,7 +17,7 @@ Pick one, from your terminal:
 npx skills@latest add wakqasahmed/ai-visibility-skills
 ```
 
-Installs all 8 skills into wherever your agent looks for skills (Claude Code: `.claude/skills/` in the current project; add `-g` to install once for every project instead of per-project).
+Installs all 10 skills into wherever your agent looks for skills (Claude Code: `.claude/skills/` in the current project; Antigravity: `.agents/skills/`; add `-g` to install once for every project instead of per-project).
 
 **Just one skill** — e.g. the crawler-access check:
 
@@ -46,15 +46,15 @@ Open your agent in that project directory and ask, in plain language — no spec
 
 > Use the `robots-ai-crawler-audit` skill to check whether AI crawlers (GPTBot, ClaudeBot, PerplexityBot) can reach `<your-site>`. Also check `llms.txt` and `sitemap.xml` aren't soft-blocked — verify the response body, not just the status code.
 
-The agent reads the skill's `SKILL.md` + `references/checks.md` and runs the actual `curl` checks itself — it needs Bash tool permission, so approve that if prompted. It reports findings with real command output as evidence, per this pack's evidence-discipline convention (no finding without an observed status code or explicit robots.txt rule).
+The agent reads the skill's `SKILL.md` + `references/checks.md` and runs the actual `curl` checks itself — it needs Bash/terminal tool permission, so approve that if prompted. It reports findings with real command output as evidence, per this pack's evidence-discipline convention (no finding without an observed status code or explicit robots.txt rule).
 
-For the full picture instead of just crawler access, ask for the `ai-visibility-audit` skill instead — it's the orchestrator that delegates to all 6 specialists (crawler access, sitemap, schema, citation readiness, content gaps, `llms.txt`).
+For the full picture instead of just crawler access, ask for the `ai-visibility-audit` skill instead — it's the orchestrator that delegates to all specialist skills (crawler access, sitemap discovery, schema markup, citation readiness, content gaps, `llms.txt`, image visibility, ecommerce catalog technical SEO).
 
 ## 5. Don't trust a 200 alone
 
 A `200` status code on `llms.txt` or `sitemap.xml` does not mean the file exists. Two failure modes look identical to a naive status-code check but are easy to catch once you know to look:
 
-- **Soft-block via captcha/anti-bot challenge**: some anti-bot systems (e.g. Alibaba/Taobao's TMD) return `200` with a JavaScript-redirect captcha page for *any* path, including ones that don't exist. Confirm by hitting a deliberately made-up path (`/this-should-not-exist-xyz`) — if it returns the identical body as `llms.txt`, that "llms.txt" isn't real.
+- **Soft-block via captcha/anti-bot challenge**: some anti-bot systems (e.g. Alibaba/Taobao's TMD, Cloudflare challenges) return `200` with a JavaScript-redirect captcha page for *any* path, including ones that don't exist. Confirm by hitting a deliberately made-up path (`/this-should-not-exist-xyz`) — if it returns the identical body as `llms.txt`, that "llms.txt" isn't real.
 - **SPA-fallback shell**: a single-page app's server can return its `index.html` shell (content-type `text/html`) for any unmatched route, including `/llms.txt`. Check the `content-type` header — a real `llms.txt` should be `text/plain`, and a real `sitemap.xml` should be `application/xml`, not `text/html`.
 
 Always ask your agent to show you the actual response headers and the first few hundred characters of the body, not just the status code.
