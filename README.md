@@ -92,9 +92,14 @@ runs; none of them have been executed against a live site and recorded here yet.
 
 To generate consistent, executive-ready deliverables, all audits follow the standardized template in [`docs/templates/AUDIT_REPORT_TEMPLATE.md`](docs/templates/AUDIT_REPORT_TEMPLATE.md). 
 
-You can render any markdown audit report into a styled HTML and print-perfect PDF using the built-in CLI:
+You can ask your AI agent to conduct an audit and generate an executive PDF report in one prompt:
+
+> **Example Prompt:**  
+> *"Run a full AI visibility audit against `https://example.com/`, format the output using the standardized audit report template, and generate an executive PDF deliverable in `output/`."*
+
+You can also manually render any markdown audit report into styled HTML and print-perfect PDF using the built-in CLI:
 ```bash
-python scripts/render-audit-pdf.py output/zaavia-net-ai-visibility-audit.md
+python scripts/render-audit-pdf.py output/my-audit.md
 ```
 See [`docs/AUDIT_REPORTING_GUIDE.md`](docs/AUDIT_REPORTING_GUIDE.md) for full formatting rules and design features.
 

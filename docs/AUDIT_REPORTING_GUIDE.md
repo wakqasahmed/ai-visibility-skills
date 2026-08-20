@@ -49,3 +49,16 @@ Store generated client/site audit reports in the `output/` directory (which is a
 - `output/<domain>-ai-visibility-audit.html`
 - `output/<domain>-ai-visibility-audit.pdf`
 
+---
+
+## 4. Example Agent Prompts
+
+To have your AI coding agent autonomously conduct an audit and generate the PDF report, use any of the following prompts:
+
+### Full AI Visibility Audit with PDF Output
+> "Run a full AI visibility audit against `https://example.com/`, format the findings using the standardized audit report template, and generate an executive PDF report in `output/`."
+
+### Focused Crawler & Protocol Audit with PDF Output
+> "Audit `https://example.com/` for crawler access, robots.txt directives, security headers, and emerging agent protocols. Output a styled report and PDF deliverable in `output/`."
+
+
