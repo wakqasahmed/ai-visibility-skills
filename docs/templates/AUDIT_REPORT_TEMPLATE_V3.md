@@ -7,8 +7,6 @@
 
 ---
 
-<!-- PAGE BREAK: EXECUTIVE DASHBOARD -->
-
 ## 1. Executive Dashboard (The 30-Second Summary)
 
 > **Readiness Statement:** {{EXECUTIVE_SUMMARY_TEXT}}  
@@ -37,6 +35,11 @@
 1. **P0 (Immediate)**: **{{ACTION_1_TITLE}}** — {{ACTION_1_DESC}}
 2. **P0 (Immediate)**: **{{ACTION_2_TITLE}}** — {{ACTION_2_DESC}}
 3. **P1 (Next)**: **{{ACTION_3_TITLE}}** — {{ACTION_3_DESC}}
+
+### Executive Briefing: Report Scope & Navigation
+- **Pillar Deep-Dives**: Section 4 details root-cause diagnostics across Discovery, Technical Access, Structured Schema, Answer Extraction, Authority Proof, and Agent Action Readiness.
+- **Actionable Remediation**: Section 3 and Section 7 provide prioritized engineering tickets (P0-P3) complete with code blueprints, curl validation commands, and acceptance criteria.
+- **Evidence-Based Grounding**: Every check is classified by Evidence Tier (`CRITICAL FOUNDATION`, `IMPORTANT IMPROVEMENT`, `SUPPORTING SIGNAL`, `EXPERIMENTAL PROTOCOL`) with transparent confidence ratings.
 
 ---
 

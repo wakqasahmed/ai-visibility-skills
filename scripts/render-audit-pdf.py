@@ -186,8 +186,8 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
         text = re.sub(r'`(Medium\s*\[Derived\]|MEDIUM\s*-\s*DERIVED)`', r'<span class="badge badge-conf-med">MEDIUM [DERIVED]</span>', text, flags=re.I)
         text = re.sub(r'`(Low\s*\[Estimated\]|LOW\s*-\s*ESTIMATED)`', r'<span class="badge badge-conf-low">LOW [ESTIMATED]</span>', text, flags=re.I)
         
-        # Inline code
-        text = re.sub(r'`([^`]+)`', r'<code>\1</code>', text)
+        # Inline code - high contrast dark text
+        text = re.sub(r'`([^`]+)`', r'<code class="inline-code">\1</code>', text)
         # Bold
         text = re.sub(r'\*\*([^*]+)\*\*', r'<strong>\1</strong>', text)
         # Italic
@@ -316,7 +316,14 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
             
             if level == 1:
                 close_containers()
-                html_lines.append(f'<div class="doc-header"><div class="brand-pill">AI Visibility & Readiness Audit</div><h1 class="doc-title">{format_inline(heading_text)}</h1></div>')
+                html_lines.append(f'''
+                <div class="doc-header">
+                    <div class="doc-header-top">
+                        <div class="brand-pill">AI Visibility & Readiness Audit</div>
+                        <div class="doc-badge-verified">Verified Audit Architecture</div>
+                    </div>
+                    <h1 class="doc-title">{format_inline(heading_text)}</h1>
+                </div>''')
             elif level == 2:
                 close_containers()
                 html_lines.append(f'<h2 class="section-title">{format_inline(heading_text)}</h2>')
@@ -441,7 +448,7 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
 
 @page {{
     size: A4 portrait;
-    margin: 14mm 12mm 14mm 12mm;
+    margin: 12mm 12mm 12mm 12mm;
     @top-left {{
         content: "AI Visibility & Website Readiness Audit";
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -474,8 +481,8 @@ body {{
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     color: var(--text-main);
     background: var(--bg-main);
-    line-height: 1.48;
-    font-size: 9pt;
+    line-height: 1.45;
+    font-size: 8.8pt;
     padding: 0;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
@@ -489,8 +496,15 @@ body {{
 /* Header Styling */
 .doc-header {{
     border-bottom: 2.5px solid #2563eb;
-    padding-bottom: 10px;
-    margin-bottom: 12px;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+}}
+
+.doc-header-top {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
 }}
 
 .brand-pill {{
@@ -504,36 +518,48 @@ body {{
     border: 1px solid #bfdbfe;
     padding: 2px 8px;
     border-radius: 4px;
-    margin-bottom: 5px;
+}}
+
+.doc-badge-verified {{
+    font-size: 7pt;
+    font-weight: 700;
+    color: #047857;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }}
 
 .doc-title {{
-    font-size: 16pt;
+    font-size: 15pt;
     font-weight: 800;
     color: #0f172a;
     letter-spacing: -0.02em;
     line-height: 1.2;
+    margin-top: 3px;
 }}
 
 /* Section Titles */
 .section-title {{
-    font-size: 11.5pt;
+    font-size: 11pt;
     font-weight: 700;
     color: #1e293b;
-    margin-top: 16px;
-    margin-bottom: 8px;
-    padding-bottom: 4px;
+    margin-top: 13px;
+    margin-bottom: 7px;
+    padding-bottom: 3px;
     border-bottom: 1.5px solid var(--border-color);
     page-break-after: avoid;
     break-after: avoid;
 }}
 
 .subsection-title {{
-    font-size: 9.8pt;
+    font-size: 9.5pt;
     font-weight: 600;
     color: #334155;
-    margin-top: 12px;
-    margin-bottom: 5px;
+    margin-top: 10px;
+    margin-bottom: 4px;
     padding-left: 6px;
     border-left: 3px solid #cbd5e1;
     page-break-after: avoid;
@@ -544,41 +570,41 @@ body {{
 .subsection-title.sub-warn {{ border-left-color: #f59e0b; color: #92400e; }}
 .subsection-title.sub-fail {{ border-left-color: #ef4444; color: #991b1b; }}
 .subsection-title.sub-exp {{ border-left-color: #8b5cf6; color: #5b21b6; }}
-.subsection-title.sub-pillar {{ border-left-color: #2563eb; color: #1e40af; background: #eff6ff; padding: 4px 8px; border-radius: 0 4px 4px 0; }}
-.subsection-title.sub-ticket {{ border-left-color: #0284c7; color: #0369a1; background: #f0f9ff; padding: 4px 8px; border-radius: 0 4px 4px 0; }}
+.subsection-title.sub-pillar {{ border-left-color: #2563eb; color: #1e40af; background: #eff6ff; padding: 3px 7px; border-radius: 0 4px 4px 0; }}
+.subsection-title.sub-ticket {{ border-left-color: #0284c7; color: #0369a1; background: #f0f9ff; padding: 3px 7px; border-radius: 0 4px 4px 0; }}
 
 .card-title {{
-    font-size: 9.5pt;
+    font-size: 9.2pt;
     font-weight: 700;
     color: #0f172a;
-    margin-top: 4px;
-    margin-bottom: 4px;
+    margin-top: 3px;
+    margin-bottom: 3px;
 }}
 
 p {{
-    margin-bottom: 5px;
+    margin-bottom: 4.5px;
     color: var(--text-main);
 }}
 
 .meta-line {{
     font-size: 8.5pt;
     color: #334155;
-    margin-bottom: 3px;
+    margin-bottom: 2.5px;
 }}
 
 .divider {{
     border: 0;
     height: 1px;
     background: var(--border-color);
-    margin: 12px 0;
+    margin: 10px 0;
 }}
 
 /* Scorecard Gauges */
 .score-gauge-grid {{
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 7px;
-    margin: 10px 0 14px 0;
+    gap: 6px;
+    margin: 8px 0 12px 0;
 }}
 
 .score-gauge-grid.cols-6 {{
@@ -594,7 +620,7 @@ p {{
 .score-card {{
     border: 1px solid var(--border-color);
     border-radius: 6px;
-    padding: 7px 3px 5px 3px;
+    padding: 6px 3px 4px 3px;
     text-align: center;
     box-shadow: 0 1px 2px rgba(0,0,0,0.03);
     display: flex;
@@ -604,14 +630,14 @@ p {{
 
 .gauge-container {{
     position: relative;
-    width: 48px;
-    height: 48px;
+    width: 46px;
+    height: 46px;
     margin: 0 auto;
 }}
 
 .gauge-svg {{
-    width: 48px;
-    height: 48px;
+    width: 46px;
+    height: 46px;
     transform: rotate(-90deg);
 }}
 
@@ -631,8 +657,8 @@ p {{
     position: absolute;
     top: 0;
     left: 0;
-    width: 48px;
-    height: 48px;
+    width: 46px;
+    height: 46px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -643,12 +669,12 @@ p {{
 }}
 
 .gauge-label {{
-    font-size: 7pt;
+    font-size: 6.8pt;
     font-weight: 700;
     color: #1e293b;
-    margin-top: 4px;
+    margin-top: 3px;
     line-height: 1.15;
-    min-height: 16px;
+    min-height: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -661,8 +687,8 @@ p {{
 /* Executive Overview Boxes */
 .exec-box {{
     border-radius: 6px;
-    padding: 8px 12px;
-    margin: 8px 0 10px 0;
+    padding: 7px 11px;
+    margin: 6px 0 8px 0;
     border-left: 4px solid #cbd5e1;
     box-sizing: border-box;
 }}
@@ -671,20 +697,20 @@ p {{
 .exec-box.box-actions {{ background: #eff6ff; border: 1px solid #bfdbfe; border-left: 4px solid #2563eb; }}
 
 .exec-box-title {{
-    font-size: 9.2pt;
+    font-size: 9pt;
     font-weight: 700;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
     color: #0f172a;
 }}
 
 .exec-box ul, .exec-box ol {{
-    margin: 3px 0 3px 18px;
+    margin: 2px 0 2px 16px;
     padding: 0;
 }}
 
 .exec-box li {{
-    margin-bottom: 2.5px;
-    font-size: 8.5pt;
+    margin-bottom: 2px;
+    font-size: 8.3pt;
 }}
 
 /* Finding Cards */
@@ -693,14 +719,14 @@ p {{
     border: 1px solid #e2e8f0;
     border-left: 4px solid #3b82f6;
     border-radius: 6px;
-    padding: 8px 10px;
-    margin: 9px 0 12px 0;
+    padding: 7px 10px;
+    margin: 8px 0 10px 0;
     box-shadow: 0 1px 2px rgba(0,0,0,0.02);
 }}
 
 /* Tables */
 .table-container {{
-    margin: 7px 0 11px 0;
+    margin: 6px 0 10px 0;
     overflow-x: auto;
 }}
 
@@ -715,7 +741,7 @@ th {{
     background: #f1f5f9;
     color: #1e293b;
     font-weight: 600;
-    padding: 4.5px 6px;
+    padding: 4px 6px;
     border: 1px solid #cbd5e1;
     font-size: 7.2pt;
     text-transform: uppercase;
@@ -723,7 +749,7 @@ th {{
 }}
 
 td {{
-    padding: 4.5px 6px;
+    padding: 4px 6px;
     border: 1px solid var(--border-color);
     color: #334155;
     vertical-align: top;
@@ -777,6 +803,24 @@ tr:nth-child(even) td {{
 .badge-blocked {{ background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }}
 .badge-exp {{ background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; font-size: 6pt; }}
 
+/* High-Contrast Code Elements */
+code {{
+    font-family: 'JetBrains Mono', -apple-system, monospace;
+    font-size: 7.5pt;
+    color: #0f172a !important;
+    background: #e2e8f0;
+    padding: 1px 4px;
+    border-radius: 3px;
+    border: 1px solid #cbd5e1;
+    font-weight: 600;
+}}
+
+.inline-code {{
+    color: #0f172a !important;
+    background: #e2e8f0;
+    border: 1px solid #cbd5e1;
+}}
+
 /* Code Blocks */
 .code-block {{
     background: var(--code-bg);
@@ -818,21 +862,15 @@ pre {{
     margin: 0;
 }}
 
-code {{
+pre code {{
     font-family: 'JetBrains Mono', monospace;
     font-size: 7.2pt;
-    color: var(--code-text);
+    color: var(--code-text) !important;
+    background: transparent;
+    padding: 0;
+    border: none;
+    font-weight: 400;
     line-height: 1.35;
-}}
-
-p code, li code, td code {{
-    background: #f1f5f9;
-    color: #0f172a;
-    padding: 1px 3px;
-    border-radius: 3px;
-    border: 1px solid #e2e8f0;
-    font-size: 7.2pt;
-    font-weight: 500;
 }}
 
 /* Callouts */
@@ -841,7 +879,7 @@ p code, li code, td code {{
     border-left: 3.5px solid #3b82f6;
     padding: 6px 8px;
     border-radius: 0 5px 5px 0;
-    margin: 7px 0 9px 0;
+    margin: 6px 0 8px 0;
     display: flex;
     align-items: flex-start;
 }}
@@ -858,9 +896,16 @@ p code, li code, td code {{
     flex: 1;
 }}
 
+.callout-body code {{
+    background: #e2e8f0;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1;
+    font-weight: 700;
+}}
+
 /* Lists */
 ul, ol {{
-    margin: 4px 0 8px 15px;
+    margin: 4px 0 7px 15px;
     color: #334155;
     font-size: 8pt;
 }}
@@ -932,7 +977,6 @@ def render_pdf(html_path: str, pdf_path: str, browser_path: str) -> tuple[bool, 
         try:
             target_path.unlink()
         except (PermissionError, OSError):
-            # Target is locked by an external reader; write to fallback
             fallback_name = f"{target_path.stem}_latest{target_path.suffix}"
             target_path = target_path.with_name(fallback_name)
             if target_path.exists():
