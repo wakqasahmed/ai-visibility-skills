@@ -59,9 +59,15 @@ def find_browser_executable() -> str | None:
 
 def generate_gauge_card(raw_score: str, label_text: str, status_text: str) -> str:
     """Generates a Lighthouse-style circular score gauge card."""
-    score_clean = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', raw_score).strip().strip('`').strip('*')
-    label_clean = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', label_text).strip().strip('*')
-    status_clean = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', status_text).strip().strip('`')
+    # Clean score: strip [82](url) or [82] or `82` or *82*
+    score_clean = re.sub(r'\[([^\]]+)\](?:\([^)]+\))?', r'\1', raw_score).strip()
+    score_clean = re.sub(r'[\[\]`*]', '', score_clean).strip()
+
+    label_clean = re.sub(r'\[([^\]]+)\](?:\([^)]+\))?', r'\1', label_text).strip()
+    label_clean = re.sub(r'[*`]', '', label_clean).strip()
+
+    status_clean = re.sub(r'\[([^\]]+)\](?:\([^)]+\))?', r'\1', status_text).strip()
+    status_clean = re.sub(r'[*`]', '', status_clean).strip()
 
     is_fraction = "/" in score_clean
     try:
@@ -129,6 +135,20 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
     table_buffer = []
     in_list = False
     list_tag = "ul"
+    in_finding_card = False
+    in_exec_box = False
+
+    def close_containers():
+        nonlocal in_finding_card, in_exec_box, in_list, list_tag
+        if in_list:
+            html_lines.append(f"</{list_tag}>")
+            in_list = False
+        if in_finding_card:
+            html_lines.append('</div>')
+            in_finding_card = False
+        if in_exec_box:
+            html_lines.append('</div>')
+            in_exec_box = False
 
     def format_inline(text: str) -> str:
         text = html.escape(text)
@@ -143,10 +163,10 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
         text = re.sub(r'`(READY)`', r'<span class="badge badge-ready">READY</span>', text, flags=re.I)
 
         # Priorities
-        text = re.sub(r'`(P0(?:\s*\(Immediate\))?|P0\s*-\s*DO\s*NOW)`', r'<span class="badge badge-p0">P0 DO NOW</span>', text, flags=re.I)
-        text = re.sub(r'`(P1(?:\s*\(Next\))?|P1\s*-\s*DO\s*NEXT)`', r'<span class="badge badge-p1">P1 DO NEXT</span>', text, flags=re.I)
-        text = re.sub(r'`(P2(?:\s*\(Improve\))?|P2\s*-\s*IMPROVE)`', r'<span class="badge badge-p2">P2 IMPROVE</span>', text, flags=re.I)
-        text = re.sub(r'`(P3(?:\s*\(Optional\))?|P3\s*-\s*OPTIONAL)`', r'<span class="badge badge-p3">P3 OPTIONAL</span>', text, flags=re.I)
+        text = re.sub(r'`(P0(?:\s*\(Immediate\))?|P0\s*-\s*DO\s*NOW|P0\s*DO\s*NOW)`', r'<span class="badge badge-p0">P0 DO NOW</span>', text, flags=re.I)
+        text = re.sub(r'`(P1(?:\s*\(Next\))?|P1\s*-\s*DO\s*NEXT|P1\s*DO\s*NEXT)`', r'<span class="badge badge-p1">P1 DO NEXT</span>', text, flags=re.I)
+        text = re.sub(r'`(P2(?:\s*\(Improve\))?|P2\s*-\s*IMPROVE|P2\s*IMPROVE)`', r'<span class="badge badge-p2">P2 IMPROVE</span>', text, flags=re.I)
+        text = re.sub(r'`(P3(?:\s*\(Optional\))?|P3\s*-\s*OPTIONAL|P3\s*OPTIONAL)`', r'<span class="badge badge-p3">P3 OPTIONAL</span>', text, flags=re.I)
 
         # Severities
         text = re.sub(r'`(HIGH)`', r'<span class="badge badge-high">HIGH</span>', text, flags=re.I)
@@ -233,7 +253,6 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
         return '\n'.join(out)
 
     i = 0
-    in_finding_card = False
 
     while i < len(lines):
         line = lines[i]
@@ -241,14 +260,9 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
 
         # Handle HTML Comments & Page Breaks
         if stripped.startswith("<!--") and "PAGE BREAK" in stripped.upper():
-            if in_finding_card:
-                html_lines.append('</div>')
-                in_finding_card = False
+            close_containers()
             if in_table:
                 html_lines.append(flush_table())
-            if in_list:
-                html_lines.append(f"</{list_tag}>")
-                in_list = False
             html_lines.append('<div class="page-break"></div>')
             i += 1
             continue
@@ -290,37 +304,24 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
 
         # Handle Horizontal Rules
         if re.match(r'^(-{3,}|\*{3,}|_{3,})$', stripped):
-            if in_finding_card:
-                html_lines.append('</div>')
-                in_finding_card = False
-            if in_list:
-                html_lines.append(f"</{list_tag}>")
-                in_list = False
+            close_containers()
             html_lines.append('<hr class="divider"/>')
             i += 1
             continue
 
         # Handle Headings
         if stripped.startswith("#"):
-            if in_list:
-                html_lines.append(f"</{list_tag}>")
-                in_list = False
-            
             level = len(re.match(r'^(#+)', stripped).group(1))
             heading_text = stripped[level:].strip()
             
             if level == 1:
+                close_containers()
                 html_lines.append(f'<div class="doc-header"><div class="brand-pill">AI Visibility & Readiness Audit</div><h1 class="doc-title">{format_inline(heading_text)}</h1></div>')
             elif level == 2:
-                if in_finding_card:
-                    html_lines.append('</div>')
-                    in_finding_card = False
+                close_containers()
                 html_lines.append(f'<h2 class="section-title">{format_inline(heading_text)}</h2>')
             elif level == 3:
-                if in_finding_card:
-                    html_lines.append('</div>')
-                    in_finding_card = False
-                # Check for status indicator in subsection title
+                close_containers()
                 status_class = ""
                 if "✅" in heading_text or "PASS" in heading_text:
                     status_class = "sub-pass"
@@ -337,14 +338,13 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
                 
                 html_lines.append(f'<h3 class="subsection-title {status_class}">{format_inline(heading_text)}</h3>')
             elif level == 4:
-                # Wrap findings in finding-card containers
+                close_containers()
                 if "FINDING" in heading_text.upper():
-                    if in_finding_card:
-                        html_lines.append('</div>')
                     in_finding_card = True
                     html_lines.append(f'<div class="finding-card avoid-break"><h4 class="card-title">{format_inline(heading_text)}</h4>')
-                elif any(sym in heading_text for sym in ["🟢", "🔴", "🎯", "What Is Working", "What Is Limiting", "Top 3"]):
-                    box_type = "box-strengths" if "🟢" in heading_text or "Working" in heading_text else ("box-limitations" if "🔴" in heading_text or "Limiting" in heading_text else "box-actions")
+                elif any(sym in heading_text for sym in ["🟢", "🔴", "🎯", "What Is Working", "What Is Limiting", "Top 3", "Priority Actions"]):
+                    in_exec_box = True
+                    box_type = "box-strengths" if ("🟢" in heading_text or "Working" in heading_text) else ("box-limitations" if ("🔴" in heading_text or "Limiting" in heading_text) else "box-actions")
                     html_lines.append(f'<div class="exec-box {box_type} avoid-break"><h4 class="exec-box-title">{format_inline(heading_text)}</h4>')
                 else:
                     html_lines.append(f'<h4 class="card-title">{format_inline(heading_text)}</h4>')
@@ -413,12 +413,9 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
 
         i += 1
 
-    if in_finding_card:
-        html_lines.append('</div>')
+    close_containers()
     if in_table:
         html_lines.append(flush_table())
-    if in_list:
-        html_lines.append(f"</{list_tag}>")
 
     body_html = "\n".join(html_lines)
 
@@ -639,7 +636,7 @@ p {{
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'JetBrains Mono', -apple-system, sans-serif;
     font-size: 9.5pt;
     font-weight: 800;
     letter-spacing: -0.04em;
@@ -664,19 +661,30 @@ p {{
 /* Executive Overview Boxes */
 .exec-box {{
     border-radius: 6px;
-    padding: 8px 10px;
+    padding: 8px 12px;
     margin: 8px 0 10px 0;
     border-left: 4px solid #cbd5e1;
+    box-sizing: border-box;
 }}
-.exec-box.box-strengths {{ background: #f0fdf4; border-left-color: #10b981; border: 1px solid #bbf7d0; border-left-width: 4px; }}
-.exec-box.box-limitations {{ background: #fef2f2; border-left-color: #ef4444; border: 1px solid #fecaca; border-left-width: 4px; }}
-.exec-box.box-actions {{ background: #eff6ff; border-left-color: #2563eb; border: 1px solid #bfdbfe; border-left-width: 4px; }}
+.exec-box.box-strengths {{ background: #f0fdf4; border: 1px solid #bbf7d0; border-left: 4px solid #10b981; }}
+.exec-box.box-limitations {{ background: #fef2f2; border: 1px solid #fecaca; border-left: 4px solid #ef4444; }}
+.exec-box.box-actions {{ background: #eff6ff; border: 1px solid #bfdbfe; border-left: 4px solid #2563eb; }}
 
 .exec-box-title {{
-    font-size: 9pt;
+    font-size: 9.2pt;
     font-weight: 700;
     margin-bottom: 4px;
     color: #0f172a;
+}}
+
+.exec-box ul, .exec-box ol {{
+    margin: 3px 0 3px 18px;
+    padding: 0;
+}}
+
+.exec-box li {{
+    margin-bottom: 2.5px;
+    font-size: 8.5pt;
 }}
 
 /* Finding Cards */
@@ -913,7 +921,6 @@ a:hover {{
 
 def render_pdf(html_path: str, pdf_path: str, browser_path: str) -> bool:
     """Executes headless Chrome/Edge to render the HTML document to PDF."""
-    # Ensure target directory exists
     Path(pdf_path).parent.mkdir(parents=True, exist_ok=True)
     
     cmd = [

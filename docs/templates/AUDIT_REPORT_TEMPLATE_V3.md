@@ -16,7 +16,7 @@
 
 ### Six-Pillar AI Visibility Scorecard
 
-| [{{DISCOVERY_SCORE}}]({{TARGET_URL}}) | [{{TECH_ACCESS_SCORE}}]({{TARGET_URL}}) | [{{UNDERSTANDING_SCORE}}]({{TARGET_URL}}) | [{{ANSWER_SCORE}}]({{TARGET_URL}}) | [{{TRUST_SCORE}}]({{TARGET_URL}}) | [{{AGENT_SCORE}}]({{TARGET_URL}}) |
+| {{DISCOVERY_SCORE}} | {{TECH_ACCESS_SCORE}} | {{UNDERSTANDING_SCORE}} | {{ANSWER_SCORE}} | {{TRUST_SCORE}} | {{AGENT_SCORE}} |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | **1. Discovery (20%)** | **2. Tech Access (20%)** | **3. Understanding (20%)** | **4. Answer Ready (20%)** | **5. Trust (15%)** | **6. Agent Ready (5%)** |
 | `{{DISCOVERY_BADGE}}` | `{{TECH_ACCESS_BADGE}}` | `{{UNDERSTANDING_BADGE}}` | `{{ANSWER_BADGE}}` | `{{TRUST_BADGE}}` | `{{AGENT_BADGE}}` |
