@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """render-audit-pdf.py
 
-Transforms an AI Visibility audit Markdown document (v1 or v2 format) into a
+Transforms an AI Visibility audit Markdown document (v1, v2, or v3 format) into a
 beautifully styled, executive HTML document and renders it into a print-perfect
 PDF using a local headless Chromium-based browser (Chrome, Edge, or Chromium).
 
@@ -94,11 +94,11 @@ def generate_gauge_card(raw_score: str, label_text: str, status_text: str) -> st
     offset = c * (1.0 - (max(0.0, min(100.0, pct)) / 100.0))
 
     badge_class = "badge-low"
-    if any(k in status_clean.upper() for k in ["PASS", "READY", "100", "✅"]):
+    if any(k in status_clean.upper() for k in ["PASS", "READY", "100", "✅", "YES"]):
         badge_class = "badge-pass"
-    elif any(k in status_clean.upper() for k in ["FAIL", "BLOCKED", "0", "❌"]):
+    elif any(k in status_clean.upper() for k in ["FAIL", "BLOCKED", "0", "❌", "NO"]):
         badge_class = "badge-fail"
-    elif any(k in status_clean.upper() for k in ["PARTIAL", "WARN", "⚠️"]):
+    elif any(k in status_clean.upper() for k in ["PARTIAL", "WARN", "⚠️", "IMPROVE"]):
         badge_class = "badge-partial"
     elif any(k in status_clean.upper() for k in ["EXP", "DRAFT", "OPTIONAL", "🧪"]):
         badge_class = "badge-exp"
@@ -133,16 +133,38 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
     def format_inline(text: str) -> str:
         text = html.escape(text)
         
-        # Replace status badges (supporting emojis and v1/v2 tokens)
+        # Replace status badges (supporting emojis, tiers, priorities, and v1/v2/v3 tokens)
+        text = re.sub(r'`(✅\s*YES|YES)`', r'<span class="badge badge-pass">✅ YES</span>', text, flags=re.I)
+        text = re.sub(r'`(⚠️\s*PARTIAL|PARTIAL)`', r'<span class="badge badge-partial">⚠️ PARTIAL</span>', text, flags=re.I)
+        text = re.sub(r'`(❌\s*NO|NO)`', r'<span class="badge badge-fail">❌ NO</span>', text, flags=re.I)
         text = re.sub(r'`(✅\s*PASS|PASS)`', r'<span class="badge badge-pass">✅ PASS</span>', text, flags=re.I)
-        text = re.sub(r'`(⚠️\s*(?:WARN|PARTIAL)|PARTIALLY\s*READY|WARN|PARTIAL)`', r'<span class="badge badge-partial">⚠️ WARN</span>', text, flags=re.I)
+        text = re.sub(r'`(⚠️\s*(?:WARN|PARTIAL)|PARTIALLY\s*READY|WARN|PARTIAL|NEEDS\s*IMPROVEMENT)`', r'<span class="badge badge-partial">⚠️ WARN</span>', text, flags=re.I)
         text = re.sub(r'`(❌\s*(?:FAIL|CRITICAL)|FAIL|CRITICAL|BLOCKED)`', r'<span class="badge badge-fail">❌ FAIL</span>', text, flags=re.I)
+        text = re.sub(r'`(READY)`', r'<span class="badge badge-ready">READY</span>', text, flags=re.I)
+
+        # Priorities
+        text = re.sub(r'`(P0(?:\s*\(Immediate\))?|P0\s*-\s*DO\s*NOW)`', r'<span class="badge badge-p0">P0 DO NOW</span>', text, flags=re.I)
+        text = re.sub(r'`(P1(?:\s*\(Next\))?|P1\s*-\s*DO\s*NEXT)`', r'<span class="badge badge-p1">P1 DO NEXT</span>', text, flags=re.I)
+        text = re.sub(r'`(P2(?:\s*\(Improve\))?|P2\s*-\s*IMPROVE)`', r'<span class="badge badge-p2">P2 IMPROVE</span>', text, flags=re.I)
+        text = re.sub(r'`(P3(?:\s*\(Optional\))?|P3\s*-\s*OPTIONAL)`', r'<span class="badge badge-p3">P3 OPTIONAL</span>', text, flags=re.I)
+
+        # Severities
         text = re.sub(r'`(HIGH)`', r'<span class="badge badge-high">HIGH</span>', text, flags=re.I)
         text = re.sub(r'`(MEDIUM)`', r'<span class="badge badge-medium">MEDIUM</span>', text, flags=re.I)
         text = re.sub(r'`(LOW)`', r'<span class="badge badge-low">LOW</span>', text, flags=re.I)
-        text = re.sub(r'`(READY)`', r'<span class="badge badge-ready">READY</span>', text, flags=re.I)
-        text = re.sub(r'`(🧪\s*EXPERIMENTAL|EXPERIMENTAL|🧪\s*DRAFT|OPTIONAL\s*\(DRAFT\)|DRAFT\s*PROTOCOLS)`', r'<span class="badge badge-exp">🧪 EXPERIMENTAL</span>', text, flags=re.I)
+
+        # Evidence Tiers
+        text = re.sub(r'`(CRITICAL\s*FOUNDATION|CRITICAL)`', r'<span class="badge badge-tier-critical">CRITICAL FOUNDATION</span>', text, flags=re.I)
+        text = re.sub(r'`(IMPORTANT\s*IMPROVEMENT|IMPORTANT)`', r'<span class="badge badge-tier-important">IMPORTANT IMPROVEMENT</span>', text, flags=re.I)
+        text = re.sub(r'`(SUPPORTING\s*SIGNAL|SUPPORTING)`', r'<span class="badge badge-tier-supporting">SUPPORTING SIGNAL</span>', text, flags=re.I)
+        text = re.sub(r'`(EXPERIMENTAL\s*PROTOCOL|EXPERIMENTAL|🧪\s*EXPERIMENTAL|🧪\s*DRAFT|OPTIONAL\s*\(DRAFT\)|DRAFT\s*PROTOCOLS)`', r'<span class="badge badge-exp">🧪 EXPERIMENTAL</span>', text, flags=re.I)
         text = re.sub(r'\[EXPERIMENTAL\]', r'<span class="badge badge-exp">EXPERIMENTAL</span>', text)
+
+        # Confidence Levels
+        text = re.sub(r'`(High\s*\[Measured\]|HIGH\s*-\s*MEASURED)`', r'<span class="badge badge-conf-high">HIGH [MEASURED]</span>', text, flags=re.I)
+        text = re.sub(r'`(High\s*\[Derived\]|HIGH\s*-\s*DERIVED)`', r'<span class="badge badge-conf-high">HIGH [DERIVED]</span>', text, flags=re.I)
+        text = re.sub(r'`(Medium\s*\[Derived\]|MEDIUM\s*-\s*DERIVED)`', r'<span class="badge badge-conf-med">MEDIUM [DERIVED]</span>', text, flags=re.I)
+        text = re.sub(r'`(Low\s*\[Estimated\]|LOW\s*-\s*ESTIMATED)`', r'<span class="badge badge-conf-low">LOW [ESTIMATED]</span>', text, flags=re.I)
         
         # Inline code
         text = re.sub(r'`([^`]+)`', r'<code>\1</code>', text)
@@ -167,8 +189,7 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
             table_buffer = []
             return ""
 
-        # Check if this table is a Lighthouse Scorecard Table:
-        # Detected when header row cells are numerical scores e.g. [100], 0, 50, 0/5
+        # Check if this table is a Scorecard Gauge Table:
         header_raw_cols = [c.strip() for c in rows[0].strip('|').split('|')]
         is_scorecard = len(header_raw_cols) >= 1 and any(
             re.search(r'(\[\d+\]|\b\d{1,3}\b|\b\d/\d\b)', c) for c in header_raw_cols
@@ -179,7 +200,9 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
             labels = [c.strip() for c in rows[2].strip('|').split('|')] if len(rows) > 2 else [""] * len(scores)
             statuses = [c.strip() for c in rows[3].strip('|').split('|')] if len(rows) > 3 else [""] * len(scores)
 
-            out = ['<div class="score-gauge-grid avoid-break">']
+            num_cols = len(scores)
+            grid_class = f"score-gauge-grid cols-{num_cols}" if num_cols in [4, 6, 8] else "score-gauge-grid"
+            out = [f'<div class="{grid_class} avoid-break">']
             for s, l, st in zip(scores, labels, statuses):
                 out.append(generate_gauge_card(s, l, st))
             out.append('</div>')
@@ -198,7 +221,10 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
             cols = [c.strip() for c in row_str.strip('|').split('|')]
             out.append('<tr>')
             for col in cols:
-                out.append(f'<td>{format_inline(col)}</td>')
+                # Center align checkmark/status-like short cells
+                is_short_center = len(col.strip()) <= 14 and any(sym in col for sym in ["✅", "⚠️", "❌", "PASS", "WARN", "FAIL", "YES", "NO", "P0", "P1", "P2", "P3"])
+                td_attr = ' class="text-center"' if is_short_center else ''
+                out.append(f'<td{td_attr}>{format_inline(col)}</td>')
             out.append('</tr>')
 
         out.append('</tbody></table></div>')
@@ -207,9 +233,25 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
         return '\n'.join(out)
 
     i = 0
+    in_finding_card = False
+
     while i < len(lines):
         line = lines[i]
         stripped = line.strip()
+
+        # Handle HTML Comments & Page Breaks
+        if stripped.startswith("<!--") and "PAGE BREAK" in stripped.upper():
+            if in_finding_card:
+                html_lines.append('</div>')
+                in_finding_card = False
+            if in_table:
+                html_lines.append(flush_table())
+            if in_list:
+                html_lines.append(f"</{list_tag}>")
+                in_list = False
+            html_lines.append('<div class="page-break"></div>')
+            i += 1
+            continue
 
         # Handle Code Fences
         if stripped.startswith("```"):
@@ -248,6 +290,9 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
 
         # Handle Horizontal Rules
         if re.match(r'^(-{3,}|\*{3,}|_{3,})$', stripped):
+            if in_finding_card:
+                html_lines.append('</div>')
+                in_finding_card = False
             if in_list:
                 html_lines.append(f"</{list_tag}>")
                 in_list = False
@@ -265,10 +310,16 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
             heading_text = stripped[level:].strip()
             
             if level == 1:
-                html_lines.append(f'<div class="doc-header"><div class="brand-pill">AI Visibility Audit</div><h1 class="doc-title">{format_inline(heading_text)}</h1></div>')
+                html_lines.append(f'<div class="doc-header"><div class="brand-pill">AI Visibility & Readiness Audit</div><h1 class="doc-title">{format_inline(heading_text)}</h1></div>')
             elif level == 2:
+                if in_finding_card:
+                    html_lines.append('</div>')
+                    in_finding_card = False
                 html_lines.append(f'<h2 class="section-title">{format_inline(heading_text)}</h2>')
             elif level == 3:
+                if in_finding_card:
+                    html_lines.append('</div>')
+                    in_finding_card = False
                 # Check for status indicator in subsection title
                 status_class = ""
                 if "✅" in heading_text or "PASS" in heading_text:
@@ -279,10 +330,24 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
                     status_class = "sub-fail"
                 elif "🧪" in heading_text or "EXPERIMENTAL" in heading_text:
                     status_class = "sub-exp"
+                elif "PILLAR" in heading_text.upper():
+                    status_class = "sub-pillar"
+                elif "TICKET" in heading_text.upper():
+                    status_class = "sub-ticket"
                 
                 html_lines.append(f'<h3 class="subsection-title {status_class}">{format_inline(heading_text)}</h3>')
             elif level == 4:
-                html_lines.append(f'<h4 class="card-title">{format_inline(heading_text)}</h4>')
+                # Wrap findings in finding-card containers
+                if "FINDING" in heading_text.upper():
+                    if in_finding_card:
+                        html_lines.append('</div>')
+                    in_finding_card = True
+                    html_lines.append(f'<div class="finding-card avoid-break"><h4 class="card-title">{format_inline(heading_text)}</h4>')
+                elif any(sym in heading_text for sym in ["🟢", "🔴", "🎯", "What Is Working", "What Is Limiting", "Top 3"]):
+                    box_type = "box-strengths" if "🟢" in heading_text or "Working" in heading_text else ("box-limitations" if "🔴" in heading_text or "Limiting" in heading_text else "box-actions")
+                    html_lines.append(f'<div class="exec-box {box_type} avoid-break"><h4 class="exec-box-title">{format_inline(heading_text)}</h4>')
+                else:
+                    html_lines.append(f'<h4 class="card-title">{format_inline(heading_text)}</h4>')
             i += 1
             continue
 
@@ -299,7 +364,24 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
             i += 1
             continue
 
-        # Handle Lists
+        # Handle Checklist items: - [ ] or - [x]
+        check_match = re.match(r'^(?:\*|-|\+)\s+\[([ xX])\]\s+(.+)', stripped)
+        if check_match:
+            is_checked = check_match.group(1).lower() == 'x'
+            check_text = check_match.group(2)
+            check_icon = "☑️" if is_checked else "⬜"
+            check_class = "check-done" if is_checked else "check-todo"
+            
+            if not in_list:
+                in_list = True
+                list_tag = "ul"
+                html_lines.append(f'<ul class="checklist">')
+            
+            html_lines.append(f'<li class="{check_class}"><span class="check-icon">{check_icon}</span> {format_inline(check_text)}</li>')
+            i += 1
+            continue
+
+        # Handle Regular Lists
         list_match = re.match(r'^(\*|-|\+)\s+(.+)', stripped)
         num_match = re.match(r'^(\d+)\.\s+(.+)', stripped)
         if list_match or num_match:
@@ -331,6 +413,8 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
 
         i += 1
 
+    if in_finding_card:
+        html_lines.append('</div>')
     if in_table:
         html_lines.append(flush_table())
     if in_list:
@@ -362,14 +446,14 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
     size: A4 portrait;
     margin: 14mm 12mm 14mm 12mm;
     @top-left {{
-        content: "AI Visibility Audit Report";
+        content: "AI Visibility & Website Readiness Audit";
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         font-size: 8pt;
         color: #94a3b8;
         font-weight: 500;
     }}
     @top-right {{
-        content: "Verified Audit Standard";
+        content: "V3 Decision Architecture";
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         font-size: 8pt;
         color: #94a3b8;
@@ -427,7 +511,7 @@ body {{
 }}
 
 .doc-title {{
-    font-size: 17pt;
+    font-size: 16pt;
     font-weight: 800;
     color: #0f172a;
     letter-spacing: -0.02em;
@@ -436,22 +520,22 @@ body {{
 
 /* Section Titles */
 .section-title {{
-    font-size: 12pt;
+    font-size: 11.5pt;
     font-weight: 700;
     color: #1e293b;
     margin-top: 16px;
     margin-bottom: 8px;
     padding-bottom: 4px;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1.5px solid var(--border-color);
     page-break-after: avoid;
     break-after: avoid;
 }}
 
 .subsection-title {{
-    font-size: 10pt;
+    font-size: 9.8pt;
     font-weight: 600;
     color: #334155;
-    margin-top: 13px;
+    margin-top: 12px;
     margin-bottom: 5px;
     padding-left: 6px;
     border-left: 3px solid #cbd5e1;
@@ -459,36 +543,23 @@ body {{
     break-after: avoid;
 }}
 
-.subsection-title.sub-pass {{
-    border-left-color: #10b981;
-    color: #065f46;
-}}
-
-.subsection-title.sub-warn {{
-    border-left-color: #f59e0b;
-    color: #92400e;
-}}
-
-.subsection-title.sub-fail {{
-    border-left-color: #ef4444;
-    color: #991b1b;
-}}
-
-.subsection-title.sub-exp {{
-    border-left-color: #8b5cf6;
-    color: #5b21b6;
-}}
+.subsection-title.sub-pass {{ border-left-color: #10b981; color: #065f46; }}
+.subsection-title.sub-warn {{ border-left-color: #f59e0b; color: #92400e; }}
+.subsection-title.sub-fail {{ border-left-color: #ef4444; color: #991b1b; }}
+.subsection-title.sub-exp {{ border-left-color: #8b5cf6; color: #5b21b6; }}
+.subsection-title.sub-pillar {{ border-left-color: #2563eb; color: #1e40af; background: #eff6ff; padding: 4px 8px; border-radius: 0 4px 4px 0; }}
+.subsection-title.sub-ticket {{ border-left-color: #0284c7; color: #0369a1; background: #f0f9ff; padding: 4px 8px; border-radius: 0 4px 4px 0; }}
 
 .card-title {{
     font-size: 9.5pt;
-    font-weight: 600;
-    color: #1e293b;
-    margin-top: 8px;
-    margin-bottom: 3px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-top: 4px;
+    margin-bottom: 4px;
 }}
 
 p {{
-    margin-bottom: 6px;
+    margin-bottom: 5px;
     color: var(--text-main);
 }}
 
@@ -513,10 +584,20 @@ p {{
     margin: 10px 0 14px 0;
 }}
 
+.score-gauge-grid.cols-6 {{
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
+}}
+
+.score-gauge-grid.cols-8 {{
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+}}
+
 .score-card {{
     border: 1px solid var(--border-color);
-    border-radius: 7px;
-    padding: 8px 4px 6px 4px;
+    border-radius: 6px;
+    padding: 7px 3px 5px 3px;
     text-align: center;
     box-shadow: 0 1px 2px rgba(0,0,0,0.03);
     display: flex;
@@ -526,14 +607,14 @@ p {{
 
 .gauge-container {{
     position: relative;
-    width: 52px;
-    height: 52px;
+    width: 48px;
+    height: 48px;
     margin: 0 auto;
 }}
 
 .gauge-svg {{
-    width: 52px;
-    height: 52px;
+    width: 48px;
+    height: 48px;
     transform: rotate(-90deg);
 }}
 
@@ -547,50 +628,78 @@ p {{
     fill: none;
     stroke-width: 4.8;
     stroke-linecap: round;
-    transition: stroke-dashoffset 0.3s ease;
 }}
 
 .gauge-score {{
     position: absolute;
     top: 0;
     left: 0;
-    width: 52px;
-    height: 52px;
+    width: 48px;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 10pt;
+    font-size: 9.5pt;
     font-weight: 800;
     letter-spacing: -0.04em;
 }}
 
 .gauge-label {{
-    font-size: 7.5pt;
+    font-size: 7pt;
     font-weight: 700;
     color: #1e293b;
-    margin-top: 5px;
+    margin-top: 4px;
     line-height: 1.15;
-    min-height: 18px;
+    min-height: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
 }}
 
 .gauge-status {{
-    margin-top: 3px;
+    margin-top: 2px;
+}}
+
+/* Executive Overview Boxes */
+.exec-box {{
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin: 8px 0 10px 0;
+    border-left: 4px solid #cbd5e1;
+}}
+.exec-box.box-strengths {{ background: #f0fdf4; border-left-color: #10b981; border: 1px solid #bbf7d0; border-left-width: 4px; }}
+.exec-box.box-limitations {{ background: #fef2f2; border-left-color: #ef4444; border: 1px solid #fecaca; border-left-width: 4px; }}
+.exec-box.box-actions {{ background: #eff6ff; border-left-color: #2563eb; border: 1px solid #bfdbfe; border-left-width: 4px; }}
+
+.exec-box-title {{
+    font-size: 9pt;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #0f172a;
+}}
+
+/* Finding Cards */
+.finding-card {{
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #3b82f6;
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin: 9px 0 12px 0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
 }}
 
 /* Tables */
 .table-container {{
-    margin: 8px 0 12px 0;
+    margin: 7px 0 11px 0;
     overflow-x: auto;
 }}
 
 table {{
     width: 100%;
     border-collapse: collapse;
-    font-size: 8pt;
+    font-size: 7.8pt;
     text-align: left;
 }}
 
@@ -598,18 +707,22 @@ th {{
     background: #f1f5f9;
     color: #1e293b;
     font-weight: 600;
-    padding: 5px 7px;
+    padding: 4.5px 6px;
     border: 1px solid #cbd5e1;
-    font-size: 7.5pt;
+    font-size: 7.2pt;
     text-transform: uppercase;
     letter-spacing: 0.03em;
 }}
 
 td {{
-    padding: 5px 7px;
+    padding: 4.5px 6px;
     border: 1px solid var(--border-color);
     color: #334155;
     vertical-align: top;
+}}
+
+td.text-center {{
+    text-align: center;
 }}
 
 tr:nth-child(even) td {{
@@ -621,7 +734,7 @@ tr:nth-child(even) td {{
     display: inline-block;
     font-size: 6.5pt;
     font-weight: 700;
-    padding: 1.5px 5px;
+    padding: 1px 5px;
     border-radius: 9999px;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -632,6 +745,22 @@ tr:nth-child(even) td {{
 .badge-high {{ background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }}
 .badge-medium {{ background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }}
 .badge-low {{ background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }}
+
+/* Priorities */
+.badge-p0 {{ background: #fee2e2; color: #991b1b; border: 1px solid #f87171; font-weight: 800; }}
+.badge-p1 {{ background: #ffedd5; color: #c2410c; border: 1px solid #fb923c; font-weight: 800; }}
+.badge-p2 {{ background: #fef3c7; color: #b45309; border: 1px solid #facc15; font-weight: 700; }}
+.badge-p3 {{ background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; font-weight: 600; }}
+
+/* Evidence Tiers */
+.badge-tier-critical {{ background: #ffe4e6; color: #9f1239; border: 1px solid #fda4af; font-size: 6pt; }}
+.badge-tier-important {{ background: #ffedd5; color: #9a3412; border: 1px solid #fdba74; font-size: 6pt; }}
+.badge-tier-supporting {{ background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-size: 6pt; }}
+
+/* Confidence */
+.badge-conf-high {{ background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-size: 6pt; }}
+.badge-conf-med {{ background: #fffbeb; color: #b45309; border: 1px solid #fde68a; font-size: 6pt; }}
+.badge-conf-low {{ background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; font-size: 6pt; }}
 
 .badge-pass {{ background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }}
 .badge-fail {{ background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }}
@@ -644,7 +773,7 @@ tr:nth-child(even) td {{
 .code-block {{
     background: var(--code-bg);
     border-radius: 5px;
-    margin: 6px 0 9px 0;
+    margin: 5px 0 8px 0;
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }}
@@ -676,16 +805,16 @@ tr:nth-child(even) td {{
 }}
 
 pre {{
-    padding: 6px 8px;
+    padding: 5px 7px;
     overflow-x: auto;
     margin: 0;
 }}
 
 code {{
     font-family: 'JetBrains Mono', monospace;
-    font-size: 7.5pt;
+    font-size: 7.2pt;
     color: var(--code-text);
-    line-height: 1.38;
+    line-height: 1.35;
 }}
 
 p code, li code, td code {{
@@ -694,7 +823,7 @@ p code, li code, td code {{
     padding: 1px 3px;
     border-radius: 3px;
     border: 1px solid #e2e8f0;
-    font-size: 7.5pt;
+    font-size: 7.2pt;
     font-weight: 500;
 }}
 
@@ -704,32 +833,48 @@ p code, li code, td code {{
     border-left: 3.5px solid #3b82f6;
     padding: 6px 8px;
     border-radius: 0 5px 5px 0;
-    margin: 8px 0 10px 0;
+    margin: 7px 0 9px 0;
     display: flex;
     align-items: flex-start;
 }}
 
 .callout-icon {{
-    font-size: 10pt;
+    font-size: 9.5pt;
     margin-right: 5px;
     line-height: 1;
 }}
 
 .callout-body {{
-    font-size: 8pt;
+    font-size: 7.8pt;
     color: #334155;
     flex: 1;
 }}
 
 /* Lists */
 ul, ol {{
-    margin: 5px 0 9px 16px;
+    margin: 4px 0 8px 15px;
     color: #334155;
-    font-size: 8.5pt;
+    font-size: 8pt;
 }}
 
 li {{
-    margin-bottom: 2.5px;
+    margin-bottom: 2px;
+}}
+
+ul.checklist {{
+    list-style: none;
+    margin-left: 2px;
+}}
+
+ul.checklist li {{
+    display: flex;
+    align-items: center;
+    margin-bottom: 2px;
+}}
+
+.check-icon {{
+    font-size: 7.5pt;
+    margin-right: 4px;
 }}
 
 a {{
@@ -742,6 +887,14 @@ a:hover {{
 }}
 
 /* Page Break Control */
+.page-break {{
+    page-break-after: always;
+    break-after: page;
+    height: 0;
+    margin: 0;
+    padding: 0;
+}}
+
 .avoid-break {{
     page-break-inside: avoid;
     break-inside: avoid;
