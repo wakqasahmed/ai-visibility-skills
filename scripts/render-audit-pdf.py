@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """render-audit-pdf.py
 
-Transforms an AI Visibility audit Markdown document into a beautifully styled,
-executive HTML document and renders it into a print-perfect PDF using a local
-headless Chromium-based browser (Chrome, Edge, or Chromium).
+Transforms an AI Visibility audit Markdown document (v1 or v2 format) into a
+beautifully styled, executive HTML document and renders it into a print-perfect
+PDF using a local headless Chromium-based browser (Chrome, Edge, or Chromium).
 
 Zero external pip dependencies required. Uses Python standard library + local browser.
 
@@ -22,7 +22,7 @@ from pathlib import Path
 
 
 def find_browser_executable() -> str | None:
-    """Find a local Chrome, Edge, or Chromium browser executable."""
+    """Find a local Edge, Chrome, or Chromium browser executable."""
     candidates = []
 
     if sys.platform == "win32":
@@ -30,12 +30,12 @@ def find_browser_executable() -> str | None:
         prog_files = os.environ.get("ProgramFiles", "C:\\Program Files")
         prog_files_x86 = os.environ.get("ProgramFiles(x86)", "C:\\Program Files (x86)")
         candidates.extend([
-            os.path.join(prog_files, "Google\\Chrome\\Application\\chrome.exe"),
-            os.path.join(prog_files_x86, "Google\\Chrome\\Application\\chrome.exe"),
             os.path.join(prog_files_x86, "Microsoft\\Edge\\Application\\msedge.exe"),
             os.path.join(prog_files, "Microsoft\\Edge\\Application\\msedge.exe"),
-            os.path.join(local_app, "Google\\Chrome\\Application\\chrome.exe"),
             os.path.join(local_app, "Microsoft\\Edge\\Application\\msedge.exe"),
+            os.path.join(prog_files, "Google\\Chrome\\Application\\chrome.exe"),
+            os.path.join(prog_files_x86, "Google\\Chrome\\Application\\chrome.exe"),
+            os.path.join(local_app, "Google\\Chrome\\Application\\chrome.exe"),
             os.path.join(prog_files, "BraveSoftware\\Brave-Browser\\Application\\brave.exe"),
         ])
     elif sys.platform == "darwin":
@@ -59,7 +59,6 @@ def find_browser_executable() -> str | None:
 
 def generate_gauge_card(raw_score: str, label_text: str, status_text: str) -> str:
     """Generates a Lighthouse-style circular score gauge card."""
-    # Clean score value (strip markdown links or brackets if any)
     score_clean = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', raw_score).strip().strip('`').strip('*')
     label_clean = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', label_text).strip().strip('*')
     status_clean = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', status_text).strip().strip('`')
@@ -95,13 +94,13 @@ def generate_gauge_card(raw_score: str, label_text: str, status_text: str) -> st
     offset = c * (1.0 - (max(0.0, min(100.0, pct)) / 100.0))
 
     badge_class = "badge-low"
-    if any(k in status_clean.upper() for k in ["PASS", "READY", "100"]):
+    if any(k in status_clean.upper() for k in ["PASS", "READY", "100", "✅"]):
         badge_class = "badge-pass"
-    elif any(k in status_clean.upper() for k in ["FAIL", "BLOCKED", "0"]):
+    elif any(k in status_clean.upper() for k in ["FAIL", "BLOCKED", "0", "❌"]):
         badge_class = "badge-fail"
-    elif "PARTIAL" in status_clean.upper():
+    elif any(k in status_clean.upper() for k in ["PARTIAL", "WARN", "⚠️"]):
         badge_class = "badge-partial"
-    elif any(k in status_clean.upper() for k in ["EXP", "DRAFT", "OPTIONAL"]):
+    elif any(k in status_clean.upper() for k in ["EXP", "DRAFT", "OPTIONAL", "🧪"]):
         badge_class = "badge-exp"
 
     return f"""
@@ -134,16 +133,15 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
     def format_inline(text: str) -> str:
         text = html.escape(text)
         
-        # Replace status badges
-        text = re.sub(r'`CRITICAL`', r'<span class="badge badge-critical">CRITICAL</span>', text, flags=re.I)
-        text = re.sub(r'`HIGH`', r'<span class="badge badge-high">HIGH</span>', text, flags=re.I)
-        text = re.sub(r'`MEDIUM`', r'<span class="badge badge-medium">MEDIUM</span>', text, flags=re.I)
-        text = re.sub(r'`LOW`', r'<span class="badge badge-low">LOW</span>', text, flags=re.I)
-        text = re.sub(r'`PASS`', r'<span class="badge badge-pass">PASS</span>', text, flags=re.I)
-        text = re.sub(r'`FAIL`', r'<span class="badge badge-fail">FAIL</span>', text, flags=re.I)
-        text = re.sub(r'`READY`', r'<span class="badge badge-ready">READY</span>', text, flags=re.I)
-        text = re.sub(r'`PARTIALLY READY`', r'<span class="badge badge-partial">PARTIALLY READY</span>', text, flags=re.I)
-        text = re.sub(r'`BLOCKED`', r'<span class="badge badge-blocked">BLOCKED</span>', text, flags=re.I)
+        # Replace status badges (supporting emojis and v1/v2 tokens)
+        text = re.sub(r'`(✅\s*PASS|PASS)`', r'<span class="badge badge-pass">✅ PASS</span>', text, flags=re.I)
+        text = re.sub(r'`(⚠️\s*(?:WARN|PARTIAL)|PARTIALLY\s*READY|WARN|PARTIAL)`', r'<span class="badge badge-partial">⚠️ WARN</span>', text, flags=re.I)
+        text = re.sub(r'`(❌\s*(?:FAIL|CRITICAL)|FAIL|CRITICAL|BLOCKED)`', r'<span class="badge badge-fail">❌ FAIL</span>', text, flags=re.I)
+        text = re.sub(r'`(HIGH)`', r'<span class="badge badge-high">HIGH</span>', text, flags=re.I)
+        text = re.sub(r'`(MEDIUM)`', r'<span class="badge badge-medium">MEDIUM</span>', text, flags=re.I)
+        text = re.sub(r'`(LOW)`', r'<span class="badge badge-low">LOW</span>', text, flags=re.I)
+        text = re.sub(r'`(READY)`', r'<span class="badge badge-ready">READY</span>', text, flags=re.I)
+        text = re.sub(r'`(🧪\s*EXPERIMENTAL|EXPERIMENTAL|🧪\s*DRAFT|OPTIONAL\s*\(DRAFT\)|DRAFT\s*PROTOCOLS)`', r'<span class="badge badge-exp">🧪 EXPERIMENTAL</span>', text, flags=re.I)
         text = re.sub(r'\[EXPERIMENTAL\]', r'<span class="badge badge-exp">EXPERIMENTAL</span>', text)
         
         # Inline code
@@ -271,7 +269,18 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
             elif level == 2:
                 html_lines.append(f'<h2 class="section-title">{format_inline(heading_text)}</h2>')
             elif level == 3:
-                html_lines.append(f'<h3 class="subsection-title">{format_inline(heading_text)}</h3>')
+                # Check for status indicator in subsection title
+                status_class = ""
+                if "✅" in heading_text or "PASS" in heading_text:
+                    status_class = "sub-pass"
+                elif "⚠️" in heading_text or "WARN" in heading_text or "PARTIAL" in heading_text:
+                    status_class = "sub-warn"
+                elif "❌" in heading_text or "FAIL" in heading_text:
+                    status_class = "sub-fail"
+                elif "🧪" in heading_text or "EXPERIMENTAL" in heading_text:
+                    status_class = "sub-exp"
+                
+                html_lines.append(f'<h3 class="subsection-title {status_class}">{format_inline(heading_text)}</h3>')
             elif level == 4:
                 html_lines.append(f'<h4 class="card-title">{format_inline(heading_text)}</h4>')
             i += 1
@@ -335,8 +344,6 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
 <meta charset="UTF-8">
 <title>{html.escape(title)}</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
-
 :root {{
     --bg-main: #ffffff;
     --text-main: #0f172a;
@@ -356,21 +363,21 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
     margin: 14mm 12mm 14mm 12mm;
     @top-left {{
         content: "AI Visibility Audit Report";
-        font-family: 'Inter', sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         font-size: 8pt;
         color: #94a3b8;
         font-weight: 500;
     }}
     @top-right {{
         content: "Verified Audit Standard";
-        font-family: 'Inter', sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         font-size: 8pt;
         color: #94a3b8;
         font-weight: 500;
     }}
     @bottom-right {{
         content: "Page " counter(page) " of " counter(pages);
-        font-family: 'Inter', sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         font-size: 8pt;
         color: #94a3b8;
     }}
@@ -383,7 +390,7 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
 }}
 
 body {{
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     color: var(--text-main);
     background: var(--bg-main);
     line-height: 1.48;
@@ -444,10 +451,32 @@ body {{
     font-size: 10pt;
     font-weight: 600;
     color: #334155;
-    margin-top: 11px;
+    margin-top: 13px;
     margin-bottom: 5px;
+    padding-left: 6px;
+    border-left: 3px solid #cbd5e1;
     page-break-after: avoid;
     break-after: avoid;
+}}
+
+.subsection-title.sub-pass {{
+    border-left-color: #10b981;
+    color: #065f46;
+}}
+
+.subsection-title.sub-warn {{
+    border-left-color: #f59e0b;
+    color: #92400e;
+}}
+
+.subsection-title.sub-fail {{
+    border-left-color: #ef4444;
+    color: #991b1b;
+}}
+
+.subsection-title.sub-exp {{
+    border-left-color: #8b5cf6;
+    color: #5b21b6;
 }}
 
 .card-title {{
@@ -554,7 +583,7 @@ p {{
 
 /* Tables */
 .table-container {{
-    margin: 9px 0 13px 0;
+    margin: 8px 0 12px 0;
     overflow-x: auto;
 }}
 
@@ -615,7 +644,7 @@ tr:nth-child(even) td {{
 .code-block {{
     background: var(--code-bg);
     border-radius: 5px;
-    margin: 7px 0 10px 0;
+    margin: 6px 0 9px 0;
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }}
@@ -647,7 +676,7 @@ tr:nth-child(even) td {{
 }}
 
 pre {{
-    padding: 7px 9px;
+    padding: 6px 8px;
     overflow-x: auto;
     margin: 0;
 }}
@@ -673,9 +702,9 @@ p code, li code, td code {{
 .callout {{
     background: #f8fafc;
     border-left: 3.5px solid #3b82f6;
-    padding: 7px 9px;
+    padding: 6px 8px;
     border-radius: 0 5px 5px 0;
-    margin: 9px 0 11px 0;
+    margin: 8px 0 10px 0;
     display: flex;
     align-items: flex-start;
 }}
@@ -731,17 +760,25 @@ a:hover {{
 
 def render_pdf(html_path: str, pdf_path: str, browser_path: str) -> bool:
     """Executes headless Chrome/Edge to render the HTML document to PDF."""
+    # Ensure target directory exists
+    Path(pdf_path).parent.mkdir(parents=True, exist_ok=True)
+    
     cmd = [
         browser_path,
-        "--headless=new",
+        "--headless",
         "--disable-gpu",
         "--no-pdf-header-footer",
-        "--run-all-compositor-stages-before-draw",
-        f"--print-to-pdf={pdf_path}",
-        html_path
+        f"--print-to-pdf={str(pdf_path)}",
+        str(html_path)
     ]
     try:
-        res = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+        res = subprocess.run(
+            cmd,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=30
+        )
         return os.path.isfile(pdf_path) and os.path.getsize(pdf_path) > 0
     except Exception as e:
         print(f"Error executing browser PDF export: {e}", file=sys.stderr)
