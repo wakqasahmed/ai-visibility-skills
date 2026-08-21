@@ -2,3 +2,9 @@ __pycache__/
 *.pyc
 .agents/
 skills-lock.json
+
+# Audit outputs, generated HTML, and PDFs
+output/
+reports/
+*.pdf
+

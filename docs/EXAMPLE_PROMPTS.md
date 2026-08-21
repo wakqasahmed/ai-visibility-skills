@@ -249,4 +249,30 @@ Fed into `ai-search-remediation-plan`, which turns those findings into:
   - Explicit disclaimer: *"Note: These checks evaluate emerging draft standards. Absence of these signals does not block search indexing or established AI crawler access."*
 - Implementation tickets or next actions
 
+---
+
+## Example 12 — full audit with automated executive PDF and HTML deliverable generation
+
+**Skills invoked:** [`ai-visibility-audit`](../skills/ai-visibility/ai-visibility-audit/SKILL.md)
+
+**Prompt:**
+
+> "Run a full AI visibility audit against `https://example-saas.com/`, compile the report following
+> the standardized template, and generate an executive PDF and HTML report in the `output/` directory."
+
+**Workflow executed:**
+
+1. The agent invokes `ai-visibility-audit` and runs discoverability, crawler access, structured data, on-page headings, and experimental signal probes.
+2. The agent formats the findings into `output/example-saas-com-ai-visibility-audit.md` following [`docs/templates/AUDIT_REPORT_TEMPLATE.md`](templates/AUDIT_REPORT_TEMPLATE.md).
+3. The agent executes `python scripts/render-audit-pdf.py output/example-saas-com-ai-visibility-audit.md`.
+4. Outputs are saved to:
+   - `output/example-saas-com-ai-visibility-audit.md`
+   - `output/example-saas-com-ai-visibility-audit.html`
+   - `output/example-saas-com-ai-visibility-audit.pdf`
+
+**Expected deliverable:**
+
+- A print-perfect, styled executive PDF featuring modern typography, status pill badges, syntax-highlighted code blocks, running headers/footers, and page-break optimization.
+
+
 
