@@ -62,6 +62,8 @@ def generate_gauge_card(raw_score: str, label_text: str, status_text: str) -> st
     # Clean score: strip [82](url) or [82] or `82` or *82*
     score_clean = re.sub(r'\[([^\]]+)\](?:\([^)]+\))?', r'\1', raw_score).strip()
     score_clean = re.sub(r'[\[\]`*]', '', score_clean).strip()
+    if score_clean.endswith('%'):
+        score_clean = score_clean[:-1].strip()
 
     label_clean = re.sub(r'\[([^\]]+)\](?:\([^)]+\))?', r'\1', label_text).strip()
     label_clean = re.sub(r'[*`]', '', label_clean).strip()
@@ -222,7 +224,18 @@ def markdown_to_html(md_content: str, title: str = "AI Visibility Audit Report")
         if is_scorecard:
             scores = header_raw_cols
             labels = [c.strip() for c in rows[2].strip('|').split('|')] if len(rows) > 2 else [""] * len(scores)
+            # Pad or truncate labels to match the number of scores (OCR robustness)
+            if len(labels) < len(scores):
+                labels.extend([''] * (len(scores) - len(labels)))
+            elif len(labels) > len(scores):
+                labels = labels[:len(scores)]
+
             statuses = [c.strip() for c in rows[3].strip('|').split('|')] if len(rows) > 3 else [""] * len(scores)
+            # Pad or truncate statuses to match the number of scores (OCR robustness)
+            if len(statuses) < len(scores):
+                statuses.extend([''] * (len(scores) - len(statuses)))
+            elif len(statuses) > len(scores):
+                statuses = statuses[:len(scores)]
 
             num_cols = len(scores)
             grid_class = f"score-gauge-grid cols-{num_cols}" if num_cols in [4, 6, 8] else "score-gauge-grid"
