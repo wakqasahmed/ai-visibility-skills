@@ -919,16 +919,34 @@ a:hover {{
     return full_document
 
 
-def render_pdf(html_path: str, pdf_path: str, browser_path: str) -> bool:
-    """Executes headless Chrome/Edge to render the HTML document to PDF."""
-    Path(pdf_path).parent.mkdir(parents=True, exist_ok=True)
+def render_pdf(html_path: str, pdf_path: str, browser_path: str) -> tuple[bool, str]:
+    """Executes headless Chrome/Edge to render the HTML document to PDF.
     
+    Returns (success, actual_pdf_path).
+    """
+    target_path = Path(pdf_path)
+    target_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Check if target file is locked by Adobe Reader / other processes
+    if target_path.exists():
+        try:
+            target_path.unlink()
+        except (PermissionError, OSError):
+            # Target is locked by an external reader; write to fallback
+            fallback_name = f"{target_path.stem}_latest{target_path.suffix}"
+            target_path = target_path.with_name(fallback_name)
+            if target_path.exists():
+                try:
+                    target_path.unlink()
+                except Exception:
+                    pass
+
     cmd = [
         browser_path,
         "--headless",
         "--disable-gpu",
         "--no-pdf-header-footer",
-        f"--print-to-pdf={str(pdf_path)}",
+        f"--print-to-pdf={str(target_path)}",
         str(html_path)
     ]
     try:
@@ -939,10 +957,11 @@ def render_pdf(html_path: str, pdf_path: str, browser_path: str) -> bool:
             stderr=subprocess.DEVNULL,
             timeout=30
         )
-        return os.path.isfile(pdf_path) and os.path.getsize(pdf_path) > 0
+        is_ok = target_path.is_file() and target_path.stat().st_size > 0
+        return is_ok, str(target_path)
     except Exception as e:
         print(f"Error executing browser PDF export: {e}", file=sys.stderr)
-        return False
+        return False, str(target_path)
 
 
 def main():
@@ -978,10 +997,10 @@ def main():
         sys.exit(0)
 
     print(f"Using browser: {browser_exe}")
-    success = render_pdf(str(output_html_path), str(output_pdf_path), browser_exe)
+    success, actual_pdf = render_pdf(str(output_html_path), str(output_pdf_path), browser_exe)
 
     if success:
-        print(f"[OK] Generated PDF report: {output_pdf_path} ({os.path.getsize(output_pdf_path)} bytes)")
+        print(f"[OK] Generated PDF report: {actual_pdf} ({os.path.getsize(actual_pdf)} bytes)")
     else:
         print(f"[ERROR] Failed to generate PDF with {browser_exe}", file=sys.stderr)
         sys.exit(1)
