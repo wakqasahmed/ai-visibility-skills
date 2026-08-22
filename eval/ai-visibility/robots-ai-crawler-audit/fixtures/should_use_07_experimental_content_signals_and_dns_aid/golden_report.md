@@ -19,8 +19,8 @@
 *Note: The following checks evaluate emerging draft standards surfaced by isitagentready.com. These signals are experimental and informational; absence of these records does not harm core search or AI platform crawler indexing.*
 
 - **Content Signals**: Present in `robots.txt` (`Content-Signal: search=yes, ai-train=no, ai-input=yes`), declaring fine-grained intent to permit search indexing and inference while opting out of foundation model training.
-- **Web Bot Auth**: Returned `404` at `/.well-known/bot-auth` and no bot signature headers — expected for most origins as cryptographic bot authentication remains in early draft stages.
-- **DNS-AID**: Present at `_aid.example-saas.com` with `v=aid1; ai-discovery=enabled; status=ready`.
+- **Web Bot Auth**: Returned `404` at `/.well-known/http-message-signatures-directory` and no bot signature headers — expected for most origins as cryptographic bot authentication remains in early draft stages.
+- **DNS-AID**: No `HTTPS` or `SVCB` DNS records found for `example-saas.com` — expected for most origins as this DNS-based agent discovery mechanism remains in early draft stages.
 
 ## Recommended robots.txt changes
 
@@ -43,4 +43,7 @@ curl -sI https://example-saas.com/ | grep -iE "(strict-transport-security|x-cont
 for ua in GPTBot ClaudeBot PerplexityBot Google-Extended; do
   printf "%-16s " "$ua"; curl -s -o /dev/null -w "%{http_code}\n" -A "$ua" https://example-saas.com/
 done
+curl -s -o /dev/null -w "%{http_code}\n" https://example-saas.com/.well-known/http-message-signatures-directory
+dig HTTPS example-saas.com +short
+dig SVCB example-saas.com +short
 ```

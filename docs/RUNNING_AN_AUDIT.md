@@ -65,7 +65,7 @@ A thorough run reports, per finding: the exact command run, the observed output,
 
 ## 7. Understanding [EXPERIMENTAL] findings
 
-Audits may check emerging draft protocols (Content Signals in `robots.txt`, Web Bot Auth cryptographic verification, DNS-AID TXT records, Markdown content-negotiation `Accept: text/markdown`, and Auth.md/ARD manifests). When present, these findings are always labeled with **`[EXPERIMENTAL]`** in reports and remediation plans. 
+Audits may check emerging draft protocols (Content Signals in `robots.txt`, Web Bot Auth cryptographic verification, DNS-AID SVCB/HTTPS records, Markdown content-negotiation `Accept: text/markdown`, and Auth.md/ARD manifests). When present, these findings are always labeled with **`[EXPERIMENTAL]`** in reports and remediation plans. 
 
 These represent draft specifications and future-readiness signals. Missing an experimental signal does **not** harm search engine discovery, crawler indexing, or AI platform visibility today.
 

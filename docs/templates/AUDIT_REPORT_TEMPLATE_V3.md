@@ -309,9 +309,9 @@
 | **Curated Context File (`/llms.txt`)** | `{{LLMSTXT_STATUS}}` | {{LLMSTXT_NOTE}} |
 | **Markdown Content Negotiation (`Accept: text/markdown`)** | `{{MD_STATUS}}` | {{MD_NOTE}} |
 | **Content Signals in `robots.txt` (`Content-Signal:`)** | `{{CONTENT_SIGNAL_STATUS}}` | {{CONTENT_SIGNAL_NOTE}} |
-| **Web Bot Auth Cryptographic Verification (`/.well-known/bot-auth`)** | `{{BOT_AUTH_STATUS}}` | {{BOT_AUTH_NOTE}} |
+| **Web Bot Auth Cryptographic Verification (`/.well-known/http-message-signatures-directory`)** | `{{BOT_AUTH_STATUS}}` | {{BOT_AUTH_NOTE}} |
 | **Agential Resource Discovery (`/auth.md`, `/.well-known/ard.json`)** | `{{ARD_STATUS}}` | {{ARD_NOTE}} |
-| **DNS-AID TXT Discovery (`_aid.{{DOMAIN}}`)** | `{{DNS_AID_STATUS}}` | {{DNS_AID_NOTE}} |
+| **DNS-AID SVCB/HTTPS Discovery (`{{DOMAIN}}` HTTPS/SVCB records)** | `{{DNS_AID_STATUS}}` | {{DNS_AID_NOTE}} |
 
 ---
 

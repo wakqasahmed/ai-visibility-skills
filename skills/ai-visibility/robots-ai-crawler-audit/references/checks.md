@@ -120,17 +120,17 @@ These checks evaluate emerging draft standards surfaced by `isitagentready.com` 
    curl -sI "$URL" | grep -i "content-signal"
    ```
 2. **Web Bot Auth deployment [WEB-BOT-AUTH-01]**:
-   Check if the origin advertises cryptographic bot authentication endpoints or RFC 9421 message signature headers:
+   Check if the origin publishes an HTTP Message Signatures directory (per the web-bot-auth draft) or sends RFC 9421 signature headers:
    ```bash
-   curl -s -o /dev/null -w "%{http_code}\n" "$SITE/.well-known/bot-auth"
-   curl -sI "$URL" | grep -iE "(bot-auth|signature-input|signature)"
+   curl -s -o /dev/null -w "%{http_code}\n" "$SITE/.well-known/http-message-signatures-directory"
+   curl -sI "$URL" | grep -iE "(signature-input|signature)"
    ```
-3. **DNS-AID (DNS for AI Discovery) TXT records [DNS-AID-01]**:
-   Check if the domain advertises AI readiness or discovery endpoints in DNS TXT records:
+3. **DNS-AID (DNS for AI Discovery) SVCB/HTTPS records [DNS-AID-01]**:
+   Check if the domain advertises AI/MCP-agent discovery endpoints via DNS `SVCB`/`HTTPS` records (RFC 9460):
    ```bash
    DOMAIN=$(echo "$SITE" | sed -e 's|^https\?://||' -e 's|/.*||')
-   nslookup -type=TXT "_aid.$DOMAIN"
-   nslookup -type=TXT "_ai.$DOMAIN"
+   dig HTTPS "$DOMAIN" +short
+   dig SVCB "$DOMAIN" +short
    ```
 
 When reporting these findings, always include an `[EXPERIMENTAL]` label and note that adoption is optional and draft-stage.

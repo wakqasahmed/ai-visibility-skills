@@ -242,8 +242,8 @@ Fed into `ai-search-remediation-plan`, which turns those findings into:
 - Quick wins
 - **`## [EXPERIMENTAL] Emerging Agent Signals (Draft Standards)`**:
   - Content Signals status (`Content-Signal:` in `robots.txt`)
-  - Web Bot Auth status (`/.well-known/bot-auth` / HTTP signatures)
-  - DNS-AID TXT records (`_aid.example-store.com`)
+  - Web Bot Auth status (`/.well-known/http-message-signatures-directory` / HTTP signatures)
+  - DNS-AID SVCB/HTTPS records (`example-store.com` HTTPS/SVCB records)
   - Markdown content negotiation (`Accept: text/markdown` response)
   - Agential Resource Discovery manifests (`/auth.md`, `/.well-known/ard.json`)
   - Explicit disclaimer: *"Note: These checks evaluate emerging draft standards. Absence of these signals does not block search indexing or established AI crawler access."*
