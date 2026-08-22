@@ -26,9 +26,9 @@
   "BACKLINKO-ORPHAN-PAGES-01": "https://backlinko.com/orphan-pages",
   "CONDUCTOR-DISCONTINUED-01": "https://www.conductor.com/academy/discontinued-products/",
   "GOOGLE-SOFT-404-01": "https://developers.google.com/search/docs/crawling-indexing/http-network-errors",
-  "DNS-AID-01": "https://isitagentready.com",
-  "CONTENT-SIGNALS-01": "https://isitagentready.com",
-  "WEB-BOT-AUTH-01": "https://isitagentready.com",
-  "MARKDOWN-NEGOTIATION-01": "https://isitagentready.com",
-  "ARD-MANIFEST-01": "https://isitagentready.com"
+  "DNS-AID-01": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/",
+  "CONTENT-SIGNALS-01": "https://datatracker.ietf.org/doc/draft-ietf-aipref-attach/",
+  "WEB-BOT-AUTH-01": "https://datatracker.ietf.org/doc/draft-meunier-webbotauth-httpsig-protocol/",
+  "MARKDOWN-NEGOTIATION-01": "https://www.rfc-editor.org/rfc/rfc9110.html#section-12",
+  "ARD-MANIFEST-01": "https://github.com/workos/auth.md"
 }
