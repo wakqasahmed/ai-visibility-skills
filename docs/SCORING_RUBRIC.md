@@ -54,7 +54,8 @@ check; a single-page brochure site may have no FAQ page to test for thinness. Tw
 
 ## Pillar 1 — Discovery (weight: 20%)
 
-Source skills: `robots-ai-crawler-audit`, `sitemap-discovery-audit`.
+Source skills: `robots-ai-crawler-audit`, `sitemap-discovery-audit`, `ecommerce-technical-seo-audit`
+(catalog-specific crawl-path checks 1.9-1.11, ecommerce sites only).
 
 | # | Check | Tier | Deduction | N/A condition | Rationale |
 |---|---|---|---|---|---|
@@ -66,6 +67,9 @@ Source skills: `robots-ai-crawler-audit`, `sitemap-discovery-audit`.
 | 1.6 | Canonical `<link rel="canonical">` on a sampled key page is missing or points to a different URL (non-self-referential without documented reason, e.g. cross-domain duplicate) | Important Improvement | −10 | Never | Ambiguous or absent canonicalization can cause a search/AI system to index or cite the wrong URL, or split authority across duplicates. |
 | 1.7 | Nav/footer-linked pages are absent from the sitemap (via the nav-vs-sitemap `comm` diff) | Supporting Signal | −5 | N/A if sitemap itself is absent (already penalized under 1.3) | A coverage gap here is a hygiene issue, not a foundational blocker — the pages are still reachable by a crawler that follows links, just missing the fast path. |
 | 1.8 | Broken internal links found during the homepage/nav crawl sweep, independent of sitemap membership | Supporting Signal | −5 | Never | Degrades crawl paths and user/agent trust but doesn't itself block discovery of the rest of the site. |
+| 1.9 | A sampled category/collection page's faceted-navigation variant (filter/sort query parameter) returns `200`, has no canonical back to the base URL, has no `noindex`, and is not blocked in `robots.txt` (`ecommerce-technical-seo-audit` check) | Important Improvement | −10 | N/A if the site has no faceted/filterable category navigation (e.g. non-ecommerce site, or a catalog with no filter/sort UI) | Per Google's own faceted-navigation guidance cited in the skill's `checks.md`, an uncanonicalized, indexable facet URL is a crawlable near-duplicate of the base category page that dilutes crawl budget across "a very large number" of parameter combinations — a real index-quality problem, but the base category page itself still resolves and is indexable, so this sits at the same Important tier and weight as 1.6's canonicalization check rather than at Critical Foundation, since no page is made unreachable. |
+| 1.10 | A sampled URL present in the sitemap has no discoverable internal link pointing to it from nav, category grids, or related-content blocks (orphan page, per `ecommerce-technical-seo-audit`'s sitemap-vs-crawled-links diff) | Supporting Signal | −5 | N/A if sitemap itself is absent (already penalized under 1.3) or the orphan-page cross-reference check wasn't run | An orphan page is still reachable via the sitemap's fast path, it's only missing the slower reinforcement of an internal link — the mirror image of 1.7's nav-without-sitemap gap and weighted identically for the same reason: a coverage/reinforcement hygiene issue, not a foundational block. |
+| 1.11 | A sampled discontinued/out-of-season product URL returns a `200` with error/out-of-stock page content (soft 404), or redirects to the homepage or an unrelated category instead of the closest matching replacement product/category, per `ecommerce-technical-seo-audit`'s check | Important Improvement | −15 | N/A if the site has no discontinued or out-of-season products to sample | Per Google's own soft-404 documentation cited in the skill's `checks.md`, this failure mode wastes crawl budget on a dead page and discards whatever ranking/citation signal the original URL had built up — a real, page-scoped resolution failure, so it is weighted the same as 1.3's missing-sitemap check (a comparable "the expected resolution path is broken" severity) rather than at Critical Foundation, since it affects one product's URL rather than blocking crawl access to the site as a whole. |
 
 ## Pillar 2 — Technical Accessibility (weight: 20%)
 
@@ -97,7 +101,8 @@ Source skill: `schema-markup-audit`.
 
 ## Pillar 4 — Answer Readiness (weight: 20%)
 
-Source skill: `answer-engine-content-audit`.
+Source skills: `answer-engine-content-audit`, `ecommerce-technical-seo-audit`
+(catalog-specific extractability check 4.7, ecommerce sites only).
 
 | # | Check | Tier | Deduction | N/A condition | Rationale |
 |---|---|---|---|---|---|
@@ -107,6 +112,7 @@ Source skill: `answer-engine-content-audit`.
 | 4.4 | `<title>` on a sampled key page is missing, or present but over ~60 characters (truncation-risk "vague" per Ahrefs' pixel-width research, `[AHREFS-TITLE-LENGTH-01]`) | Important Improvement | −10 missing / −5 vague | Never | The title is verbatim text an answer engine or search snippet quotes back to the user — missing it removes the primary citation label; an overlong one risks being cut mid-word, which is a real but smaller degradation. |
 | 4.5 | Meta description on a sampled key page is missing, or present but empty/boilerplate/over ~160 characters ("vague") | Supporting Signal | −5 missing / −3 vague | Never | Per the task's own calibration example, this is "a minor citation-quality signal" — it affects how a snippet reads, not whether the underlying content can be found or understood, so it sits well below the title check and the structural answer checks above. |
 | 4.6 | No freshness signal (`article:published_time`/`article:modified_time` meta, or a visible "updated"/"last modified" string) on time-sensitive content (pricing, docs, guides) | Supporting Signal | −10 | N/A if the sampled content is genuinely evergreen with no freshness claim to make (rare — most business content benefits from a dateline) | Freshness is a supporting trust/recency signal, not a blocker to extracting the answer itself, consistent with its Tier-3 framing in the V3 design doc's "content freshness" example. |
+| 4.7 | A sampled category/collection page has under ~300 words of unique, non-boilerplate, non-product-grid text *and* that text duplicates another category's copy (`ecommerce-technical-seo-audit`'s two-part thin-content test) | Important Improvement | −10 per flagged sampled page, capped at −20 | N/A if the site has no category/collection page structure (e.g. a single-product store or a non-ecommerce site) | A category page this thin gives an agent nothing distinct to extract or cite about that specific category — it can only paraphrase the product grid or fall back to a near-identical sibling page's copy. This is a real but non-catastrophic extractability gap, not the "promised then empty" failure of 4.1 (a dedicated FAQ section is a much stronger, explicit signal to a reader that an answer exists here), so it sits at the same Important tier and weight as 4.2/4.3 rather than 4.1's Critical tier. The check requires *both* low word count and duplication, per the skill's own guardrail against flagging a page as thin from word count alone (a low count can be a legitimate short category with no duplication problem) and against extrapolating a small sample into a catalog-wide count — the −20 cap keeps a 3-5 page sample from swinging the pillar further than the sample itself justifies. |
 
 ## Pillar 5 — Trust & Authority (weight: 15%)
 
@@ -137,6 +143,40 @@ machine-readable price) are scored here.
 | 6.3 | A conversion form exists but its inputs have no associated `<label>`/`name`/`required` semantics, making the form's purpose and required fields un-parseable without visual rendering | Supporting Signal | −15 | N/A if the site has no forms (e.g. contact is a plain mailto/phone link) | A structurally opaque form degrades an agent's ability to fill it out correctly but doesn't remove the conversion path entirely the way 6.1 does. |
 | 6.4 | No documentation, pricing, or process page is discoverable that would let an agent understand *how* to engage (steps, requirements, pricing tiers) before acting | Supporting Signal | −15 | N/A if the site's engagement model is a single obvious action with no process to document (e.g. a single "Buy Now" button with no onboarding steps) | Useful for agent confidence before it acts, but its absence doesn't block the action itself the way 6.1's missing endpoint does. |
 
+## Skills intentionally excluded from scoring
+
+Two of this pack's specialist skills produce findings that never appear in the deduction tables
+above, on purpose. Both are stated here explicitly rather than left silently absent, per this
+rubric's own discipline (see "Handling inapplicable checks and pillars" above).
+
+- **`llms-txt-generator`** — `llms.txt` presence, validity, and correct `Content-Type` (a real
+  `text/plain` file vs. a JS-shell/SPA-fallback false positive) is never scored, in any pillar.
+  This isn't an oversight this issue is fixing — it's an explicit, already-shipped design
+  decision: `docs/AUDIT_REPORTING_GUIDE.md`'s four-tier evidence hierarchy names `llms.txt` by
+  name as a Tier 4 "Experimental Protocol" and states as a "Mandatory Rule" that "Tier 4 items
+  *never* reduce the core 100-point audit score," and Pillar 6's own rationale text above
+  repeats the same rule for the same reason. `llms.txt` is a community draft convention
+  (llmstxt.org) with no confirmed adoption by the major AI crawlers this pack audits against —
+  unlike `robots.txt` and `sitemap.xml`, which are long-established, universally-respected
+  standards this rubric does score. Wiring `llms-txt-generator`'s findings into a pillar would
+  directly contradict that already-documented mandatory rule rather than close a gap, so its
+  findings stay exactly where `docs/templates/AUDIT_REPORT_TEMPLATE_V3.md` already places them:
+  Section 6, "[EXPERIMENTAL] Emerging Agent Protocols (Draft Standards)" — reported, but
+  explicitly non-scoring.
+- **`commerce-protocol-discovery`** — none of its four discovery probes (UCP business profile,
+  A2A Agent Card, protected MCP endpoint challenge, catalog feed) appear in any pillar's
+  deduction table. Per the skill's own `SKILL.md` and Guardrails, this is a **discovery-only
+  teaser by explicit design**, not an oversight: it is mechanically forbidden from using
+  `ready`/`partial`/`missing`/`verified` or any other graded-assessment language, and its own
+  eval enforces this via regex contract checks rather than a scoring table. Full
+  commerce-protocol *readiness* scoring (a graded rubric, trust/order-lifecycle gates, and
+  remediation guidance) is explicitly named in the skill's own description as a separate, deeper
+  audit capability this skill does not attempt — inventing a scoring path for it here would
+  duplicate or pre-empt that separate capability and would contradict the one skill in this pack
+  whose entire design purpose is to *not* be scored. Its findings are reported as-is (protocol
+  probed, endpoint, observed status) with no pillar attribution and no contribution to the
+  Overall Readiness Score.
+
 ## Worked example
 
 A SaaS marketing site audit finds: `robots.txt` blocks `GPTBot` entirely (1.1, −25); sitemap
@@ -151,6 +191,13 @@ FAQ page answers are all real content (4.1 N/A-pass); meta description on `/pric
 - **Trust & Authority, Technical Accessibility, Agent/Action Readiness**: no triggered checks
   found in this abbreviated example → 100 each (in a real audit these would still need every
   applicable check run and recorded, not assumed clean by default)
+
+This is a SaaS marketing site with no catalog, so `ecommerce-technical-seo-audit`'s checks
+(1.9-1.11, 4.7) are all check-level N/A — no category/collection pages, no faceted navigation,
+no discontinued products to sample — and contribute no deduction, exactly as check-level N/A
+checks do everywhere else in this rubric. This doesn't change the math below; it's recorded here
+so the new checks aren't silently absent from the worked example the way the "Handling
+inapplicable checks" section above requires N/A checks to be stated, not omitted.
 
 Overall = (75×0.20) + (100×0.20) + (75×0.20) + (95×0.20) + (100×0.15) + (100×0.05)
 = 15 + 20 + 15 + 19 + 15 + 5 = **89/100**

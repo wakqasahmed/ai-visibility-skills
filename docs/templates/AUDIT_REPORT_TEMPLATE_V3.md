@@ -118,6 +118,7 @@
   - `robots.txt`: {{FINDING_1_EVIDENCE_ROBOTS}}
   - `sitemap.xml`: {{FINDING_1_EVIDENCE_SITEMAP}}
   - `HTTP Status`: {{FINDING_1_EVIDENCE_HTTP}}
+  - `Catalog Crawl Health (facets/orphans/discontinued, ecommerce sites only)`: {{FINDING_1_EVIDENCE_CATALOG}}
 - **Affected Systems:** {{FINDING_1_AFFECTED_SYSTEMS}}
 - **Recommended Action:** {{FINDING_1_RECOMMENDATION}}
 - **Expected Outcome:** {{FINDING_1_EXPECTED_OUTCOME}}
@@ -212,6 +213,7 @@
   - `Direct Answer Sampling`: {{FINDING_4_EVIDENCE_ANSWERS}}
   - `FAQ / Q&A Sections`: {{FINDING_4_EVIDENCE_FAQ}}
   - `Content Specificity`: {{FINDING_4_EVIDENCE_SPECIFICITY}}
+  - `Category/Collection Page Word Count (ecommerce sites only)`: {{FINDING_4_EVIDENCE_CATEGORY_THINNESS}}
 - **Affected Systems:** {{FINDING_4_AFFECTED_SYSTEMS}}
 - **Recommended Action:** {{FINDING_4_RECOMMENDATION}}
 - **Expected Outcome:** {{FINDING_4_EXPECTED_OUTCOME}}

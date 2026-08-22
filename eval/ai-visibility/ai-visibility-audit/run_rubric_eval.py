@@ -17,6 +17,10 @@ of known fixture finding-sets against it, and asserts:
 4. A pillar with every check marked N/A is excluded from the composite and
    the remaining pillar weights are reproportioned rather than defaulting
    the excluded pillar to 0 or 100.
+5. PR #86 wired ecommerce-technical-seo-audit's checks (1.9-1.11 in Discovery,
+   4.7 in Answer Readiness) into the rubric — they score with the same flat/
+   per-occurrence/capped arithmetic as every other check, and are cleanly
+   absent (no deduction) on a non-ecommerce site.
 
 This does not invoke an LLM — it proves the rubric's arithmetic is
 well-defined and reproducible, which is the property the reporting
@@ -54,6 +58,9 @@ RUBRIC = {
         "1.6": {"deduction": 10},
         "1.7": {"deduction": 5},
         "1.8": {"deduction": 5},
+        "1.9": {"deduction": 10},
+        "1.10": {"deduction": 5},
+        "1.11": {"deduction": 15},
     },
     "technical_accessibility": {
         "2.1": {"deduction": 30},
@@ -81,6 +88,7 @@ RUBRIC = {
         "4.5_missing": {"deduction": 5},
         "4.5_vague": {"deduction": 3},
         "4.6": {"deduction": 10},
+        "4.7": {"deduction": 10, "cap": 20, "per_occurrence": True},  # per flagged thin category page
     },
     "trust_authority": {
         "5.1": {"deduction": 25},
@@ -251,6 +259,43 @@ def run_floor_at_zero() -> list:
     return failures
 
 
+def run_ecommerce_checks_scoring() -> list:
+    """PR #86 wired ecommerce-technical-seo-audit's checks into Discovery (1.9-1.11)
+    and Answer Readiness (4.7). Prove they flow through the same arithmetic as every
+    other check: flat deductions apply once, and 4.7's per-occurrence cap holds."""
+    failures = []
+
+    # 1.9 (facet dup, -10) + 1.10 (orphan, -5) + 1.11 (discontinued soft-404, -15)
+    # triggered together on an ecommerce catalog audit -> 100 - 30 = 70.
+    discovery = score_pillar("discovery", {"1.9": 1, "1.10": 1, "1.11": 1})
+    if discovery.score != 70.0:
+        failures.append(f"expected discovery 1.9+1.10+1.11 to total -30 (score 70), got {discovery.score}")
+
+    # 4.7 triggered on 2 sampled thin category pages: 2 x -10 = -20, under the cap.
+    answer_two = score_pillar("answer_readiness", {"4.7": 2})
+    if answer_two.score != 80.0:
+        failures.append(f"expected 4.7 x2 occurrences to deduct exactly -20 (score 80), got {answer_two.score}")
+
+    # 4.7 triggered on 5 sampled thin category pages: 5 x -10 = -50 uncapped,
+    # must cap at -20 (score 80) to prevent a small sample from swinging the pillar.
+    answer_five = score_pillar("answer_readiness", {"4.7": 5})
+    if answer_five.score != 80.0:
+        failures.append(f"expected 4.7's cap to hold at -20 regardless of sample size (score 80), got {answer_five.score}")
+
+    return failures
+
+
+def run_ecommerce_na_pillar() -> list:
+    """A non-ecommerce site (docs/SaaS, no catalog) has 1.9-1.11 and 4.7 all
+    check-level N/A — they must simply be absent from `triggered`, contributing
+    zero deduction, exactly like the worked example's SaaS site."""
+    failures = []
+    discovery = score_pillar("discovery", {"1.1": 1})  # only 1.1 triggered, 1.9-1.11 N/A
+    if discovery.score != 75.0:
+        failures.append(f"expected non-ecommerce site's N/A facet/orphan/discontinued checks to add no deduction, got {discovery.score}")
+    return failures
+
+
 def main() -> int:
     all_failures = []
     checks = [
@@ -259,6 +304,8 @@ def main() -> int:
         ("per-check deduction caps are enforced", run_cap_enforcement),
         ("N/A pillar exclusion + weight reproportioning", run_na_pillar_reweighting),
         ("pillar score floors at 0", run_floor_at_zero),
+        ("ecommerce-technical-seo-audit checks (1.9-1.11, 4.7) score correctly", run_ecommerce_checks_scoring),
+        ("ecommerce checks are cleanly N/A on a non-ecommerce site", run_ecommerce_na_pillar),
     ]
 
     for label, fn in checks:
