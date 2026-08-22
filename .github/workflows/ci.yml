@@ -26,6 +26,8 @@ jobs:
         run: python3 eval/ai-visibility/answer-engine-content-audit/run_eval.py
       - name: Run ai-visibility-audit deterministic outcome-contract eval
         run: python3 eval/ai-visibility/ai-visibility-audit/run_outcome_eval.py
+      - name: Run V3 scoring rubric deterministic eval
+        run: python3 eval/ai-visibility/ai-visibility-audit/run_rubric_eval.py
       - name: Run citation-readiness-audit deterministic contract eval
         run: python3 eval/ai-visibility/citation-readiness-audit/run_eval.py
       - name: Run ai-search-remediation-plan deterministic contract eval

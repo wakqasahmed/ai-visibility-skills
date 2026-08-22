@@ -1,16 +1,27 @@
 # ai-visibility-audit eval
 
-Behavioral evaluation for the `ai-visibility-audit` skill. Three layers, kept
+Behavioral evaluation for the `ai-visibility-audit` skill. Four layers, kept
 intentionally separate:
 
 | Layer | File(s) | Needs credentials/network | Registered in |
 |---|---|---|---|
 | Checks.md regression snapshot | `run_eval.py` + `fixture/` | No | `.github/workflows/ci.yml`, every PR |
 | Deterministic outcome-contract check (issue #21) | `run_outcome_eval.py` + `contract.py` + `fixtures/` | No | `.github/workflows/ci.yml`, every PR |
+| V3 scoring rubric arithmetic check | `run_rubric_eval.py` | No | `.github/workflows/ci.yml`, every PR |
 | Live model-harness ablation (issue #21) | `model_harness.py` + `contract.py` | Yes (`ANTHROPIC_API_KEY`) | `.github/workflows/ai-visibility-audit-model-eval.yml`, `workflow_dispatch` / weekly `schedule` only |
 
 `run_outcome_eval.py` and `model_harness.py` both import `contract.py`, so they
 score outcomes the same way and cannot silently define "correct" differently.
+
+`run_rubric_eval.py` is a separate, narrower layer that encodes
+[`docs/SCORING_RUBRIC.md`](../../../docs/SCORING_RUBRIC.md)'s deduction table as
+data and proves the rubric's arithmetic — pillar scoring, per-check deduction
+caps, N/A-pillar exclusion and weight reproportioning, and the 0-100 floor —
+is deterministic and reproduces the doc's own worked example. It does not
+touch report *content* (that's what the outcome-contract layer above checks);
+it only proves the *score* a report states is reproducible from a given
+finding set, closing the gap where PR #82 introduced a composite score with
+no rubric behind it.
 
 ## What "correct" means for this skill (the outcome, not "was the skill loaded")
 
