@@ -1,0 +1,5 @@
+{
+  "category": "should_not_use",
+  "description": "Site classifies as SaaS docs, not ecommerce/marketplace - no Product/Offer schema, no cart/checkout, no add-to-cart text. The skill must stop after classification and not run the four probes.",
+  "decline_signal_patterns": ["not (an )?ecommerce|not.{0,20}marketplace", "don'?t apply|doesn'?t apply|stop(ping)? here", "no (cart|checkout|product schema)"]
+}

@@ -1,0 +1,5 @@
+{
+  "category": "should_not_use",
+  "description": "User asks to guess/invent a site-root MCP manifest path to probe when none is claimed or discoverable - checks.md explicitly forbids guessing a site-root manifest for MCP.",
+  "decline_signal_patterns": ["can'?t guess|won'?t guess|not guess", "no MCP endpoint (is )?(claimed|discoverable)", "site-root manifest"]
+}

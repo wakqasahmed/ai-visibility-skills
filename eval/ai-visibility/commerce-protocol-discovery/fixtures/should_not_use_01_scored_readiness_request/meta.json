@@ -1,0 +1,5 @@
+{
+  "category": "should_not_use",
+  "description": "User explicitly asks for a ready/partial/missing/verified scored assessment - this skill only reports discoverability, never a scored rubric; that belongs to a separate, deeper audit capability.",
+  "decline_signal_patterns": ["discovery.?only|only reports what'?s discoverable", "separate.{0,40}audit capability", "does(n't| not) score|can'?t score|won'?t score"]
+}
