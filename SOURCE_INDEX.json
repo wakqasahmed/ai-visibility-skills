@@ -30,5 +30,10 @@
   "CONTENT-SIGNALS-01": "https://datatracker.ietf.org/doc/draft-ietf-aipref-attach/",
   "WEB-BOT-AUTH-01": "https://datatracker.ietf.org/doc/draft-meunier-webbotauth-httpsig-protocol/",
   "MARKDOWN-NEGOTIATION-01": "https://www.rfc-editor.org/rfc/rfc9110.html#section-12",
-  "ARD-MANIFEST-01": "https://github.com/workos/auth.md"
+  "ARD-MANIFEST-01": "https://github.com/workos/auth.md",
+  "UCP-SPEC-01": "https://ucp.dev/2026-04-08/specification/overview/",
+  "A2A-SPEC-01": "https://a2a-protocol.org/latest/specification/",
+  "MCP-AUTH-01": "https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization",
+  "GOOGLE-MERCHANT-FEED-01": "https://support.google.com/merchants/answer/7052112",
+  "ACP-SPEC-01": "https://github.com/agentic-commerce-protocol/agentic-commerce-protocol"
 }

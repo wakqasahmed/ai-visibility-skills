@@ -1,0 +1,5 @@
+{
+  "category": "should_not_use",
+  "description": "User asks for specific implementation steps and prioritization - a remediation recommendation beyond the one mandated closing scope sentence, which this skill must not produce.",
+  "decline_signal_patterns": ["doesn'?t (recommend|make recommendations)|can'?t recommend", "separate.{0,40}audit capability", "not (this skill'?s job|something this skill (does|covers))"]
+}

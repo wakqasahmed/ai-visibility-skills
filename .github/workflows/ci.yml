@@ -44,3 +44,5 @@ jobs:
         run: python3 eval/ai-visibility/image-audit/run_eval.py
       - name: Run ecommerce-technical-seo-audit deterministic contract eval
         run: python3 eval/ai-visibility/ecommerce-technical-seo-audit/run_eval.py
+      - name: Run commerce-protocol-discovery deterministic contract eval
+        run: python3 eval/ai-visibility/commerce-protocol-discovery/run_eval.py

@@ -1,0 +1,5 @@
+{
+  "category": "should_use",
+  "description": "All four discovery probes come back negative (404s, no feed, no MCP endpoint claimed) - a valid discovery report that plainly states nothing was found, not a scored failure.",
+  "evidenced_sections": ["ucp business profile", "a2a agent card", "catalog feeds"]
+}

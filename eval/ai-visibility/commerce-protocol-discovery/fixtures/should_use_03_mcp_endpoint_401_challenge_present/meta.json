@@ -1,0 +1,5 @@
+{
+  "category": "should_use",
+  "description": "A claimed remote MCP endpoint returns a 401 with a WWW-Authenticate resource_metadata challenge - the correct probe target per checks.md, not a guessed site-root manifest. UCP/A2A absent, no catalog feed found.",
+  "evidenced_sections": ["mcp", "ucp business profile", "a2a agent card", "catalog feeds"]
+}

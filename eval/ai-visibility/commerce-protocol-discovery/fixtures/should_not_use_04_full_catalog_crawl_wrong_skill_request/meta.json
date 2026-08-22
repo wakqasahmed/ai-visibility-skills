@@ -1,0 +1,5 @@
+{
+  "category": "should_not_use",
+  "description": "Request is thin category pages/faceted-nav duplicates/orphan pages - that's ecommerce-technical-seo-audit's job, not this skill's four discovery probes.",
+  "decline_signal_patterns": ["ecommerce-technical-seo-audit", "not this skill'?s job|different skill|out of scope", "thin (category )?page|faceted.?nav|orphan page"]
+}

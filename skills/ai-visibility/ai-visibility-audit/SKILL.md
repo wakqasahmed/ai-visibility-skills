@@ -37,6 +37,7 @@ This is the orchestrator: it evaluates the 6 pillars, ranks blockers by evidence
 - Image alt text, image sitemap coverage & fetchability → `image-audit`
 - Drafting `llms.txt` & agent markdown → `llms-txt-generator`
 - For ecommerce sites: catalog spot-checks & faceted duplicate URLs → `ecommerce-technical-seo-audit`
+- For ecommerce/marketplace sites: agentic-commerce/checkout-protocol discovery (UCP, A2A, MCP, catalog feeds) → `commerce-protocol-discovery`
 - Generating remediation roadmap & developer tickets → `ai-search-remediation-plan`
 
 ## Output Format

@@ -1,0 +1,5 @@
+{
+  "category": "should_use",
+  "description": "products.json feed found but its sampled item's price ($89.00) does not match the live product page ($109.00) - a stale-feed observation, reported as a finding not a scored fail.",
+  "evidenced_sections": ["catalog feeds", "ucp business profile", "a2a agent card"]
+}

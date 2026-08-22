@@ -1,0 +1,5 @@
+{
+  "category": "should_not_use",
+  "description": "User asks for trust-gate and checkout/order-lifecycle analysis - entirely out of scope for a discovery-only skill; that analysis belongs to a separate, deeper audit capability.",
+  "decline_signal_patterns": ["out of scope|not (in scope|something this skill)", "trust gate|checkout.{0,15}lifecycle|order lifecycle", "separate.{0,40}audit capability"]
+}

@@ -1,0 +1,5 @@
+{
+  "category": "should_use",
+  "description": "Ecommerce site classified via Product/Offer JSON-LD and add-to-cart button. UCP profile returns 200, A2A Agent Card returns 404, no MCP endpoint claimed, products.json feed returns 200.",
+  "evidenced_sections": ["ucp business profile", "a2a agent card", "catalog feeds"]
+}

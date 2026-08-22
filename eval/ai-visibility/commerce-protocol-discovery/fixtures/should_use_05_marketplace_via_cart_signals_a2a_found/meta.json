@@ -1,0 +1,5 @@
+{
+  "category": "should_use",
+  "description": "No Product/Offer JSON-LD present, but cart/checkout paths and add-to-cart text classify the site as ecommerce/marketplace via the fallback observable signals. A2A Agent Card found (200), UCP and catalog feed absent.",
+  "evidenced_sections": ["a2a agent card", "ucp business profile", "catalog feeds"]
+}
