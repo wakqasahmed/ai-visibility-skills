@@ -45,13 +45,14 @@ These probes check for early-stage agent discovery protocols (surfaced by `isita
 ```bash
 # DNS-AID (DNS for AI Discovery) [DNS-AID-01]
 DOMAIN=$(echo "$SITE" | sed -e 's|^https\?://||' -e 's|/.*||')
-nslookup -type=TXT "_aid.$DOMAIN"
+dig HTTPS "$DOMAIN" +short
+dig SVCB "$DOMAIN" +short
 
 # Content Signals in robots.txt [CONTENT-SIGNALS-01]
 curl -s "$SITE/robots.txt" | grep -i "content-signal"
 
 # Web Bot Auth / Signatures [WEB-BOT-AUTH-01]
-curl -s -o /dev/null -w "%{http_code}\n" "$SITE/.well-known/bot-auth"
+curl -s -o /dev/null -w "%{http_code}\n" "$SITE/.well-known/http-message-signatures-directory"
 
 # Markdown Content Negotiation [MARKDOWN-NEGOTIATION-01]
 curl -s -i -H "Accept: text/markdown" "$URL" | grep -i "content-type"

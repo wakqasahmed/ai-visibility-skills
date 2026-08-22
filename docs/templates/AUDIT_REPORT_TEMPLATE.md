@@ -121,9 +121,9 @@
 
 - **Markdown Content Negotiation (`Accept: text/markdown`):** `{{MD_NEGOTIATION_STATUS}}` — {{MD_NEGOTIATION_NOTE}}
 - **Content Signals in `robots.txt`:** `{{CONTENT_SIGNALS_STATUS}}` — {{CONTENT_SIGNALS_NOTE}}
-- **Web Bot Auth (`/.well-known/bot-auth`):** `{{BOT_AUTH_STATUS}}` — {{BOT_AUTH_NOTE}}
+- **Web Bot Auth (`/.well-known/http-message-signatures-directory`):** `{{BOT_AUTH_STATUS}}` — {{BOT_AUTH_NOTE}}
 - **Agential Resource Discovery (`/auth.md`, `/.well-known/ard.json`):** `{{ARD_STATUS}}` — {{ARD_NOTE}}
-- **DNS-AID (`_aid.{{DOMAIN}}`):** `{{DNS_AID_STATUS}}` — {{DNS_AID_NOTE}}
+- **DNS-AID (`{{DOMAIN}}` HTTPS/SVCB records):** `{{DNS_AID_STATUS}}` — {{DNS_AID_NOTE}}
 
 ---
 
