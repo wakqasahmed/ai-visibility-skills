@@ -19,6 +19,26 @@ Audit deliverables follow the V3 template defined in [`docs/templates/AUDIT_REPO
 | **5. Trust & Authority** | **15%** | Clear company identity, team/author attribution, contact transparency, case studies with quantified results, freshness. |
 | **6. Agent/Action Readiness** | **5%** | Conversion paths, forms, documentation, machine-readable action endpoints, and optional agent guidance files. |
 
+### Scores Are Rubric-Derived, Not Free-Form Estimates
+
+Every pillar score is computed from the deterministic deduction table in
+[`docs/SCORING_RUBRIC.md`](SCORING_RUBRIC.md), not estimated. The rubric maps each pillar to
+the specific, real checks the specialist skills already run (e.g. "robots.txt blocks GPTBot
+with `Disallow: /`" or "no `Product`/`Offer` schema on the primary offering"), assigns each
+check a reasoned point deduction, and states explicitly how to handle a check — or an entire
+pillar — that doesn't apply to a given site type (excluded and the remaining weights
+reproportioned, never defaulted to full or zero marks). Two people applying the rubric to the
+same finding set must land on the same score; if they don't, treat that as a rubric bug to
+fix, not an acceptable range. The V3 template's Section 4 "Score Derivation" subsection under
+each pillar is where that mechanical trace — check ID → observed result → points deducted —
+is shown, so a reader can verify the number instead of taking it on faith.
+
+Per [`docs/RUNNING_AN_AUDIT.md`](RUNNING_AN_AUDIT.md), this score is a readiness assessment
+of audited signals, not a promise of AI platform rankings, citations, or traffic — that
+caveat lives in the report's executive dashboard note and doesn't change because the score is
+now traceable rather than free-form; traceability makes the score reproducible, not a
+guarantee of outcomes.
+
 ---
 
 ## 2. Four-Tier Evidence Hierarchy
@@ -54,6 +74,7 @@ The V3 report is architected for both executive decision-makers and technical en
 | Template | File | Description |
 |---|---|---|
 | **V3 (Current / Recommended)** | [`docs/templates/AUDIT_REPORT_TEMPLATE_V3.md`](templates/AUDIT_REPORT_TEMPLATE_V3.md) | 6-pillar scoring, 4 evidence tiers, executive dashboard, single-finding cards, and technical tickets. |
+| **Scoring Rubric (required companion to V3)** | [`docs/SCORING_RUBRIC.md`](SCORING_RUBRIC.md) | The deduction table every V3 pillar score is computed from — check-by-check point values, rationale, and N/A/reweighting rules. Apply this alongside the V3 template; the template's `{{*_SCORE}}` placeholders should never be filled in without it. |
 | **V2** | [`docs/templates/AUDIT_REPORT_TEMPLATE_V2.md`](templates/AUDIT_REPORT_TEMPLATE_V2.md) | 8-dimension scorecard with itemized check tables and section status indicators. |
 | **V1** | [`docs/templates/AUDIT_REPORT_TEMPLATE.md`](templates/AUDIT_REPORT_TEMPLATE.md) | Flat 8-dimension checklist and quick wins. |
 

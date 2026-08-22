@@ -11,6 +11,8 @@
 
 > **Readiness Statement:** {{EXECUTIVE_SUMMARY_TEXT}}  
 > *Note: This score reflects audited discoverability, machine-readability, answerability, and trust signals. It represents readiness for search engines and AI systems, not a commercial guarantee of ranking, citations, or traffic.*
+>
+> **Every point on this page is traceable.** Each pillar score below is derived mechanically from the deduction table in [`docs/SCORING_RUBRIC.md`](../SCORING_RUBRIC.md) — not a free-form estimate. Section 4's "Score Derivation" subsection under each pillar lists the exact rubric check IDs and point deductions that produced that pillar's number. If a check does not apply to this site type (e.g. no ecommerce checks on a docs site), it is marked N/A there rather than silently scored as a pass or a fail — see the rubric's "Handling inapplicable checks and pillars" section for how N/A pillars are excluded and the remaining weights are reproportioned.
 
 ### Six-Pillar AI Visibility Scorecard
 
@@ -94,6 +96,17 @@
 
 > **Pillar Score:** `{{DISCOVERY_SCORE}}/100` — `{{DISCOVERY_BADGE}}`
 
+**Score Derivation** *(rubric: [`docs/SCORING_RUBRIC.md`](../SCORING_RUBRIC.md) § Pillar 1)*
+
+| Rubric Check | Result | Deduction |
+|---|---|---|
+| {{DISCOVERY_RUBRIC_CHECK_1}} | {{DISCOVERY_RUBRIC_RESULT_1}} | {{DISCOVERY_RUBRIC_DEDUCTION_1}} |
+| {{DISCOVERY_RUBRIC_CHECK_2}} | {{DISCOVERY_RUBRIC_RESULT_2}} | {{DISCOVERY_RUBRIC_DEDUCTION_2}} |
+| {{DISCOVERY_RUBRIC_CHECK_N}} | {{DISCOVERY_RUBRIC_RESULT_N}} | {{DISCOVERY_RUBRIC_DEDUCTION_N}} |
+| **Baseline 100, total deductions** | | **{{DISCOVERY_TOTAL_DEDUCTION}} → {{DISCOVERY_SCORE}}/100** |
+
+*List every applicable check from the rubric's Pillar 1 table, including passing checks with a `0` deduction — not only the ones that lost points. Mark N/A checks explicitly (`N/A — <reason>`) rather than omitting the row.*
+
 #### Finding 1.1: {{FINDING_1_TITLE}}
 - **Severity:** `{{FINDING_1_SEVERITY}}` *(CRITICAL / HIGH / MEDIUM / LOW)*
 - **Evidence Tier:** `{{FINDING_1_TIER}}` *(Critical Foundation / Important Improvement / Supporting Signal)*
@@ -118,6 +131,14 @@
 
 > **Pillar Score:** `{{TECH_ACCESS_SCORE}}/100` — `{{TECH_ACCESS_BADGE}}`
 
+**Score Derivation** *(rubric: [`docs/SCORING_RUBRIC.md`](../SCORING_RUBRIC.md) § Pillar 2)*
+
+| Rubric Check | Result | Deduction |
+|---|---|---|
+| {{TECH_ACCESS_RUBRIC_CHECK_1}} | {{TECH_ACCESS_RUBRIC_RESULT_1}} | {{TECH_ACCESS_RUBRIC_DEDUCTION_1}} |
+| {{TECH_ACCESS_RUBRIC_CHECK_N}} | {{TECH_ACCESS_RUBRIC_RESULT_N}} | {{TECH_ACCESS_RUBRIC_DEDUCTION_N}} |
+| **Baseline 100, total deductions** | | **{{TECH_ACCESS_TOTAL_DEDUCTION}} → {{TECH_ACCESS_SCORE}}/100** |
+
 #### Finding 2.1: {{FINDING_2_TITLE}}
 - **Severity:** `{{FINDING_2_SEVERITY}}`
 - **Evidence Tier:** `{{FINDING_2_TIER}}`
@@ -140,6 +161,14 @@
 ### Pillar 3: Machine Understanding — Can Systems Understand What You Do? (Weight: 20%)
 
 > **Pillar Score:** `{{UNDERSTANDING_SCORE}}/100` — `{{UNDERSTANDING_BADGE}}`
+
+**Score Derivation** *(rubric: [`docs/SCORING_RUBRIC.md`](../SCORING_RUBRIC.md) § Pillar 3)*
+
+| Rubric Check | Result | Deduction |
+|---|---|---|
+| {{UNDERSTANDING_RUBRIC_CHECK_1}} | {{UNDERSTANDING_RUBRIC_RESULT_1}} | {{UNDERSTANDING_RUBRIC_DEDUCTION_1}} |
+| {{UNDERSTANDING_RUBRIC_CHECK_N}} | {{UNDERSTANDING_RUBRIC_RESULT_N}} | {{UNDERSTANDING_RUBRIC_DEDUCTION_N}} |
+| **Baseline 100, total deductions** | | **{{UNDERSTANDING_TOTAL_DEDUCTION}} → {{UNDERSTANDING_SCORE}}/100** |
 
 #### Finding 3.1: {{FINDING_3_TITLE}}
 - **Severity:** `{{FINDING_3_SEVERITY}}`
@@ -164,6 +193,14 @@
 
 > **Pillar Score:** `{{ANSWER_SCORE}}/100` — `{{ANSWER_BADGE}}`
 
+**Score Derivation** *(rubric: [`docs/SCORING_RUBRIC.md`](../SCORING_RUBRIC.md) § Pillar 4)*
+
+| Rubric Check | Result | Deduction |
+|---|---|---|
+| {{ANSWER_RUBRIC_CHECK_1}} | {{ANSWER_RUBRIC_RESULT_1}} | {{ANSWER_RUBRIC_DEDUCTION_1}} |
+| {{ANSWER_RUBRIC_CHECK_N}} | {{ANSWER_RUBRIC_RESULT_N}} | {{ANSWER_RUBRIC_DEDUCTION_N}} |
+| **Baseline 100, total deductions** | | **{{ANSWER_TOTAL_DEDUCTION}} → {{ANSWER_SCORE}}/100** |
+
 #### Finding 4.1: {{FINDING_4_TITLE}}
 - **Severity:** `{{FINDING_4_SEVERITY}}`
 - **Evidence Tier:** `{{FINDING_4_TIER}}`
@@ -187,6 +224,14 @@
 
 > **Pillar Score:** `{{TRUST_SCORE}}/100` — `{{TRUST_BADGE}}`
 
+**Score Derivation** *(rubric: [`docs/SCORING_RUBRIC.md`](../SCORING_RUBRIC.md) § Pillar 5)*
+
+| Rubric Check | Result | Deduction |
+|---|---|---|
+| {{TRUST_RUBRIC_CHECK_1}} | {{TRUST_RUBRIC_RESULT_1}} | {{TRUST_RUBRIC_DEDUCTION_1}} |
+| {{TRUST_RUBRIC_CHECK_N}} | {{TRUST_RUBRIC_RESULT_N}} | {{TRUST_RUBRIC_DEDUCTION_N}} |
+| **Baseline 100, total deductions** | | **{{TRUST_TOTAL_DEDUCTION}} → {{TRUST_SCORE}}/100** |
+
 #### Finding 5.1: {{FINDING_5_TITLE}}
 - **Severity:** `{{FINDING_5_SEVERITY}}`
 - **Evidence Tier:** `{{FINDING_5_TIER}}`
@@ -209,6 +254,16 @@
 ### Pillar 6: Agent/Action Readiness — Can Agents Interact With You? (Weight: 5%)
 
 > **Pillar Score:** `{{AGENT_SCORE}}/100` — `{{AGENT_BADGE}}`
+
+**Score Derivation** *(rubric: [`docs/SCORING_RUBRIC.md`](../SCORING_RUBRIC.md) § Pillar 6)*
+
+| Rubric Check | Result | Deduction |
+|---|---|---|
+| {{AGENT_RUBRIC_CHECK_1}} | {{AGENT_RUBRIC_RESULT_1}} | {{AGENT_RUBRIC_DEDUCTION_1}} |
+| {{AGENT_RUBRIC_CHECK_N}} | {{AGENT_RUBRIC_RESULT_N}} | {{AGENT_RUBRIC_DEDUCTION_N}} |
+| **Baseline 100, total deductions** | | **{{AGENT_TOTAL_DEDUCTION}} → {{AGENT_SCORE}}/100** |
+
+*If this pillar is wholly N/A for the site type (e.g. no commerce or conversion actions exist to check), write `N/A — pillar excluded, remaining weights reproportioned per docs/SCORING_RUBRIC.md` here instead of a derivation table, and show the reproportioned weights used in the Overall Readiness Score calculation.*
 
 #### Finding 6.1: {{FINDING_6_TITLE}}
 - **Severity:** `{{FINDING_6_SEVERITY}}`
