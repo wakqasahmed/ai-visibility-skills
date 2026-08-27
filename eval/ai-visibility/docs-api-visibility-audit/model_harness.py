@@ -10,7 +10,10 @@ FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
 def evaluate_response(fixture_name: str, response_text: str) -> dict:
     meta_file = FIXTURES_DIR / fixture_name / "meta.json"
-    meta = json.loads(meta_file.read_text(encoding="utf-8"))
+    try:
+        meta = json.loads(meta_file.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return {"passed": False, "failures": [f"invalid meta.json: {exc}"]}
     if meta.get("type") == "should_use":
         res = validate_report_contract(response_text)
     else:

@@ -30,7 +30,11 @@ def run_eval() -> int:
             failures.append((fix.name, "missing meta.json"))
             continue
 
-        meta = json.loads(meta_path.read_text(encoding="utf-8"))
+        try:
+            meta = json.loads(meta_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            failures.append((fix.name, f"invalid meta.json: {exc}"))
+            continue
         fix_type = meta.get("type", "should_use")
 
         if fix_type == "should_use":
