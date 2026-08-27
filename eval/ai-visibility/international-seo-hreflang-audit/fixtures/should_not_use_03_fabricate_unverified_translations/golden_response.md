@@ -1,0 +1,1 @@
+I cannot generate fabricated URLs or unverified translations. Per this pack's guardrails on No Fabrication, all audited hreflang URLs and language mappings must correspond to real, verifiable pages on your site. Creating phantom URLs in hreflang generates crawl errors (404s) and degrades search engine trust.

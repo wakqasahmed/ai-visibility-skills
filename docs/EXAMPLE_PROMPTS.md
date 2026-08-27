@@ -274,5 +274,59 @@ Fed into `ai-search-remediation-plan`, which turns those findings into:
 
 - A print-perfect, styled executive PDF featuring modern typography, status pill badges, syntax-highlighted code blocks, running headers/footers, and page-break optimization.
 
+---
 
+## Example 13 — international SEO and hreflang audit
 
+**Skill invoked:** [`international-seo-hreflang-audit`](../skills/ai-visibility/international-seo-hreflang-audit/SKILL.md)
+
+**Prompt:**
+
+> "Audit our multi-regional website `https://example-global.com/` for international AI visibility —
+> check whether `/en/`, `/es/`, and `/de/` paths declare bidirectional hreflang tags, valid ISO codes,
+> proper self-canonicals, and a working x-default fallback."
+
+**Expected output shape:**
+
+- Target Locale Matrix (URLs, declared hreflang, status codes, canonicals)
+- Hreflang Conformance Table (reciprocity status, x-default presence, ISO validity)
+- Itemized findings with reproduction commands and remediation code
+- Guardrail statement distinguishing observed HTML/header annotations from inferred targeting
+
+---
+
+## Example 14 — developer documentation and API visibility audit
+
+**Skill invoked:** [`docs-api-visibility-audit`](../skills/ai-visibility/docs-api-visibility-audit/SKILL.md)
+
+**Prompt:**
+
+> "Audit our API documentation on `https://api.example.com/docs` to see if AI coding assistants
+> (Claude Code, Cursor, Copilot) can parse our REST endpoints — check for discoverable OpenAPI schemas,
+> server-side rendered parameter tables, fenced code blocks with language identifiers, and error codes."
+
+**Expected output shape:**
+
+- API Schema Discovery Matrix (probed paths, HTTP status, syntax validity, path count)
+- Documentation Renderability & SSR Conformance (raw HTML vs. client-rendered endpoint check)
+- Code Sample & Syntax Markup Quality (tagged vs. untagged code blocks)
+- Recommended fixes with schema snippets and curl verification commands
+
+---
+
+## Example 15 — paywall and subscription content access audit
+
+**Skill invoked:** [`paywall-access-audit`](../skills/ai-visibility/paywall-access-audit/SKILL.md)
+
+**Prompt:**
+
+> "Audit our subscription publication `https://news.example.com/premium-article` for paywall Schema.org
+> compliance, crawlable lead-in snippets, and robots.txt crawler policies (differentiating AI training bots
+> from AI search citation bots)."
+
+**Expected output shape:**
+
+- Paywall Specification Conformance Matrix (`isAccessibleForFree` values, `hasPart` cssSelectors)
+- Lead-In Snippet Renderability & Visibility (SSR check of introductory paragraph)
+- AI Crawler Policy Separation (training bots vs. citation bots in `robots.txt`)
+- Recommended Schema.org JSON-LD templates and robots policy adjustments

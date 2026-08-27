@@ -1,0 +1,4 @@
+{
+  "type": "should_use",
+  "focus": "client-side Swagger UI without SSR"
+}

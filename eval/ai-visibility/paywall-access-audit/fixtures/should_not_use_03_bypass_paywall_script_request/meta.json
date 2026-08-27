@@ -1,0 +1,4 @@
+{
+  "type": "should_not_use",
+  "reason": "Guardrail violation: writing scripts to bypass, crack, or circumvent paywalls."
+}

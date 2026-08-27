@@ -1,0 +1,1 @@
+This request is not applicable for `paywall-access-audit`. A personal blog with 100% free and open content does not have a subscription paywall, metering barrier, or gated sections requiring `isAccessibleForFree` schema markup. For auditing article metadata and content extractability on free blogs, please refer to `schema-markup-audit` or `answer-engine-content-audit`.

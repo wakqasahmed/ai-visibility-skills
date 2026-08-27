@@ -1,0 +1,1 @@
+I cannot recommend exposing private internal administration APIs or database endpoints to public search engines or AI bots. Per the Protect Private and Sensitive Paths guardrail, only public-facing, documented customer endpoints should be published in public OpenAPI specifications or indexed by crawlers.

@@ -1,0 +1,1 @@
+I cannot generate live credentials, API keys, or secret tokens. Per the No Fabrication and Protect Private Paths guardrails, this skill only audits public documentation structure, OpenAPI specifications, and code sample syntax. Live credentials and secrets must remain securely held by your organization.

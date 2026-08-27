@@ -9,7 +9,13 @@ Assess a public website for AI-mediated discovery, parsing, semantic understandi
 
 ## Workflow
 
-1. **Identify the site type**: SaaS, healthcare tech, ecommerce, marketplace, docs, blog, local business, portfolio, or enterprise.
+1. **Identify the site type & capability gating**:
+   - Classify business model: SaaS, ecommerce, publisher/media, developer platform, healthcare, blog, local business, or enterprise.
+   - **Capability Gating Matrix**:
+     - *Ecommerce*: Catalog, product listings, cart, checkout, or facet filters detected → triggers `ecommerce-technical-seo-audit` & `commerce-protocol-discovery`. (If absent, catalog/facet checks are `N/A` with 0 pt deduction).
+     - *Multilingual / Multi-Region*: Language subdirectories (`/es/`, `/de/`), localized subdomains, language selector menus, or `hreflang` tags detected → triggers `international-seo-hreflang-audit`. (If absent, hreflang checks are `N/A` with 0 pt deduction).
+     - *Developer / API Platform*: Developer portal (`/docs`, `/api`, `/developers`), SDK reference guides, or exposed API endpoints detected → triggers `docs-api-visibility-audit`. (If absent, API schema checks are `N/A` with 0 pt deduction).
+     - *Paywalled / Subscription*: Metered paywall, subscription barrier, premium membership gating, or `isAccessibleForFree` detected → triggers `paywall-access-audit`. (If absent, paywall checks are `N/A` with 0 pt deduction).
 2. **Pillar 1: Discovery (Weight: 20%)**: Audit `robots.txt`, XML sitemap availability/declaration, canonicals, redirect status, indexability, and crawler reachability.
 3. **Pillar 2: Technical Accessibility (Weight: 20%)**: Audit server-delivered HTML payload, JavaScript dependency, semantic HTML structure, heading hierarchy, and performance/Core Web Vitals.
 4. **Pillar 3: Machine Understanding (Weight: 20%)**: Audit Schema.org JSON-LD structured entities (`Organization`, `MedicalBusiness`, `Service`, `Product`), entity graph relationships, and `sameAs` authority links.
@@ -39,6 +45,9 @@ This skill serves as the central orchestrator: it evaluates the 6 pillars, ranks
 | **Content & Answer Extraction** | `answer-engine-content-audit` | Tests direct Q&A extractability, heading structure, and content specificity. |
 | **Citation & Brand Authority** | `citation-readiness-audit` | Checks entity disambiguation, author credentials, and verifiable client proof. |
 | **Visual Asset Accessibility** | `image-audit` | Checks image alt text, server renderability, and image sitemap coverage. |
+| **International & Multi-Region** | `international-seo-hreflang-audit` | Audits bidirectional hreflang tags, x-default fallbacks, language codes, and canonical relationships across locales. |
+| **Developer Docs & API** | `docs-api-visibility-audit` | Audits OpenAPI spec discovery, server-rendered reference endpoints, and code sample markup. |
+| **Paywall & Subscription** | `paywall-access-audit` | Audits Schema.org paywall markup, lead-in snippet SSR, and AI training vs. citation crawler policies. |
 | **Agent Context Manifest** | `llms-txt-generator` | Generates and validates `/llms.txt`; [EXPERIMENTAL] markdown content-negotiation and ARD manifests. |
 | **Ecommerce Catalog Health** | `ecommerce-technical-seo-audit` | Audits thin category pages, faceted-navigation duplicate URLs, orphan product URLs, and discontinued-product handling (ecommerce only). |
 | **Commerce Agent Discovery** | `commerce-protocol-discovery` | Discovers UCP profiles, A2A cards, MCP endpoints, and feeds (ecommerce/marketplace only; discovery, not remediation). |

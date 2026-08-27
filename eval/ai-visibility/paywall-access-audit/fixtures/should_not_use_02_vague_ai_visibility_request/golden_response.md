@@ -1,0 +1,1 @@
+General site-wide AI visibility evaluation is out of scope for the specialist `paywall-access-audit` skill. Please delegate to `ai-visibility-audit`, which orchestrates the complete 6-pillar assessment across Discovery, Technical Access, Machine Understanding, Answer Readiness, Trust, and Action Readiness.
