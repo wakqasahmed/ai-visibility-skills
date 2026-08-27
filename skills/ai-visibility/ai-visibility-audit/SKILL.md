@@ -22,8 +22,8 @@ Assess a public website for AI-mediated discovery, parsing, semantic understandi
    - *Tier 3 — Supporting Signal*: General hygiene and secondary signals.
    - *Tier 4 — Experimental Protocol*: Emerging draft conventions (`llms.txt`, ARD, DNS-AID, Content Signals) — *never reduces the core 100-point audit score*.
 9. **Separate Technical Hygiene**: Move transport security headers (HSTS, X-Content-Type-Options, clickjacking) into a dedicated non-scoring technical hygiene section.
-10. **Score Each Pillar Mechanically**: Apply [`docs/SCORING_RUBRIC.md`](../../../docs/SCORING_RUBRIC.md) — never write a pillar score as a free-form estimate. Each pillar starts at 100 and loses only the specific, rationale-backed deductions the rubric's table lists for checks actually triggered by this audit's findings. Mark any check that doesn't apply to this site type as N/A rather than scoring it a pass or a fail; if every check in a pillar is N/A, exclude that pillar and reproportion the remaining weights per the rubric's "Handling inapplicable checks and pillars" section. Show the check-by-check derivation in the report so the score is traceable, not asserted.
-11. **Produce Consolidated Deliverable**: Generate the executive 30-second dashboard, understand matrix, prioritized action plan (P0-P3), and technical appendix using `docs/templates/AUDIT_REPORT_TEMPLATE_V3.md`.
+10. **Score Each Pillar Mechanically**: Apply [`references/scoring_rubric.md`](references/scoring_rubric.md) — never write a pillar score as a free-form estimate. Each pillar starts at 100 and loses only the specific, rationale-backed deductions the rubric's table lists for checks actually triggered by this audit's findings. Mark any check that doesn't apply to this site type as N/A rather than scoring it a pass or a fail; if every check in a pillar is N/A, exclude that pillar and reproportion the remaining weights per the rubric's "Handling inapplicable checks and pillars" section. Show the check-by-check derivation in the report so the score is traceable, not asserted.
+11. **Produce Consolidated Deliverable**: Generate the executive 30-second dashboard, understand matrix, prioritized action plan (P0-P3), and technical appendix using [`references/audit_report_template_v3.md`](references/audit_report_template_v3.md).
 
 ## Delegation
 
@@ -42,7 +42,7 @@ This is the orchestrator: it evaluates the 6 pillars, ranks blockers by evidence
 
 ## Output Format
 
-Reports follow the V3 template in [`docs/templates/AUDIT_REPORT_TEMPLATE_V3.md`](../../../docs/templates/AUDIT_REPORT_TEMPLATE_V3.md), scored per [`docs/SCORING_RUBRIC.md`](../../../docs/SCORING_RUBRIC.md):
+Reports follow the V3 template in [`references/audit_report_template_v3.md`](references/audit_report_template_v3.md), scored per [`references/scoring_rubric.md`](references/scoring_rubric.md):
 - **Executive Dashboard**: 30-second summary with overall score (0-100), 6-pillar scorecards, strengths, limitations, and top 3 priority actions.
 - **What AI Can Understand Today**: `YES` / `PARTIAL` / `NO` diagnostic matrix and Business-Topic Extractability Map.
 - **Prioritized Action Plan**: P0 (Immediate), P1 (Next), P2 (Improve), P3 (Optional/Experimental) backlog.
