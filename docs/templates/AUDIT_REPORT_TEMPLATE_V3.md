@@ -309,6 +309,8 @@
 | Emerging Protocol Probe | Status | Observed Finding & Details |
 |---|:---:|---|
 | **Curated Context File (`/llms.txt`)** | `{{LLMSTXT_STATUS}}` | {{LLMSTXT_NOTE}} |
+| **Developer Context Manifest (`/docs/llms.txt`)** | `{{DOCS_LLMSTXT_STATUS}}` | {{DOCS_LLMSTXT_NOTE}} |
+| **Model Context Protocol Server (`/.well-known/mcp`)** | `{{MCP_STATUS}}` | {{MCP_NOTE}} |
 | **Markdown Content Negotiation (`Accept: text/markdown`)** | `{{MD_STATUS}}` | {{MD_NOTE}} |
 | **Content Signals in `robots.txt` (`Content-Signal:`)** | `{{CONTENT_SIGNAL_STATUS}}` | {{CONTENT_SIGNAL_NOTE}} |
 | **Web Bot Auth Cryptographic Verification (`/.well-known/http-message-signatures-directory`)** | `{{BOT_AUTH_STATUS}}` | {{BOT_AUTH_NOTE}} |

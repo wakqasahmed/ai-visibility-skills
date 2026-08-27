@@ -180,6 +180,13 @@ rubric's own discipline (see "Handling inapplicable checks and pillars" above).
   whose entire design purpose is to *not* be scored. Its findings are reported as-is (protocol
   probed, endpoint, observed status) with no pillar attribution and no contribution to the
   Overall Readiness Score.
+- **`docs-api-visibility-audit` (Tier 4 Developer Manifests & Agent Endpoints)** — While OpenAPI 3.x
+  specification hosting (`/openapi.json`, check 3.7) is scored under Machine Understanding for developer
+  platforms, the discovery of `/docs/llms.txt`, `llms-full.txt`, and Model Context Protocol (MCP)
+  tool endpoints is strictly classified as a Tier 4 Experimental Protocol. In accordance with the
+  mandatory Tier 4 rule, absence of `/docs/llms.txt` or MCP manifests is reported in Section 6
+  (`[EXPERIMENTAL] Emerging Agent Protocols`) as a forward-looking discovery signal and never
+  reduces the core 100-point audit score.
 
 ## Worked example
 

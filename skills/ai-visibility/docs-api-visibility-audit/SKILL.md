@@ -24,8 +24,9 @@ Audit technical documentation, API reference portals, OpenAPI/Swagger specificat
 4. **Audit Authentication, Error Codes, and Rate Limit Transparency**:
    - Verify that authentication schemes (Bearer tokens, API keys, OAuth endpoints) and HTTP error code tables (400, 401, 403, 429, 500) are documented in structured HTML.
 
-5. **Inspect Developer Agent Pointers (`/docs/llms.txt`)**:
-   - Check if the documentation root exposes a curated developer manifest (e.g., `/docs/llms.txt` or `llms-full.txt`) pointing directly to markdown guides and spec downloads.
+5. **[EXPERIMENTAL / TIER 4] Inspect Developer Agent Manifests (`/docs/llms.txt`)**:
+   - Check if the documentation root exposes a curated developer manifest (e.g., `/docs/llms.txt`, `llms-full.txt`, or Model Context Protocol endpoints) pointing directly to markdown guides and spec downloads.
+   - Note: This is an emerging draft protocol (Tier 4) and is strictly non-scoring.
 
 6. **Classify Findings & Deliver Remediation**:
    - Provide concrete fixes: schema hosting, SSR static generation, language fencing, and developer ticket blueprints.
@@ -53,3 +54,4 @@ See [Shared Guardrails](references/guardrails.md) for cross-cutting rules on out
 
 - Distinguish observed HTML/schema endpoints (`High [Measured]`) from inferred API capabilities.
 - Do not attempt to test authenticated private endpoints with live credentials (read-only public documentation inspection only).
+- **Tier 4 Experimental Protocol Isolation**: Probing `/docs/llms.txt` or emerging developer agent manifests is an experimental discovery signal. Absence of `/docs/llms.txt` does not block established search crawlers or reduce the core 100-point audit score.

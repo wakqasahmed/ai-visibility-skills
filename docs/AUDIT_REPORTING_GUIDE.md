@@ -48,7 +48,7 @@ To prevent low-impact signals or emerging draft conventions from distorting the 
 1. **Tier 1 — Critical Foundation**: Blockers that directly prevent crawling, indexing, or core entity disambiguation (e.g. `robots.txt` disallows, missing sitemap, missing Schema.org `Organization`).
 2. **Tier 2 — Important Improvement**: Meaningful improvements to semantic understanding, answer extraction, or trust (e.g. missing `Service` schema, indirect Q&A copy, thin case studies).
 3. **Tier 3 — Supporting Signal**: General hygiene and quality indicators that do not independently decide AI ranking (e.g. image alt text ratios, non-critical accessibility tweaks).
-4. **Tier 4 — Experimental Protocol**: Emerging conventions (`llms.txt`, Markdown content negotiation, Content Signals, ARD, DNS-AID) with no current ranking guarantee. **Mandatory Rule:** Tier 4 items *never* reduce the core 100-point audit score.
+4. **Tier 4 — Experimental Protocol**: Emerging conventions (`llms.txt`, `/docs/llms.txt`, MCP discovery, Markdown content negotiation, Content Signals, ARD, DNS-AID) with no current ranking guarantee. **Mandatory Rule:** Tier 4 items *never* reduce the core 100-point audit score.
 
 ---
 
