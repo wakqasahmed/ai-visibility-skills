@@ -26,7 +26,7 @@ GUARANTEE_WORD_RE = re.compile(
 )
 NEGATION_BEFORE_RE = re.compile(
     r"\b(no|not|cannot|can't|won't|will not|never|doesn't|does not|isn't|"
-    r"n't|without any)\b[^.]{0,40}$",
+    r"n't|without any)\b[^.]{0,40}",
     re.IGNORECASE,
 )
 
@@ -81,7 +81,7 @@ def validate_report_contract(text: str) -> ValidationResult:
     return result
 
 
-def validate_decline_contract(text: str, expected_topic: str | None = None) -> ValidationResult:
+def validate_decline_contract(text: str) -> ValidationResult:
     result = ValidationResult(passed=True)
     if not text or not text.strip():
         result.add_failure("decline response is empty")
