@@ -29,20 +29,19 @@ Assess a public website for AI-mediated discovery, parsing, semantic understandi
 
 This skill serves as the central orchestrator: it evaluates the 6 pillars, ranks blockers by evidence tier and priority, and synthesizes outputs from the focused specialist skills.
 
-> [!IMPORTANT]
-> **Invocation Mechanism**: The specialist skills listed below are instruction sets (skills), not standalone agent identities. Execute them sequentially within the current agent session, or reference the skill by name in the task text when spawning a generic sub-agent. **Do NOT pass a skill name as an `agentId` to sub-agent spawning tools (such as OpenClaw's `sessions_spawn`)**, as `agentId` only accepts registered agent identities.
+**Invocation mechanism**: The specialist skills listed below are instruction sets (skills), not standalone agent identities. Run them within the current agent session, or reference the skill by name in the task text when spawning a generic sub-agent. Do NOT pass a skill name where a registered agent identity is expected (e.g. a sub-agent spawn tool's `agentId` parameter, as in OpenClaw's `sessions_spawn`) — that parameter only accepts registered agent identities, not skill names.
 
-| Diagnostic Pillar / Focus Area | Specialist Skill | Diagnostic Role & Outputs |
+| Focus Area | Specialist Skill | Diagnostic Role & Outputs |
 |---|---|---|
-| **Discovery & Reachability** | `robots-ai-crawler-audit` | Evaluates `robots.txt`, meta robots tags, UA headers, WAF blocking. |
+| **Discovery & Reachability** | `robots-ai-crawler-audit` | Evaluates `robots.txt`, meta robots tags, and header rules (access rules only). |
 | **Sitemap & Indexing** | `sitemap-discovery-audit` | Audits sitemap availability, XML structure, canonicals, and redirect chains. |
 | **Structured Data & Schema** | `schema-markup-audit` | Validates Schema.org JSON-LD depth, entity graph linkages, and `sameAs` authority. |
 | **Content & Answer Extraction** | `answer-engine-content-audit` | Tests direct Q&A extractability, heading structure, and content specificity. |
 | **Citation & Brand Authority** | `citation-readiness-audit` | Checks entity disambiguation, author credentials, and verifiable client proof. |
 | **Visual Asset Accessibility** | `image-audit` | Checks image alt text, server renderability, and image sitemap coverage. |
-| **Agent Context Manifest** | `llms-txt-generator` | Generates and validates `/llms.txt` and markdown negotiation endpoints. |
-| **Ecommerce Catalog Health** | `ecommerce-technical-seo-audit` | Audits faceted navigation, orphan product URLs, and soft 404s (ecommerce only). |
-| **Commerce Agent Discovery** | `commerce-protocol-discovery` | Discovers UCP profiles, A2A cards, MCP endpoints, and feeds (discovery only). |
+| **Agent Context Manifest** | `llms-txt-generator` | Generates and validates `/llms.txt`; [EXPERIMENTAL] markdown content-negotiation and ARD manifests. |
+| **Ecommerce Catalog Health** | `ecommerce-technical-seo-audit` | Audits thin category pages, faceted-navigation duplicate URLs, orphan product URLs, and discontinued-product handling (ecommerce only). |
+| **Commerce Agent Discovery** | `commerce-protocol-discovery` | Discovers UCP profiles, A2A cards, MCP endpoints, and feeds (ecommerce/marketplace only; discovery, not remediation). |
 | **Remediation Roadmap** | `ai-search-remediation-plan` | Translates audit findings into prioritized developer tickets with blueprints. |
 
 ## Output Format
