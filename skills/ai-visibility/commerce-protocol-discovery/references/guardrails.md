@@ -25,3 +25,14 @@ data), not assumed or invented to fill a gap.
 Do not recommend exposing, listing, or opening private, authenticated, admin, staging,
 checkout, cart, order, account, or customer-specific pages/paths to crawlers or AI agents.
 Only recommend surfacing public, non-sensitive content.
+
+## Chronological date arithmetic and delta direction
+
+When comparing dates or timestamps (such as sitemap `lastmod` tags, `article:modified_time` metadata, HTTP headers, or prior audit benchmark dates):
+
+- Explicitly compute the delta and verify its direction:
+  - If `target_date < reference_date`: the event occurred **before** the reference date (e.g. `2026-08-05` is 14 days *before* `2026-08-19`, not after).
+  - If `target_date > reference_date`: the event occurred **after** the reference date.
+  - If `target_date == reference_date`: the event occurred on the **same date** as the reference date.
+- Never invert the chronological relationship or assert that an earlier date occurred after a later date.
+- When evaluating regressions (e.g. a URL returning HTTP 500 that passed in a prior audit): if the sitemap `lastmod` is *older* than the prior audit date, do not assert the page was updated after the prior audit. State that the page is currently broken and the last recorded modification timestamp in the sitemap is from prior to the reference run.

@@ -34,6 +34,24 @@ curl -s "$SITE/sitemap.xml" | grep -c '<url>'
 curl -s "$SITE/sitemap.xml" | grep -oE '<lastmod>[^<]+</lastmod>' | sort -u | tail -20
 ```
 
+### Verify lastmod delta vs. reference audit date
+
+```bash
+# Explicitly compute chronological delta to ensure correct before/after direction
+python3 -c "
+from datetime import date
+lastmod = date.fromisoformat('2026-08-05')
+ref_date = date.fromisoformat('2026-08-19')
+delta = (lastmod - ref_date).days
+if delta < 0:
+    print(f'{abs(delta)} days before reference audit ({ref_date})')
+elif delta > 0:
+    print(f'{delta} days after reference audit ({ref_date})')
+else:
+    print('identical date')
+"
+```
+
 ## Check representative URLs for status, redirects, and indexability
 
 ```bash
