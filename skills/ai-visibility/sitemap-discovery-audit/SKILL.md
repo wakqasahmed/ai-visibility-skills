@@ -28,7 +28,16 @@ Scope: discovery paths only. Access rules (robots, headers, bot blocks) belong t
 
 "Broken or blocked URLs" covers both sitemap-listed entries and internal links discovered by crawling on-page navigation/body links — a broken-link sweep is not limited to what the sitemap happens to list.
 
+## Check commands
+
+See [`references/checks.md`](references/checks.md) for runnable commands, including
+verifying `lastmod` delta direction against the reference audit date.
+
 ## Guardrails
+
+See [Shared Guardrails](references/guardrails.md) for the cross-cutting rules on not
+claiming AI platform outcomes, not fabricating content, protecting private paths, and
+chronological date/delta-direction arithmetic when comparing `lastmod` or other timestamps.
 
 - Do not treat sitemap presence as proof of indexing.
 - Prioritize high-value public pages over exhaustive URL counts.

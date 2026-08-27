@@ -37,11 +37,13 @@ curl -s "$SITE/sitemap.xml" | grep -oE '<lastmod>[^<]+</lastmod>' | sort -u | ta
 ### Verify lastmod delta vs. reference audit date
 
 ```bash
-# Explicitly compute chronological delta to ensure correct before/after direction
-python3 -c "
+# Explicitly compute chronological delta to ensure correct before/after direction.
+# LASTMOD is a value pulled from the sitemap above; REF_DATE is this audit's run date.
+LASTMOD="$LASTMOD" REF_DATE="$REF_DATE" python3 -c "
+import os
 from datetime import date
-lastmod = date.fromisoformat('2026-08-05')
-ref_date = date.fromisoformat('2026-08-19')
+lastmod = date.fromisoformat(os.environ['LASTMOD'])
+ref_date = date.fromisoformat(os.environ['REF_DATE'])
 delta = (lastmod - ref_date).days
 if delta < 0:
     print(f'{abs(delta)} days before reference audit ({ref_date})')
