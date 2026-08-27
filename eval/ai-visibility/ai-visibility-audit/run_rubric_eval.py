@@ -61,6 +61,7 @@ RUBRIC = {
         "1.9": {"deduction": 10},
         "1.10": {"deduction": 5},
         "1.11": {"deduction": 15},
+        "1.12": {"deduction": 10},
     },
     "technical_accessibility": {
         "2.1": {"deduction": 30},
@@ -78,6 +79,8 @@ RUBRIC = {
         "3.4": {"deduction": 20},
         "3.5": {"deduction": 10},
         "3.6": {"deduction": 10},
+        "3.7": {"deduction": 15},
+        "3.8": {"deduction": 20},
     },
     "answer_readiness": {
         "4.1": {"deduction": 25},
@@ -296,6 +299,36 @@ def run_ecommerce_na_pillar() -> list:
     return failures
 
 
+def run_domain_gated_checks_scoring() -> list:
+    """Domain-specific checks (1.12 hreflang in Discovery, 3.7 OpenAPI in Machine
+    Understanding, 3.8 Paywall Schema in Machine Understanding) score correctly
+    when triggered on sites with those capabilities."""
+    failures = []
+    # 1.12 triggered on a multilingual site -> 100 - 10 = 90
+    discovery = score_pillar("discovery", {"1.12": 1})
+    if discovery.score != 90.0:
+        failures.append(f"expected 1.12 to deduct -10 (score 90), got {discovery.score}")
+
+    # 3.7 (OpenAPI, -15) + 3.8 (Paywall schema, -20) triggered -> 100 - 35 = 65
+    mu = score_pillar("machine_understanding", {"3.7": 1, "3.8": 1})
+    if mu.score != 65.0:
+        failures.append(f"expected 3.7+3.8 to deduct -35 (score 65), got {mu.score}")
+    return failures
+
+
+def run_domain_gated_na_checks() -> list:
+    """A single-language, non-developer, free open site has 1.12, 3.7, and 3.8
+    all check-level N/A — absent from `triggered`, contributing zero deduction."""
+    failures = []
+    discovery = score_pillar("discovery", {})
+    if discovery.score != 100.0:
+        failures.append(f"expected clean single-language discovery score to be 100, got {discovery.score}")
+    mu = score_pillar("machine_understanding", {})
+    if mu.score != 100.0:
+        failures.append(f"expected clean non-dev free site understanding score to be 100, got {mu.score}")
+    return failures
+
+
 def main() -> int:
     all_failures = []
     checks = [
@@ -306,6 +339,8 @@ def main() -> int:
         ("pillar score floors at 0", run_floor_at_zero),
         ("ecommerce-technical-seo-audit checks (1.9-1.11, 4.7) score correctly", run_ecommerce_checks_scoring),
         ("ecommerce checks are cleanly N/A on a non-ecommerce site", run_ecommerce_na_pillar),
+        ("domain-gated checks (1.12, 3.7, 3.8) score correctly when triggered", run_domain_gated_checks_scoring),
+        ("domain-gated checks are cleanly N/A on non-applicable sites", run_domain_gated_na_checks),
     ]
 
     for label, fn in checks:

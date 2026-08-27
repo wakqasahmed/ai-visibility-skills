@@ -9,7 +9,13 @@ Assess a public website for AI-mediated discovery, parsing, semantic understandi
 
 ## Workflow
 
-1. **Identify the site type**: SaaS, healthcare tech, ecommerce, marketplace, docs, blog, local business, portfolio, or enterprise.
+1. **Identify the site type & capability gating**:
+   - Classify business model: SaaS, ecommerce, publisher/media, developer platform, healthcare, blog, local business, or enterprise.
+   - **Capability Gating Matrix**:
+     - *Ecommerce*: Catalog, product listings, cart, checkout, or facet filters detected → triggers `ecommerce-technical-seo-audit` & `commerce-protocol-discovery`. (If absent, catalog/facet checks are `N/A` with 0 pt deduction).
+     - *Multilingual / Multi-Region*: Language subdirectories (`/es/`, `/de/`), localized subdomains, language selector menus, or `hreflang` tags detected → triggers `international-seo-hreflang-audit`. (If absent, hreflang checks are `N/A` with 0 pt deduction).
+     - *Developer / API Platform*: Developer portal (`/docs`, `/api`, `/developers`), SDK reference guides, or exposed API endpoints detected → triggers `docs-api-visibility-audit`. (If absent, API schema checks are `N/A` with 0 pt deduction).
+     - *Paywalled / Subscription Media*: Metered article counters, paywall modals, subscriber-only gates, or premium tiers detected → triggers `paywall-access-audit`. (If absent, paywall checks are `N/A` with 0 pt deduction).
 2. **Pillar 1: Discovery (Weight: 20%)**: Audit `robots.txt`, XML sitemap availability/declaration, canonicals, redirect status, indexability, and crawler reachability.
 3. **Pillar 2: Technical Accessibility (Weight: 20%)**: Audit server-delivered HTML payload, JavaScript dependency, semantic HTML structure, heading hierarchy, and performance/Core Web Vitals.
 4. **Pillar 3: Machine Understanding (Weight: 20%)**: Audit Schema.org JSON-LD structured entities (`Organization`, `MedicalBusiness`, `Service`, `Product`), entity graph relationships, and `sameAs` authority links.

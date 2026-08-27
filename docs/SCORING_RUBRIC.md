@@ -55,7 +55,8 @@ check; a single-page brochure site may have no FAQ page to test for thinness. Tw
 ## Pillar 1 — Discovery (weight: 20%)
 
 Source skills: `robots-ai-crawler-audit`, `sitemap-discovery-audit`, `ecommerce-technical-seo-audit`
-(catalog-specific crawl-path checks 1.9-1.11, ecommerce sites only).
+(catalog-specific crawl-path checks 1.9-1.11, ecommerce sites only), `international-seo-hreflang-audit`
+(multilingual/multi-region check 1.12).
 
 | # | Check | Tier | Deduction | N/A condition | Rationale |
 |---|---|---|---|---|---|
@@ -70,6 +71,7 @@ Source skills: `robots-ai-crawler-audit`, `sitemap-discovery-audit`, `ecommerce-
 | 1.9 | A sampled category/collection page's faceted-navigation variant (filter/sort query parameter) returns `200`, has no canonical back to the base URL, has no `noindex`, and is not blocked in `robots.txt` (`ecommerce-technical-seo-audit` check) | Important Improvement | −10 | N/A if the site has no faceted/filterable category navigation (e.g. non-ecommerce site, or a catalog with no filter/sort UI) | Per Google's own faceted-navigation guidance cited in the skill's `checks.md`, an uncanonicalized, indexable facet URL is a crawlable near-duplicate of the base category page that dilutes crawl budget across "a very large number" of parameter combinations — a real index-quality problem, but the base category page itself still resolves and is indexable, so this sits at the same Important tier and weight as 1.6's canonicalization check rather than at Critical Foundation, since no page is made unreachable. |
 | 1.10 | A sampled URL present in the sitemap has no discoverable internal link pointing to it from nav, category grids, or related-content blocks (orphan page, per `ecommerce-technical-seo-audit`'s sitemap-vs-crawled-links diff) | Supporting Signal | −5 | N/A if sitemap itself is absent (already penalized under 1.3) or the orphan-page cross-reference check wasn't run | An orphan page is still reachable via the sitemap's fast path, it's only missing the slower reinforcement of an internal link — the mirror image of 1.7's nav-without-sitemap gap and weighted identically for the same reason: a coverage/reinforcement hygiene issue, not a foundational block. |
 | 1.11 | A sampled discontinued/out-of-season product URL returns a `200` with error/out-of-stock page content (soft 404), or redirects to the homepage or an unrelated category instead of the closest matching replacement product/category, per `ecommerce-technical-seo-audit`'s check | Important Improvement | −15 | N/A if the site has no discontinued or out-of-season products to sample | Per Google's own soft-404 documentation cited in the skill's `checks.md`, this failure mode wastes crawl budget on a dead page and discards whatever ranking/citation signal the original URL had built up — a real, page-scoped resolution failure, so it is weighted the same as 1.3's missing-sitemap check (a comparable "the expected resolution path is broken" severity) rather than at Critical Foundation, since it affects one product's URL rather than blocking crawl access to the site as a whole. |
+| 1.12 | Sampled multilingual/multi-region alternate page lacks reciprocal hreflang annotations, has an invalid ISO 639-1 / 3166-1 code, or lacks `hreflang="x-default"` (`international-seo-hreflang-audit` check) | Important Improvement | −10 | N/A if the site operates solely in a single language and region with no alternate locale variations | Per Google hreflang documentation `[GOOGLE-HREFLANG-01]`, broken or non-reciprocal hreflang tags cause crawlers to ignore localized variations and risk duplicate content penalties. For single-language sites, hreflang is completely unnecessary and never penalized. |
 
 ## Pillar 2 — Technical Accessibility (weight: 20%)
 
@@ -88,7 +90,7 @@ Source skills: `robots-ai-crawler-audit` (page-level directives), `answer-engine
 
 ## Pillar 3 — Machine Understanding (weight: 20%)
 
-Source skill: `schema-markup-audit`.
+Source skills: `schema-markup-audit`, `docs-api-visibility-audit` (API platform check 3.7), `paywall-access-audit` (subscription paywall check 3.8).
 
 | # | Check | Tier | Deduction | N/A condition | Rationale |
 |---|---|---|---|---|---|
@@ -98,6 +100,8 @@ Source skill: `schema-markup-audit`.
 | 3.4 | A schema-claimed property doesn't match the visible page text it purports to describe (e.g. schema price differs from displayed price) | Critical Foundation | −20 | N/A if no comparable schema property exists to check against page text | Per this pack's cross-check convention, a mismatch is worse than an absence — it's a concrete source of hallucination risk where an AI system could confidently cite a wrong number, rather than simply having nothing to cite. |
 | 3.5 | `FAQPage` schema's `Question`/`acceptedAnswer` pairs don't match the visible on-page Q&A verbatim | Important Improvement | −10 | N/A if no `FAQPage` schema is present (nothing to mismatch) | Same mismatch principle as 3.4 but scoped to FAQ content specifically and weighted lower since FAQ answers are typically lower-stakes than pricing/availability facts. |
 | 3.6 | No `sameAs` links (verified social/profile/authority URLs) on the `Organization` entity | Supporting Signal | −10 | N/A if 3.1 already failed (nothing to attach `sameAs` to) | `sameAs` helps disambiguate the entity against other same-named organizations but isn't itself required for basic identification — a genuine but secondary signal, consistent with the V3 design doc listing `sameAs` under "may include" rather than a hard requirement. |
+| 3.7 | A developer portal, API platform, or SDK guide site has no discoverable, parseable OpenAPI/Swagger specification at conventional paths or `<link rel="describedby">` (`docs-api-visibility-audit` check) | Important Improvement | −15 | N/A if the site is not a developer portal, API provider, or SDK platform | Per OpenAPI specifications `[OPENAPI-SPEC-01]`, machine-readable API definitions allow AI coding agents to understand parameter models, endpoints, and response schemas without fragile HTML scraping. Non-developer sites have no APIs and are not penalized. |
+| 3.8 | A subscription-gated or paywalled publication has no `isAccessibleForFree: "False"` Schema.org JSON-LD or has a `hasPart.cssSelector` that fails to match the DOM (`paywall-access-audit` check) | Critical Foundation | −20 | N/A if the site has no subscription paywall, metered content, or gated articles (100% free/open access) | Per Google Search Central paywall guidelines `[GOOGLE-PAYWALL-SCHEMA-01]`, subscription content must be marked with `isAccessibleForFree` and `hasPart` to distinguish paywalls from cloaking. 100% free public sites have no paywall barrier and are not penalized. |
 
 ## Pillar 4 — Answer Readiness (weight: 20%)
 
