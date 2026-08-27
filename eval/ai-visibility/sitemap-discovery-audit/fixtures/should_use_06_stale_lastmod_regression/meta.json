@@ -1,0 +1,7 @@
+{
+  "id": "should_use_06_stale_lastmod_regression",
+  "category": "should_use",
+  "description": "A sitemap URL now returns 500 with a lastmod timestamp that predates the reference audit date. Golden report must state the negative delta correctly ('before', not 'after') per the chronological date arithmetic guardrail, matching issue #90.",
+  "expected_min_findings": 1,
+  "expects_faceted_flag": false
+}

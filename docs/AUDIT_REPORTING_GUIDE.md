@@ -63,7 +63,7 @@ The V3 report is architected for both executive decision-makers and technical en
 - **Prioritized Action Plan**: P0 (Immediate), P1 (Next), P2 (Improve), and P3 (Optional) action backlog.
 
 ### Layer B: Technical Appendix & Developer Tickets
-- **Consolidated Findings**: "Single Finding, Multiple Evidence" cards grouping multiple tool observations into unified root-cause issues.
+- **Consolidated Findings**: "Single Finding, Multiple Evidence" cards grouping multiple tool observations into unified root-cause issues. When a finding card states a timestamp's chronological relationship to the audit's reference date (e.g. "lastmod is N days before/after the prior audit"), compute the actual delta and direction from the two dates before writing the claim — never assume a newer-looking or older-looking date implies a direction. See each specialist skill's `references/guardrails.md` for the chronological date arithmetic rule this must satisfy.
 - **Technical Hygiene & Origin Security**: Independent evaluation of security headers (HSTS, X-Content-Type-Options, clickjacking).
 - **Implementation Tickets**: Engineer-ready tickets complete with specialist delegate skills, code/schema blueprints, curl validation commands, and acceptance criteria.
 

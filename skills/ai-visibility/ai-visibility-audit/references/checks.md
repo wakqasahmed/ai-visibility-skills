@@ -62,6 +62,10 @@ curl -s -o /dev/null -w "%{http_code}\n" "$SITE/auth.md"
 curl -s -o /dev/null -w "%{http_code}\n" "$SITE/.well-known/ard.json"
 ```
 
-## Evidence discipline
+## Evidence discipline & date arithmetic
 
 Record each finding as: URL checked, command run, observed output, why it blocks or helps AI visibility. Findings without observed output are inferences and must be labeled as such.
+
+When comparing timestamps (such as sitemap `lastmod` dates vs. prior reference audit dates):
+- Explicitly compute delta and direction: if `target_date < ref_date`, report as **X days before** the reference date (never "after").
+- If a page is broken today but had a sitemap `lastmod` prior to a working reference audit, state that the URL is currently broken and the last recorded modification was YYYY-MM-DD (prior to the reference audit).

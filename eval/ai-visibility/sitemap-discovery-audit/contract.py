@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from datetime import date as _date
 
 REQUIRED_SECTIONS = [
     "Sitemap paths found",
@@ -43,6 +44,12 @@ FACETED_NOISE_RE = re.compile(
 NO_FINDINGS_RE = re.compile(
     r"no (significant )?(coverage )?gaps|none found|no broken (or blocked )?urls|"
     r"no issues found|nothing to (flag|fix)",
+    re.IGNORECASE,
+)
+DATE_DIRECTION_RE = re.compile(
+    r"(?P<date>\d{4}-\d{2}-\d{2})[^\n]{0,120}?"
+    r"(?P<days>\d+)\s+days?\s+(?P<direction>before|after)\s+(?:the\s+)?"
+    r"reference audit\s*\(\s*(?P<ref>\d{4}-\d{2}-\d{2})\s*\)",
     re.IGNORECASE,
 )
 
@@ -74,6 +81,47 @@ def _bullets(body: str) -> list:
     return [line.strip()[2:].strip() for line in body.splitlines() if line.strip().startswith("- ")]
 
 
+def check_date_direction(report_text: str) -> ContractResult:
+    """Verify every '<date> ... N days before/after reference audit (<ref date>)'
+    claim (the phrasing produced by the checks.md lastmod-delta snippet) is
+    chronologically consistent with the guardrails.md chronological date
+    arithmetic rule: the direction word and day count must match the actual
+    delta between the cited date and the reference date. Catches issue #90's
+    regression class — an earlier date asserted to be "N days after" a later
+    reference date — deterministically, independent of any fixture's meta.
+    """
+    result = ContractResult()
+    for match in DATE_DIRECTION_RE.finditer(report_text):
+        try:
+            target = _date.fromisoformat(match.group("date"))
+            ref = _date.fromisoformat(match.group("ref"))
+        except ValueError:
+            continue
+        stated_days = int(match.group("days"))
+        stated_direction = match.group("direction").lower()
+        actual_delta = (target - ref).days
+        if actual_delta == 0:
+            result.add(
+                f"date direction claim says '{stated_days} days {stated_direction} "
+                f"reference audit ({ref})' for {target}, but the dates are identical"
+            )
+            continue
+        actual_direction = "before" if actual_delta < 0 else "after"
+        if stated_direction != actual_direction:
+            result.add(
+                f"date direction inverted: report says '{target} is {stated_days} days "
+                f"{stated_direction} reference audit ({ref})' but {target} is actually "
+                f"{abs(actual_delta)} days {actual_direction} reference audit ({ref})"
+            )
+        elif stated_days != abs(actual_delta):
+            result.add(
+                f"date delta magnitude wrong: report says '{stated_days} days "
+                f"{stated_direction} reference audit ({ref})' for {target}, but the "
+                f"actual delta is {abs(actual_delta)} days"
+            )
+    return result
+
+
 def check_report_contract(report_text: str, meta: dict | None = None) -> ContractResult:
     """Deterministic, non-negotiable checks from SKILL.md's Output/Guardrails
     and references/checks.md's evidence-discipline note.
@@ -88,9 +136,13 @@ def check_report_contract(report_text: str, meta: dict | None = None) -> Contrac
       fixes are ranked rather than dumped as an exhaustive URL count
     - if the fixture expects a faceted/generated-URL crawl-noise flag, the
       report must mention it somewhere
+    - every 'N days before/after reference audit (DATE)' claim is
+      chronologically consistent with the actual delta (see
+      check_date_direction)
     """
     meta = meta or {}
     result = ContractResult()
+    result.failures.extend(check_date_direction(report_text).failures)
     sections = parse_sections(report_text)
 
     for heading in REQUIRED_SECTIONS:
