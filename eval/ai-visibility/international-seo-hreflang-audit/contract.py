@@ -20,13 +20,13 @@ REQUIRED_SECTIONS = [
 SECTION_HEADING_RE = re.compile(r"^#{1,3}\s+(.+)$", re.MULTILINE)
 
 GUARANTEE_WORD_RE = re.compile(
-    r"guarantee[sd]?|will definitely|will certainly|100% (cited|indexed|ranked|guaranteed)|"
-    r"always be (cited|included|indexed)|promise[sd]?",
+    r"\b(?:guarantee[sd]?|will definitely|will certainly|100% (?:cited|indexed|ranked|guaranteed)|"
+    r"always be (?:cited|included|indexed)|promise[sd]?)\b",
     re.IGNORECASE,
 )
 NEGATION_BEFORE_RE = re.compile(
-    r"\b(no|not|cannot|can't|won't|will not|never|doesn't|does not|isn't|"
-    r"n't|without any)\b[^.]{0,40}$",
+    r"\b(?:no|not|cannot|can't|won't|will not|never|doesn't|does not|isn't|"
+    r"n't|without any)\b",
     re.IGNORECASE,
 )
 
@@ -41,7 +41,7 @@ def _has_affirmative_guarantee(text: str) -> bool:
 
 
 EVIDENCE_KEYWORD_RE = re.compile(
-    r"hreflang|x-default|alternate|canonical|xhtml:link|curl|iso",
+    r"\b(?:hreflang|x-default|alternate|canonical|xhtml:link|curl|iso)\b",
     re.IGNORECASE,
 )
 INLINE_CODE_RE = re.compile(r"`[^`]+`")

@@ -21,6 +21,12 @@ on:
 jobs:
   model-eval:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    concurrency:
+      group: international-seo-hreflang-audit-model-eval
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v5
@@ -44,11 +50,14 @@ jobs:
         if: steps.check-secret.outputs.has_key == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TRIALS: ${{ github.event.inputs.trials || '4' }}
+          THRESHOLD: ${{ github.event.inputs.threshold || '0.8' }}
+          MODEL: ${{ github.event.inputs.model || 'claude-sonnet-4-5' }}
         run: |
           python3 eval/ai-visibility/international-seo-hreflang-audit/model_harness.py \
-            --trials "${{ github.event.inputs.trials || '4' }}" \
-            --threshold "${{ github.event.inputs.threshold || '0.8' }}" \
-            --model "${{ github.event.inputs.model || 'claude-sonnet-4-5' }}" \
+            --trials "$TRIALS" \
+            --threshold "$THRESHOLD" \
+            --model "$MODEL" \
             --output international-seo-hreflang-audit-model-eval-results.json
       - name: Upload results
         if: steps.check-secret.outputs.has_key == 'true'
