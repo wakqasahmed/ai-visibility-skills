@@ -83,6 +83,7 @@ RUBRIC = {
         "3.5": {"deduction": 10},
         "3.6": {"deduction": 10},
         "3.7": {"deduction": 15},
+        "3.8": {"deduction": 20},
     },
     "answer_readiness": {
         "4.1": {"deduction": 25},
@@ -319,6 +320,15 @@ def run_openapi_checks_scoring() -> list:
     return failures
 
 
+def run_paywall_checks_scoring() -> list:
+    """3.8 (missing isAccessibleForFree paywall schema, -20) scores correctly."""
+    failures = []
+    mu = score_pillar("machine_understanding", {"3.8": 1})
+    if mu.score != 80.0:
+        failures.append(f"expected 3.8 to deduct -20 (score 80), got {mu.score}")
+    return failures
+
+
 def main() -> int:
     all_failures = []
     checks = [
@@ -331,6 +341,7 @@ def main() -> int:
         ("ecommerce checks are cleanly N/A on a non-ecommerce site", run_ecommerce_na_pillar),
         ("international-seo-hreflang-audit check (1.12) scores correctly", run_hreflang_checks_scoring),
         ("docs-api-visibility-audit check (3.7) scores correctly", run_openapi_checks_scoring),
+        ("paywall-access-audit check (3.8) scores correctly", run_paywall_checks_scoring),
     ]
 
     for label, fn in checks:

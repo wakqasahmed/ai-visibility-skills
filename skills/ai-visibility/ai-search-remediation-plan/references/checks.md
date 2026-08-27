@@ -19,6 +19,7 @@ failing to passing once the fix ships. Reuse the relevant skill's `references/ch
 - Ecommerce catalog fixes → `ecommerce-technical-seo-audit/references/checks.md`
 - International / hreflang fixes → `international-seo-hreflang-audit/references/checks.md`
 - Developer docs & API schema fixes → `docs-api-visibility-audit/references/checks.md`
+- Paywall & subscription access fixes → `paywall-access-audit/references/checks.md`
 
 Example ticket acceptance criterion, copied verbatim from the source check:
 

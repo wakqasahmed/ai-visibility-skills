@@ -311,3 +311,22 @@ Fed into `ai-search-remediation-plan`, which turns those findings into:
 - Documentation Renderability & SSR Conformance (raw HTML vs. client-rendered endpoint check)
 - Code Sample & Syntax Markup Quality (tagged vs. untagged code blocks)
 - Recommended fixes with schema snippets and curl verification commands
+
+---
+
+## Example 15 — paywall and subscription content access audit
+
+**Skill invoked:** [`paywall-access-audit`](../skills/ai-visibility/paywall-access-audit/SKILL.md)
+
+**Prompt:**
+
+> "Audit our subscription publication `https://news.example.com/premium-article` for paywall Schema.org
+> compliance, crawlable lead-in snippets, and robots.txt crawler policies (differentiating AI training bots
+> from AI search citation bots)."
+
+**Expected output shape:**
+
+- Paywall Specification Conformance Matrix (`isAccessibleForFree` values, `hasPart` cssSelectors)
+- Lead-In Snippet Renderability & Visibility (SSR check of introductory paragraph)
+- AI Crawler Policy Separation (training bots vs. citation bots in `robots.txt`)
+- Recommended Schema.org JSON-LD templates and robots policy adjustments

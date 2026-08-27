@@ -92,7 +92,7 @@ Source skills: `robots-ai-crawler-audit` (page-level directives), `answer-engine
 
 ## Pillar 3 — Machine Understanding (weight: 20%)
 
-Source skills: `schema-markup-audit`, `docs-api-visibility-audit` (API platform check 3.7).
+Source skills: `schema-markup-audit`, `docs-api-visibility-audit` (API platform check 3.7), `paywall-access-audit` (paywall check 3.8).
 
 | # | Check | Tier | Deduction | N/A condition | Rationale |
 |---|---|---|---|---|---|
@@ -103,6 +103,7 @@ Source skills: `schema-markup-audit`, `docs-api-visibility-audit` (API platform 
 | 3.5 | `FAQPage` schema's `Question`/`acceptedAnswer` pairs don't match the visible on-page Q&A verbatim | Important Improvement | −10 | N/A if no `FAQPage` schema is present (nothing to mismatch) | Same mismatch principle as 3.4 but scoped to FAQ content specifically and weighted lower since FAQ answers are typically lower-stakes than pricing/availability facts. |
 | 3.6 | No `sameAs` links (verified social/profile/authority URLs) on the `Organization` entity | Supporting Signal | −10 | N/A if 3.1 already failed (nothing to attach `sameAs` to) | `sameAs` helps disambiguate the entity against other same-named organizations but isn't itself required for basic identification — a genuine but secondary signal, consistent with the V3 design doc listing `sameAs` under "may include" rather than a hard requirement. |
 | 3.7 | A developer portal, API platform, or SDK guide site has no discoverable, parseable OpenAPI/Swagger specification at conventional paths or `<link rel="describedby">` (`docs-api-visibility-audit` check) | Important Improvement | −15 | N/A if the site is not a developer portal, API provider, or SDK platform | Per OpenAPI specifications `[OPENAPI-SPEC-01]`, machine-readable API definitions allow AI coding agents to understand parameter models, endpoints, and response schemas without fragile HTML scraping. Non-developer sites have no APIs and are not penalized. |
+| 3.8 | A subscription-gated or paywalled page lacks Schema.org `isAccessibleForFree` specification markup or has mismatched `hasPart` cssSelectors (`paywall-access-audit` check) | Critical Foundation | −20 | N/A if the site does not contain paywalled or subscription-gated content | Per Google and Schema.org paywall specifications `[GOOGLE-PAYWALL-SCHEMA-01]` `[SCHEMA-ISACCESSIBLEFORFREE-01]`, paywalled content must explicitly declare `isAccessibleForFree: "False"` and valid `hasPart` selectors to prevent search engines from penalizing the gated text as cloaking. Free and open access sites are not penalized. |
 
 ## Pillar 4 — Answer Readiness (weight: 20%)
 
