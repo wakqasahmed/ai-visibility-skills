@@ -1,3 +1,5 @@
+<!-- Canonical copy. A bundled duplicate lives at skills/ai-visibility/ai-visibility-audit/references/audit_report_template_v3.md for self-contained single-skill installs (issue #91) — keep both in sync when editing either. -->
+
 # AI Visibility & Website Readiness Audit: {{TARGET_URL}}
 
 **Target Domain:** `{{TARGET_URL}}`  

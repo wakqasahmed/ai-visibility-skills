@@ -1,3 +1,5 @@
+<!-- Canonical copy. A bundled duplicate lives at skills/ai-visibility/ai-visibility-audit/references/scoring_rubric.md for self-contained single-skill installs (issue #91) — keep both in sync when editing either. -->
+
 # V3 Scoring Rubric
 
 This is the deduction table the [V3 report template](templates/AUDIT_REPORT_TEMPLATE_V3.md)'s

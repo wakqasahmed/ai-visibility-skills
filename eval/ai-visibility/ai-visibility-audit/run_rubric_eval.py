@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Deterministic eval for the V3 scoring rubric (docs/SCORING_RUBRIC.md).
+"""Deterministic eval for the V3 scoring rubric (docs/SCORING_RUBRIC.md, also
+bundled at skills/ai-visibility/ai-visibility-audit/references/scoring_rubric.md
+for self-contained single-skill installs -- see issue #91; the two copies must
+stay in sync).
 
 PR #82 added a composite Overall Readiness Score built from six pillar scores,
 but nothing enforced that those pillar scores were derived mechanically from
