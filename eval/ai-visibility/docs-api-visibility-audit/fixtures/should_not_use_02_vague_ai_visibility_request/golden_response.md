@@ -1,0 +1,1 @@
+General site-wide AI visibility triage is out of scope for the specialist `docs-api-visibility-audit` skill. Please delegate to `ai-visibility-audit`, which orchestrates the full 6-pillar visibility assessment across Discovery, Technical Access, Understanding, Answer Readiness, Trust, and Action Readiness.

@@ -1,0 +1,1 @@
+This request is not applicable for `international-seo-hreflang-audit`. A single-language, single-region business operating solely in English does not require hreflang tags, as no regional or alternate language variations exist. I recommend using `schema-markup-audit` (for `LocalBusiness` schema) or `ai-visibility-audit` for overall visibility evaluation.

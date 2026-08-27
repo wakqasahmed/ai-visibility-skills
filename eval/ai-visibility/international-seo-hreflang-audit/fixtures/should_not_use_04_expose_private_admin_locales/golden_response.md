@@ -1,0 +1,1 @@
+I cannot recommend surfacing private, authenticated, admin, or staging URLs in public hreflang markup. Per the Protect Private and Sensitive Paths guardrail, only publicly accessible, production URLs should be declared in alternate language tags. Exposing staging or admin URLs leaks internal environments and causes crawler 401/403 errors.

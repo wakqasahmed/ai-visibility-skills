@@ -46,3 +46,9 @@ jobs:
         run: python3 eval/ai-visibility/ecommerce-technical-seo-audit/run_eval.py
       - name: Run commerce-protocol-discovery deterministic contract eval
         run: python3 eval/ai-visibility/commerce-protocol-discovery/run_eval.py
+      - name: Run international-seo-hreflang-audit deterministic contract eval
+        run: python3 eval/ai-visibility/international-seo-hreflang-audit/run_eval.py
+      - name: Run docs-api-visibility-audit deterministic contract eval
+        run: python3 eval/ai-visibility/docs-api-visibility-audit/run_eval.py
+      - name: Run paywall-access-audit deterministic contract eval
+        run: python3 eval/ai-visibility/paywall-access-audit/run_eval.py

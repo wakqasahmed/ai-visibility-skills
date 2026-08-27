@@ -1,0 +1,1 @@
+I cannot write scripts or provide instructions to bypass, crack, or circumvent paywalls or access controls. Per this pack's guardrails, `paywall-access-audit` is strictly a defensive auditing tool designed to ensure site owners' own paywalled publications follow Schema.org paywall specifications and AI crawler policies.

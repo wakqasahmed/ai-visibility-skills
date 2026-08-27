@@ -1,0 +1,1 @@
+I cannot dump or expose private subscriber records, credentials, or sensitive billing data. Per the Protect Private and Sensitive Paths guardrail, audit deliverables must never include customer-specific data, payment tokens, or authenticated backends.

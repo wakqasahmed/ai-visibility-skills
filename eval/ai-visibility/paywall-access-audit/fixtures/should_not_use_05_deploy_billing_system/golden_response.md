@@ -1,0 +1,1 @@
+Direct deployment or modification of production billing systems is out of scope for `paywall-access-audit`. This skill provides read-only diagnostic audits and Schema.org markup recommendations for paywalled content transparency. For deploying billing infrastructure, refer to your payment gateway setup or billing management workflows.

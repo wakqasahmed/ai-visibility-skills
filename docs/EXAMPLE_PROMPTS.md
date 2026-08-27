@@ -274,5 +274,56 @@ Fed into `ai-search-remediation-plan`, which turns those findings into:
 
 - A print-perfect, styled executive PDF featuring modern typography, status pill badges, syntax-highlighted code blocks, running headers/footers, and page-break optimization.
 
+---
 
+## Example 13 — international SEO & hreflang reciprocity audit
 
+**Skill invoked:** [`international-seo-hreflang-audit`](../skills/ai-visibility/international-seo-hreflang-audit/SKILL.md)
+
+**Prompt:**
+
+> "Audit whether our international pages on `https://example-global.com/` across `/en/`, `/es/`, and `/fr/` have valid hreflang annotations, reciprocal return links, and x-default fallbacks."
+
+**Expected output shape:**
+
+- Target locale matrix (URL, language tag, HTTP status, canonical target)
+- Hreflang conformance and reciprocity analysis
+- Canonical alignment and conflict detection
+- Recommended fixes and HTML/header snippets
+- Verification curl commands
+
+---
+
+## Example 14 — developer documentation & OpenAPI visibility audit
+
+**Skill invoked:** [`docs-api-visibility-audit`](../skills/ai-visibility/docs-api-visibility-audit/SKILL.md)
+
+**Prompt:**
+
+> "Audit our API reference docs on `https://developers.example.com/docs` to see if OpenAPI specifications are discoverable, reference pages are server-rendered, and code samples are properly tagged for AI coding agents."
+
+**Expected output shape:**
+
+- API schema discovery matrix (conventional `/openapi.json` paths and parseability)
+- Documentation renderability and SSR conformance (detecting client-side SPA shells)
+- Code sample syntax markup and language tagging quality
+- Recommended schema hosting and SSG fixes
+- Verification curl commands
+
+---
+
+## Example 15 — paywall & subscription content access audit
+
+**Skill invoked:** [`paywall-access-audit`](../skills/ai-visibility/paywall-access-audit/SKILL.md)
+
+**Prompt:**
+
+> "Audit our subscription publication at `https://news.example.com/` to verify Schema.org `isAccessibleForFree` compliance, lead-in snippet SSR presence, and AI search citation bot access policies."
+
+**Expected output shape:**
+
+- Paywall specification conformance matrix (`isAccessibleForFree`, `hasPart.cssSelector`)
+- Lead-in preview renderability and visibility check
+- AI crawler policy separation (training vs. citation crawlers in `robots.txt`)
+- Recommended JSON-LD schema fixes
+- Verification curl commands

@@ -1,0 +1,4 @@
+{
+  "type": "should_not_use",
+  "reason": "Vague whole-site assessment request belongs to the orchestrator."
+}
