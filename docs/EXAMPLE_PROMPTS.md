@@ -292,3 +292,22 @@ Fed into `ai-search-remediation-plan`, which turns those findings into:
 - Hreflang Conformance Table (reciprocity status, x-default presence, ISO validity)
 - Itemized findings with reproduction commands and remediation code
 - Guardrail statement distinguishing observed HTML/header annotations from inferred targeting
+
+---
+
+## Example 14 — developer documentation and API visibility audit
+
+**Skill invoked:** [`docs-api-visibility-audit`](../skills/ai-visibility/docs-api-visibility-audit/SKILL.md)
+
+**Prompt:**
+
+> "Audit our API documentation on `https://api.example.com/docs` to see if AI coding assistants
+> (Claude Code, Cursor, Copilot) can parse our REST endpoints — check for discoverable OpenAPI schemas,
+> server-side rendered parameter tables, fenced code blocks with language identifiers, and error codes."
+
+**Expected output shape:**
+
+- API Schema Discovery Matrix (probed paths, HTTP status, syntax validity, path count)
+- Documentation Renderability & SSR Conformance (raw HTML vs. client-rendered endpoint check)
+- Code Sample & Syntax Markup Quality (tagged vs. untagged code blocks)
+- Recommended fixes with schema snippets and curl verification commands

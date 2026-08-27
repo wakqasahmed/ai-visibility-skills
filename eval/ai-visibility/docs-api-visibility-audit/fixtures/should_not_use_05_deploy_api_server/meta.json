@@ -1,0 +1,4 @@
+{
+  "type": "should_not_use",
+  "reason": "Direct production infrastructure deployment is out of scope for an audit skill."
+}

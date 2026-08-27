@@ -37,5 +37,7 @@
   "GOOGLE-MERCHANT-FEED-01": "https://support.google.com/merchants/answer/7052112",
   "ACP-SPEC-01": "https://github.com/agentic-commerce-protocol/agentic-commerce-protocol",
   "GOOGLE-HREFLANG-01": "https://developers.google.com/search/docs/specialty/international/localized-versions",
-  "W3C-ISO-LANG-01": "https://www.w3.org/International/articles/language-tags/"
+  "W3C-ISO-LANG-01": "https://www.w3.org/International/articles/language-tags/",
+  "OPENAPI-SPEC-01": "https://spec.openapis.org/oas/v3.1.0",
+  "COMMONMARK-CODE-01": "https://spec.commonmark.org/0.31.2/#fenced-code-blocks"
 }

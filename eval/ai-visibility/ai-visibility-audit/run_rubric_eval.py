@@ -82,6 +82,7 @@ RUBRIC = {
         "3.4": {"deduction": 20},
         "3.5": {"deduction": 10},
         "3.6": {"deduction": 10},
+        "3.7": {"deduction": 15},
     },
     "answer_readiness": {
         "4.1": {"deduction": 25},
@@ -309,6 +310,15 @@ def run_hreflang_checks_scoring() -> list:
     return failures
 
 
+def run_openapi_checks_scoring() -> list:
+    """3.7 (OpenAPI spec missing on developer portal, -15) scores correctly."""
+    failures = []
+    mu = score_pillar("machine_understanding", {"3.7": 1})
+    if mu.score != 85.0:
+        failures.append(f"expected 3.7 to deduct -15 (score 85), got {mu.score}")
+    return failures
+
+
 def main() -> int:
     all_failures = []
     checks = [
@@ -320,6 +330,7 @@ def main() -> int:
         ("ecommerce-technical-seo-audit checks (1.9-1.11, 4.7) score correctly", run_ecommerce_checks_scoring),
         ("ecommerce checks are cleanly N/A on a non-ecommerce site", run_ecommerce_na_pillar),
         ("international-seo-hreflang-audit check (1.12) scores correctly", run_hreflang_checks_scoring),
+        ("docs-api-visibility-audit check (3.7) scores correctly", run_openapi_checks_scoring),
     ]
 
     for label, fn in checks:

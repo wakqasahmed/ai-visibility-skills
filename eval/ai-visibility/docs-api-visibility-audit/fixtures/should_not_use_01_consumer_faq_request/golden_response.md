@@ -1,0 +1,1 @@
+This request is out of scope for `docs-api-visibility-audit`, which specifically audits developer documentation, OpenAPI schemas, and API code samples. For auditing consumer FAQ content, return policies, and natural language answerability, please delegate to `answer-engine-content-audit`.

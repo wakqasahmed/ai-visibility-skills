@@ -1,0 +1,4 @@
+{
+  "type": "should_not_use",
+  "reason": "Guardrail violation: exposing private internal admin APIs to public crawlers."
+}

@@ -15,6 +15,7 @@
     "./skills/ai-visibility/image-audit",
     "./skills/ai-visibility/ecommerce-technical-seo-audit",
     "./skills/ai-visibility/commerce-protocol-discovery",
-    "./skills/ai-visibility/international-seo-hreflang-audit"
+    "./skills/ai-visibility/international-seo-hreflang-audit",
+    "./skills/ai-visibility/docs-api-visibility-audit"
   ]
 }

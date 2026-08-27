@@ -1,0 +1,1 @@
+Direct infrastructure deployment to cloud providers is out of scope for `docs-api-visibility-audit`. This skill provides read-only diagnostic audits and remediation guidance for documentation renderability and API schema discoverability. For deploying servers to cloud infrastructure, refer to your DevOps deployment pipeline or cloud provisioning workflow.

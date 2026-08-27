@@ -92,7 +92,7 @@ Source skills: `robots-ai-crawler-audit` (page-level directives), `answer-engine
 
 ## Pillar 3 — Machine Understanding (weight: 20%)
 
-Source skill: `schema-markup-audit`.
+Source skills: `schema-markup-audit`, `docs-api-visibility-audit` (API platform check 3.7).
 
 | # | Check | Tier | Deduction | N/A condition | Rationale |
 |---|---|---|---|---|---|
@@ -102,6 +102,7 @@ Source skill: `schema-markup-audit`.
 | 3.4 | A schema-claimed property doesn't match the visible page text it purports to describe (e.g. schema price differs from displayed price) | Critical Foundation | −20 | N/A if no comparable schema property exists to check against page text | Per this pack's cross-check convention, a mismatch is worse than an absence — it's a concrete source of hallucination risk where an AI system could confidently cite a wrong number, rather than simply having nothing to cite. |
 | 3.5 | `FAQPage` schema's `Question`/`acceptedAnswer` pairs don't match the visible on-page Q&A verbatim | Important Improvement | −10 | N/A if no `FAQPage` schema is present (nothing to mismatch) | Same mismatch principle as 3.4 but scoped to FAQ content specifically and weighted lower since FAQ answers are typically lower-stakes than pricing/availability facts. |
 | 3.6 | No `sameAs` links (verified social/profile/authority URLs) on the `Organization` entity | Supporting Signal | −10 | N/A if 3.1 already failed (nothing to attach `sameAs` to) | `sameAs` helps disambiguate the entity against other same-named organizations but isn't itself required for basic identification — a genuine but secondary signal, consistent with the V3 design doc listing `sameAs` under "may include" rather than a hard requirement. |
+| 3.7 | A developer portal, API platform, or SDK guide site has no discoverable, parseable OpenAPI/Swagger specification at conventional paths or `<link rel="describedby">` (`docs-api-visibility-audit` check) | Important Improvement | −15 | N/A if the site is not a developer portal, API provider, or SDK platform | Per OpenAPI specifications `[OPENAPI-SPEC-01]`, machine-readable API definitions allow AI coding agents to understand parameter models, endpoints, and response schemas without fragile HTML scraping. Non-developer sites have no APIs and are not penalized. |
 
 ## Pillar 4 — Answer Readiness (weight: 20%)
 
