@@ -1,0 +1,1 @@
+Direct modification of live production DNS or Cloudflare routing is out of scope for `international-seo-hreflang-audit`. This skill provides read-only diagnostic audits and remediation recommendations for HTML, HTTP headers, and sitemaps. For implementing DNS infrastructure changes, refer to your DNS registrar or infrastructure provisioning workflow.

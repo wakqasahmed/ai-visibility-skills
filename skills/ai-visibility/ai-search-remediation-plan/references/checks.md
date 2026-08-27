@@ -17,6 +17,7 @@ failing to passing once the fix ships. Reuse the relevant skill's `references/ch
 - Citation/trust fixes → `citation-readiness-audit/references/checks.md`
 - Image visibility fixes → `image-audit/references/checks.md`
 - Ecommerce catalog fixes → `ecommerce-technical-seo-audit/references/checks.md`
+- International / hreflang fixes → `international-seo-hreflang-audit/references/checks.md`
 
 Example ticket acceptance criterion, copied verbatim from the source check:
 

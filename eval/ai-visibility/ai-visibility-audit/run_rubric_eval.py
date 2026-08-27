@@ -64,6 +64,7 @@ RUBRIC = {
         "1.9": {"deduction": 10},
         "1.10": {"deduction": 5},
         "1.11": {"deduction": 15},
+        "1.12": {"deduction": 10},
     },
     "technical_accessibility": {
         "2.1": {"deduction": 30},
@@ -299,6 +300,15 @@ def run_ecommerce_na_pillar() -> list:
     return failures
 
 
+def run_hreflang_checks_scoring() -> list:
+    """1.12 (hreflang mismatch, -10) triggered on a multilingual site scores correctly."""
+    failures = []
+    discovery = score_pillar("discovery", {"1.12": 1})
+    if discovery.score != 90.0:
+        failures.append(f"expected 1.12 to deduct -10 (score 90), got {discovery.score}")
+    return failures
+
+
 def main() -> int:
     all_failures = []
     checks = [
@@ -309,6 +319,7 @@ def main() -> int:
         ("pillar score floors at 0", run_floor_at_zero),
         ("ecommerce-technical-seo-audit checks (1.9-1.11, 4.7) score correctly", run_ecommerce_checks_scoring),
         ("ecommerce checks are cleanly N/A on a non-ecommerce site", run_ecommerce_na_pillar),
+        ("international-seo-hreflang-audit check (1.12) scores correctly", run_hreflang_checks_scoring),
     ]
 
     for label, fn in checks:

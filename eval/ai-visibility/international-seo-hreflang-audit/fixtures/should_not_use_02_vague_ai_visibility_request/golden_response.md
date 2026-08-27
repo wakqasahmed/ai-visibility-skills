@@ -1,0 +1,1 @@
+A comprehensive whole-platform AI visibility audit is out of scope for the specialist `international-seo-hreflang-audit` skill. Please delegate to `ai-visibility-audit`, which orchestrates the full 6-pillar assessment across Discovery, Technical Access, Understanding, Answer Readiness, Trust, and Action Readiness.

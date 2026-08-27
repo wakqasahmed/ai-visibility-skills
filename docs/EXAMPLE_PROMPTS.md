@@ -274,5 +274,21 @@ Fed into `ai-search-remediation-plan`, which turns those findings into:
 
 - A print-perfect, styled executive PDF featuring modern typography, status pill badges, syntax-highlighted code blocks, running headers/footers, and page-break optimization.
 
+---
 
+## Example 13 — international SEO and hreflang audit
 
+**Skill invoked:** [`international-seo-hreflang-audit`](../skills/ai-visibility/international-seo-hreflang-audit/SKILL.md)
+
+**Prompt:**
+
+> "Audit our multi-regional website `https://example-global.com/` for international AI visibility —
+> check whether `/en/`, `/es/`, and `/de/` paths declare bidirectional hreflang tags, valid ISO codes,
+> proper self-canonicals, and a working x-default fallback."
+
+**Expected output shape:**
+
+- Target Locale Matrix (URLs, declared hreflang, status codes, canonicals)
+- Hreflang Conformance Table (reciprocity status, x-default presence, ISO validity)
+- Itemized findings with reproduction commands and remediation code
+- Guardrail statement distinguishing observed HTML/header annotations from inferred targeting
