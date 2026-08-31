@@ -18,6 +18,18 @@ from pathlib import Path
 FIXTURE_DIR = Path(__file__).resolve().parent / "fixture"
 ROBOTS_PATH = FIXTURE_DIR / "robots.txt"
 PAGE_PATH = FIXTURE_DIR / "index.html"
+HYDRATED_PAGE_PATH = FIXTURE_DIR / "hydrated.html"
+
+TITLE_RE = re.compile(r"<title[^>]*>[^<]*", re.IGNORECASE)
+META_DESCRIPTION_RE = re.compile(r'<meta[^>]+name="description"[^>]*>', re.IGNORECASE)
+CANONICAL_RE = re.compile(r'<link[^>]+rel="canonical"[^>]*>', re.IGNORECASE)
+JSON_LD_RE = re.compile(r"<script[^>]+application/ld\+json", re.IGNORECASE)
+
+# The naive adjacent-token patterns this eval guards against: they miss any tag
+# whose framework attribute (data-react-helmet, nonce, id) precedes the attribute
+# being matched. Issue #102's zaavia.net false negative was exactly this.
+NAIVE_META_DESCRIPTION_RE = re.compile(r'<meta name="description"', re.IGNORECASE)
+NAIVE_JSON_LD_RE = re.compile(r'<script type="application/ld\+json"', re.IGNORECASE)
 
 FORBIDDEN_GUARANTEE_PATTERN = re.compile(
     r"guarantee[ds]?\b.{0,30}\b(inclusion|ranking|ranked|included|placement)",
@@ -53,17 +65,59 @@ def check_robots_ai_crawler_block(robots_text: str) -> dict | None:
     }
 
 
-def check_missing_json_ld(page_html: str) -> dict | None:
-    """Mirrors: curl ... | grep -oE '<script type="application/ld+json">...'
-    (references/checks.md, Machine-readable context)."""
-    if re.search(r'<script[^>]+application/ld\+json', page_html, re.IGNORECASE):
+def check_json_ld_delivery(page_html: str, hydrated_html: str) -> dict | None:
+    """Mirrors references/checks.md "Machine-readable context" plus its
+    "Hydrated-DOM fallback verification" section: a zero-match raw-HTML pass is
+    unresolved, not absent, so it is re-checked against the hydrated DOM and the
+    two results are reported as a comparison (SKILL.md workflow step 2)."""
+    in_raw = bool(JSON_LD_RE.search(page_html))
+    in_hydrated = bool(JSON_LD_RE.search(hydrated_html))
+
+    if in_raw:
         return None
+    if in_hydrated:
+        return {
+            "severity": "important",
+            "title": (
+                "JSON-LD structured data is present in the hydrated DOM but absent "
+                "from the initial server response"
+            ),
+            "evidence": (
+                "index.html — no <script ... application/ld+json> block in the raw "
+                "response; hydrated.html (chrome --headless=new --dump-dom) has 1 block "
+                "(Organization) — invisible to non-JS-executing crawlers"
+            ),
+            "delegate": "schema-markup-audit",
+        }
     return {
         "severity": "important",
         "title": "No JSON-LD structured data on the representative page",
-        "evidence": "index.html — no <script type=\"application/ld+json\"> block found in <head> or <body>",
+        "evidence": (
+            "index.html and hydrated.html — no <script ... application/ld+json> block "
+            "in the raw response or the hydrated DOM"
+        ),
         "delegate": "schema-markup-audit",
     }
+
+
+def check_head_metadata(page_html: str) -> list[dict]:
+    """Mirrors the attribute-order-tolerant title/description/canonical patterns in
+    references/checks.md. Framework attributes routinely sit between the tag name and
+    the attribute being matched, so an absent match here must be a real absence."""
+    findings = []
+    for label, pattern in (
+        ("title", TITLE_RE),
+        ("meta description", META_DESCRIPTION_RE),
+        ("canonical link", CANONICAL_RE),
+    ):
+        if not pattern.search(page_html):
+            findings.append({
+                "severity": "important",
+                "title": f"No {label} on the representative page",
+                "evidence": f"index.html — no {label} tag found in the raw response",
+                "delegate": "answer-engine-content-audit",
+            })
+    return findings
 
 
 def check_thin_faq_content(page_html: str) -> dict | None:
@@ -87,15 +141,17 @@ def check_thin_faq_content(page_html: str) -> dict | None:
 def run_audit() -> list[dict]:
     robots_text = ROBOTS_PATH.read_text()
     page_html = PAGE_PATH.read_text()
+    hydrated_html = HYDRATED_PAGE_PATH.read_text()
 
     findings = [
         f for f in (
             check_robots_ai_crawler_block(robots_text),
-            check_missing_json_ld(page_html),
+            check_json_ld_delivery(page_html, hydrated_html),
             check_thin_faq_content(page_html),
         )
         if f is not None
     ]
+    findings.extend(check_head_metadata(page_html))
 
     order = {"critical": 0, "important": 1, "optional": 2}
     findings.sort(key=lambda f: order[f["severity"]])
@@ -116,8 +172,51 @@ def render_report(findings: list[dict]) -> str:
     return "\n".join(lines)
 
 
-def assert_report(findings: list[dict], report: str) -> list[str]:
+def assert_hydration_methodology() -> list[str]:
+    """Regression guard for issue #102: the two confirmed false-negative shapes —
+    React-Helmet-attributed head tags, and JSON-LD that only exists after hydration —
+    must not be reported as absent by a raw-HTML pass."""
     failures = []
+    page_html = PAGE_PATH.read_text()
+    hydrated_html = HYDRATED_PAGE_PATH.read_text()
+
+    if NAIVE_META_DESCRIPTION_RE.search(page_html):
+        failures.append(
+            "fixture no longer exercises the React-Helmet case: index.html's meta "
+            "description has no framework attribute before name=\"description\""
+        )
+    if not META_DESCRIPTION_RE.search(page_html):
+        failures.append(
+            "attribute-order-tolerant meta-description pattern missed a tag that is "
+            "present in index.html (the zaavia.net false negative)"
+        )
+    if check_head_metadata(page_html):
+        failures.append(
+            "head metadata present in index.html was reported absent: "
+            f"{[f['title'] for f in check_head_metadata(page_html)]}"
+        )
+
+    if NAIVE_JSON_LD_RE.search(page_html):
+        failures.append(
+            "fixture no longer exercises the hydration case: index.html itself now "
+            "carries a static JSON-LD block"
+        )
+    if not JSON_LD_RE.search(hydrated_html):
+        failures.append("hydrated.html carries no JSON-LD block to compare against")
+
+    finding = check_json_ld_delivery(page_html, hydrated_html)
+    if finding is None:
+        failures.append("hydration-only JSON-LD produced no finding at all")
+    elif "hydrated DOM" not in finding["title"]:
+        failures.append(
+            "hydration-only JSON-LD was reported as a flat absence instead of a "
+            f"raw-vs-hydrated divergence: {finding['title']!r}"
+        )
+    return failures
+
+
+def assert_report(findings: list[dict], report: str) -> list[str]:
+    failures = assert_hydration_methodology()
 
     if len(findings) < 3:
         failures.append(f"expected >=3 injected issues surfaced, got {len(findings)}")

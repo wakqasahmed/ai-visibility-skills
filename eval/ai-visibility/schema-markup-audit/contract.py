@@ -24,6 +24,19 @@ ANY_CODE_BLOCK_RE = re.compile(r"```(?:bash|json)?\s*\n.*?\n[ \t]*```", re.DOTAL
 VALIDATOR_URL_RE = re.compile(
     r"validator\.schema\.org|search\.google\.com/test/rich-results", re.IGNORECASE
 )
+RAW_PASS_RE = re.compile(
+    r"initial (server )?response|raw html|raw `?curl|server-delivered|server response",
+    re.IGNORECASE,
+)
+HYDRATED_PASS_RE = re.compile(
+    r"hydrated dom|rendered dom|--dump-dom|headless chrom|after javascript",
+    re.IGNORECASE,
+)
+NON_JS_CRAWLER_RE = re.compile(
+    r"non-js|do(es)? not execute javascript|without executing javascript|"
+    r"javascript-executing|js-executing",
+    re.IGNORECASE,
+)
 
 REQUIRED_SECTIONS = [
     "Existing schema types found",
@@ -106,6 +119,7 @@ def check_audit_contract(
     page_type: str,
     expect_mismatch: bool = False,
     forbidden_properties: list | None = None,
+    hydration_only: bool = False,
 ) -> ContractResult:
     """Deterministic, non-negotiable checks from SKILL.md's Output list,
     Guardrails, and references/checks.md's property checklists.
@@ -169,6 +183,20 @@ def check_audit_contract(
             result.add(
                 "'Verification tools or commands' has neither a runnable command nor "
                 "a validator/rich-results URL"
+            )
+
+    if hydration_only:
+        existing = sections.get("Existing schema types found", "")
+        if not RAW_PASS_RE.search(existing) or not HYDRATED_PASS_RE.search(existing):
+            result.add(
+                "fixture's schema exists only after hydration, but 'Existing schema types "
+                "found' does not report both passes (raw response vs. hydrated DOM) — the "
+                "delivery divergence must be stated, not reconciled away"
+            )
+        if not NON_JS_CRAWLER_RE.search(report_text):
+            result.add(
+                "fixture's schema exists only after hydration, but the report never says it "
+                "is invisible to crawlers that do not execute JavaScript"
             )
 
     if expect_mismatch and "Mismatches with visible content" in sections:

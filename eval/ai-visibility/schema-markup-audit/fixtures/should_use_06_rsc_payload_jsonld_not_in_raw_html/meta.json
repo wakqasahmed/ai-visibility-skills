@@ -1,0 +1,8 @@
+{
+  "category": "should_use",
+  "page_type": "Organization",
+  "description": "Next.js App Router page: a raw-HTML pass finds zero JSON-LD because the blocks are serialized into the RSC streaming payload, but the hydrated DOM has four real blocks (issue #102). Correct behavior is to report them as present-but-server-invisible, not as missing.",
+  "expect_mismatch": false,
+  "hydration_only": true,
+  "forbidden_properties": []
+}

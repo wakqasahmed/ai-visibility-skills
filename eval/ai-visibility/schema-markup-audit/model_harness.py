@@ -80,6 +80,7 @@ def score_response(meta: dict, response_text: str) -> list:
             page_type=meta["page_type"],
             expect_mismatch=meta.get("expect_mismatch", False),
             forbidden_properties=meta.get("forbidden_properties"),
+            hydration_only=meta.get("hydration_only", False),
         )
         return result.failures
     else:

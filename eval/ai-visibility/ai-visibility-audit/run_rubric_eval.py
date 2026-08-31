@@ -74,6 +74,7 @@ RUBRIC = {
         "2.5": {"deduction": 10},
         "2.6": {"deduction": 10},
         "2.7": {"deduction": 5},
+        "2.8": {"deduction": 15},
     },
     "machine_understanding": {
         "3.1": {"deduction": 25},
@@ -329,6 +330,24 @@ def run_paywall_checks_scoring() -> list:
     return failures
 
 
+def run_hydration_divergence_scoring() -> list:
+    """2.8 (metadata present in the hydrated DOM only, -15) scores in the delivery
+    pillar, and the same gap is never double-counted as a Pillar 3 absence."""
+    failures = []
+    ta = score_pillar("technical_accessibility", {"2.8": 1})
+    if ta.score != 85.0:
+        failures.append(f"expected 2.8 to deduct -15 (score 85), got {ta.score}")
+
+    # Hydration-only Organization JSON-LD: 2.8 fires, 3.1 must not, because the
+    # entity does exist -- it is only invisible to non-JS crawlers.
+    mu = score_pillar("machine_understanding", {})
+    if mu.score != 100.0:
+        failures.append(
+            f"hydration-only structured data must not also deduct in Pillar 3, got {mu.score}"
+        )
+    return failures
+
+
 def main() -> int:
     all_failures = []
     checks = [
@@ -342,6 +361,7 @@ def main() -> int:
         ("international-seo-hreflang-audit check (1.12) scores correctly", run_hreflang_checks_scoring),
         ("docs-api-visibility-audit check (3.7) scores correctly", run_openapi_checks_scoring),
         ("paywall-access-audit check (3.8) scores correctly", run_paywall_checks_scoring),
+        ("hydration-divergence check (2.8) scores correctly", run_hydration_divergence_scoring),
     ]
 
     for label, fn in checks:
