@@ -36,6 +36,15 @@ behavior. A correct run produces a report where:
 6. A genuinely clean sitemap (full coverage, no broken URLs, no
    canonical/redirect drift) gets reported as clean — findings are never
    fabricated to look useful.
+7. A sitemap is declared absent only after the full three-step discovery pass
+   from `SKILL.md` — the `robots.txt` `Sitemap:` directive, the homepage
+   `<link rel="sitemap">`, and the default-path list — is shown in `Sitemap
+   paths found`. A sitemap found via a declaration is never reported as
+   missing, and both declaration steps must be cited even when one of them
+   succeeded — an `or` there would bless a report that skipped the head-link
+   check. A `<loc>` host that differs from the site's working/canonical host is
+   flagged, and the flag must be an actual mismatch conclusion rather than any
+   sentence mentioning hosts (`check_discovery_completeness`, issue #103).
 
 For inputs this skill should **not** turn into a full sitemap-audit report
 (wrong scope — robots.txt/bot-blocking belongs to `robots-ai-crawler-audit`,
@@ -49,7 +58,7 @@ sections.
 
 ## Fixtures
 
-`fixtures/` has 10 scenarios, 5 should-use and 5 should-not-use/near-miss:
+`fixtures/` has 12 scenarios, 7 should-use and 5 should-not-use/near-miss:
 
 **Should-use** (requests this skill should turn into a full sitemap-coverage report):
 
@@ -60,6 +69,7 @@ sections.
 | `should_use_03_broken_sitemap_urls` | sitemap lists URLs that 404/500, plus a broader internal-link sweep finds a non-sitemap footer link that also 404s — broken entries, distinct from coverage gaps |
 | `should_use_04_canonical_redirect_mismatch` | post-migration: sitemap URLs 301-redirect to different URLs than their own stale self-referencing canonical tags claim |
 | `should_use_05_faceted_noise_stale` | sitemap flooded with faceted/generated filter-combination URLs plus stale duplicate `lastmod` values — crawl-noise finding |
+| `should_use_07_ssg_default_sitemap_path` | the sitemap lives at `gatsby-plugin-sitemap`'s hyphenated default `/sitemap-index.xml` and is declared in the homepage `<head>`, while `/sitemap.xml` and `/sitemap_index.xml` both 404 — the sitemap must be reported as found, the missing `robots.txt` `Sitemap:` directive as the narrower real finding, and the `www` `<loc>` host that refuses HTTPS as a host mismatch (issue #103) |
 
 **Should-not-use / near-miss** (should be declined or redirected, not forced into a fabricated report):
 
@@ -167,8 +177,9 @@ To add a new fixture:
 
 1. Add `fixtures/<should_use|should_not_use>_NN_<slug>/input.md`.
 2. Add `meta.json` with `category`, `description`, and either
-   `expected_min_findings` / `expects_faceted_flag` (should_use) or
-   `decline_signal_patterns` (should_not_use).
+   `expected_min_findings` / `expects_faceted_flag` /
+   `expects_declared_sitemap_discovery` / `expects_host_mismatch_flag`
+   (should_use) or `decline_signal_patterns` (should_not_use).
 3. Add `golden_report.md` or `golden_response.md` — the correct output a
    compliant agent would produce.
 4. Re-run `run_eval.py`; it picks up any new fixture directory automatically.

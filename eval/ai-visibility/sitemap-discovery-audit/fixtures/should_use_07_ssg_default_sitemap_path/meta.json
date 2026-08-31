@@ -1,0 +1,9 @@
+{
+  "id": "should_use_07_ssg_default_sitemap_path",
+  "category": "should_use",
+  "description": "gatsby-plugin-sitemap writes /sitemap-index.xml (hyphenated) and declares it in the homepage <head>; /sitemap.xml and /sitemap_index.xml both 404. The sitemap exists — the real finding is the missing robots.txt Sitemap: directive, plus sitemap <loc> entries pointing at a www host that does not serve HTTPS (issue #103).",
+  "expected_min_findings": 1,
+  "expects_faceted_flag": false,
+  "expects_declared_sitemap_discovery": true,
+  "expects_host_mismatch_flag": true
+}

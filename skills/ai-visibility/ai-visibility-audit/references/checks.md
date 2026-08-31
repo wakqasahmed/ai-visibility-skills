@@ -7,11 +7,17 @@ Replace `$SITE` with the site origin and `$URL` with a representative high-value
 ```bash
 curl -s "$SITE/robots.txt"
 curl -s "$SITE/robots.txt" | grep -i sitemap
+curl -s "$SITE" | grep -oiE '<link[^>]+rel="sitemap"[^>]*>'
 curl -s -o /dev/null -w "%{http_code} %{redirect_url}\n" "$URL"
 curl -sI "$URL" | grep -i "x-robots-tag"
 curl -s "$URL" | grep -oiE '<meta[^>]+robots[^>]+>'
 curl -s "$URL" | grep -oiE '<link[^>]+canonical[^>]+>'
 ```
+
+A sitemap is only absent once the `robots.txt` directive, the homepage `<link rel="sitemap">`, and
+the default-path list have all come up empty — see `sitemap-discovery-audit`'s `references/checks.md`
+for the full probe list (`/sitemap-index.xml`, hyphenated, is `gatsby-plugin-sitemap`'s default and
+is the path a two-probe guess-list misses).
 
 ## AI crawler access (edge blocks don't show in robots.txt)
 
