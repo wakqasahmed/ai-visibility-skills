@@ -345,6 +345,22 @@ def run_hydration_divergence_scoring() -> list:
         failures.append(
             f"hydration-only structured data must not also deduct in Pillar 3, got {mu.score}"
         )
+
+    # No headless browser available: 2.8 is N/A because the divergence cannot be
+    # observed, but 3.1's N/A column reads "Never", so a genuinely missing
+    # Organization entity must still be scorable from the raw pass as [Derived].
+    ta_no_browser = score_pillar("technical_accessibility", {})
+    if ta_no_browser.score != 100.0:
+        failures.append(
+            "2.8 must be N/A (no deduction) when no hydrated pass could be run, got "
+            f"{ta_no_browser.score}"
+        )
+    mu_no_browser = score_pillar("machine_understanding", {"3.1": 1})
+    if mu_no_browser.score != 75.0:
+        failures.append(
+            "3.1 must stay reachable when no headless browser is available (scored from "
+            f"the raw pass and labelled [Derived]), expected 75, got {mu_no_browser.score}"
+        )
     return failures
 
 

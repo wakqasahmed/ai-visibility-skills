@@ -68,7 +68,17 @@ pattern would miss, and no JSON-LD; the hydrated DOM adds an `Organization`
 block. `assert_hydration_methodology()` fails the run if either false-negative
 shape comes back — a head tag that is present being reported absent, or a
 hydration-only JSON-LD block being reported as a flat absence instead of a
-raw-vs-hydrated divergence.
+raw-vs-hydrated divergence. Title, meta description and canonical go through the
+same two-pass resolution as JSON-LD, and the assertions cover both the
+raw-absent/hydrated-present case for each of them and the no-browser case, where
+every zero-match raw result must come back as `[Derived]` with an explicit
+"hydration cross-check not performed" disclosure rather than as absent.
+
+`contract.py` enforces the same rule at the report level for every fixture
+(`check_hydration_crosscheck`): any finding — or any report prose — claiming a
+title, meta description, canonical or JSON-LD is absent must also state what the
+hydrated pass returned, or disclose that no browser was available and label itself
+`[Derived]`.
 
 ```bash
 python3 eval/ai-visibility/ai-visibility-audit/run_eval.py

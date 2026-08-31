@@ -25,7 +25,7 @@ VALIDATOR_URL_RE = re.compile(
     r"validator\.schema\.org|search\.google\.com/test/rich-results", re.IGNORECASE
 )
 RAW_PASS_RE = re.compile(
-    r"initial (server )?response|raw html|raw `?curl|server-delivered|server response",
+    r"initial (server )?response|raw html|raw `?curl|raw pass|server-delivered|server response",
     re.IGNORECASE,
 )
 HYDRATED_PASS_RE = re.compile(
@@ -35,6 +35,17 @@ HYDRATED_PASS_RE = re.compile(
 NON_JS_CRAWLER_RE = re.compile(
     r"non-js|do(es)? not execute javascript|without executing javascript|"
     r"javascript-executing|js-executing",
+    re.IGNORECASE,
+)
+NO_SCHEMA_CLAIM_RE = re.compile(
+    r"no structured data|none found|no json-?ld|no schema|zero (json-?ld|structured data|"
+    r"schema|blocks)|unmarked|has none",
+    re.IGNORECASE,
+)
+SCHEMA_PRESENT_CLAIM_RE = re.compile(
+    r"(you )?do have (structured data|schema|json-?ld)|structured data (is|are) present|"
+    r"schema (is|are) present|present in the hydrated|blocks are present|"
+    r"(entities|blocks) (do )?exist|the entities exist",
     re.IGNORECASE,
 )
 
@@ -112,6 +123,32 @@ def _walk_properties(node, found: set) -> None:
     elif isinstance(node, list):
         for item in node:
             _walk_properties(item, found)
+
+
+def _unscoped_absence_claims(text: str) -> list:
+    """Sentences that conclude structured data is absent without scoping that
+    conclusion to the raw pass or to non-JS-executing crawlers.
+
+    "Crawlers that do not execute JavaScript receive a page with no structured
+    data" is a correct hydration finding; "This site has no structured data at
+    all" is the issue-#102 false negative. Naming both passes elsewhere in the
+    section does not redeem the second one, which is why this looks at the
+    conclusion rather than the vocabulary.
+    """
+    claims = []
+    # Unwrap soft line breaks inside each paragraph first, so a sentence split across
+    # two source lines is judged whole rather than as two half-sentences.
+    unwrapped = "\n\n".join(
+        " ".join(block.split()) for block in re.split(r"\n\s*\n", text)
+    )
+    for sentence in re.split(r"(?<=[.!?])\s+|\n\n", unwrapped):
+        sentence = sentence.strip()
+        if not sentence or not NO_SCHEMA_CLAIM_RE.search(sentence):
+            continue
+        if RAW_PASS_RE.search(sentence) or NON_JS_CRAWLER_RE.search(sentence):
+            continue
+        claims.append(sentence)
+    return claims
 
 
 def check_audit_contract(
@@ -197,6 +234,23 @@ def check_audit_contract(
             result.add(
                 "fixture's schema exists only after hydration, but the report never says it "
                 "is invisible to crawlers that do not execute JavaScript"
+            )
+        if not SCHEMA_PRESENT_CLAIM_RE.search(existing):
+            result.add(
+                "fixture's schema exists only after hydration, but 'Existing schema types "
+                "found' never states that the structured data is present — naming both "
+                "passes is not the same as concluding the entities exist"
+            )
+        first_line = next((ln.strip() for ln in existing.splitlines() if ln.strip()), "")
+        if first_line.lower().rstrip(".").startswith("none"):
+            result.add(
+                "fixture's schema exists only after hydration, but 'Existing schema types "
+                f"found' opens with an absence verdict: {first_line!r}"
+            )
+        for sentence in _unscoped_absence_claims(existing):
+            result.add(
+                "fixture's schema exists only after hydration, but the report concludes it "
+                f"is absent without scoping the claim to the raw pass: {sentence!r}"
             )
 
     if expect_mismatch and "Mismatches with visible content" in sections:

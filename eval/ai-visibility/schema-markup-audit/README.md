@@ -59,6 +59,13 @@ most of the audit-report sections.
 | `should_use_05_duplicate_organization_entities` | Organization | three inconsistent per-page `Organization` entities instead of one canonical entity, missing `sameAs`/`contactPoint` |
 | `should_use_06_rsc_payload_jsonld_not_in_raw_html` | Organization | `hydration_only`: the raw-HTML pass finds 0 blocks (Next.js RSC payload) while the hydrated DOM has 4 — the report must state both passes and call the blocks server-invisible, never "no structured data" (issue #102) |
 
+The `hydration_only` rule checks the report's *conclusion*, not its vocabulary: naming
+both passes is not enough. `Existing schema types found` must affirm the structured
+data is present, must not open with an absence verdict, and must not contain an
+absence sentence that is unscoped — a claim like "this site has no structured data
+at all" fails, while "crawlers that do not execute JavaScript receive a page with no
+structured data" passes, because it is scoped to the raw pass.
+
 **Should-not-use / near-miss** (should be declined or deferred, not forced into a fabricated audit):
 
 | Fixture | Why it's a near-miss |

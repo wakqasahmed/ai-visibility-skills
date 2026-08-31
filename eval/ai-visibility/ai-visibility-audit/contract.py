@@ -33,6 +33,25 @@ FORBIDDEN_GUARANTEE_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
+HEAD_TARGET_ABSENCE_RE = re.compile(
+    r"\bno\s+(?:\w+[- ]){0,3}?(?:json-?ld|structured data|schema markup|title|meta description|"
+    r"canonical(?: link| tag| url)?)\b"
+    r"|\b(?:json-?ld|structured data|title|meta description|canonical(?: link| tag)?)\b"
+    r"[^.\n]{0,40}?\b(?:is|are|was|were)\s*(?:absent|missing|not found|not present)\b"
+    r"|\bzero\s+(?:json-?ld|structured data|schema)\b",
+    re.IGNORECASE,
+)
+HYDRATION_CROSSCHECK_RE = re.compile(
+    r"hydrated dom|rendered dom|--dump-dom|headless chrom|after (?:javascript|hydration)|"
+    r"hydration cross-check",
+    re.IGNORECASE,
+)
+NO_BROWSER_DISCLOSURE_RE = re.compile(
+    r"hydration cross-check not performed|"
+    r"no (?:headless |chromium-family |chromium )?browser (?:was )?available",
+    re.IGNORECASE,
+)
+
 KNOWN_DELEGATES = {
     "robots-ai-crawler-audit",
     "sitemap-discovery-audit",
@@ -85,6 +104,48 @@ def parse_findings(report_text: str) -> list:
                     body=report_text[start:end])
         )
     return findings
+
+
+def check_hydration_crosscheck(report_text: str) -> ContractResult:
+    """Issue #102: a title, meta description, canonical or JSON-LD block may exist
+    only in the hydrated DOM, so a raw-HTML pass that matched nothing is unresolved,
+    not absent.
+
+    Every finding that claims one of those four is absent must therefore also say
+    what the hydrated pass returned — or, when no Chromium-family browser was
+    available to run one, disclose that explicitly and mark the finding [Derived]
+    rather than asserting absence. Prose outside the findings is held to the same
+    rule, so the claim cannot simply be moved out of a bullet.
+    """
+    result = ContractResult()
+    findings = parse_findings(report_text)
+
+    def verdict(scope: str, text: str) -> None:
+        if not HEAD_TARGET_ABSENCE_RE.search(text):
+            return
+        if NO_BROWSER_DISCLOSURE_RE.search(text):
+            if "[Derived]" not in text:
+                result.add(
+                    f"{scope} claims a title/meta/canonical/JSON-LD absence with no "
+                    "hydration cross-check available, but is not labelled [Derived]"
+                )
+            return
+        if not HYDRATION_CROSSCHECK_RE.search(text):
+            result.add(
+                f"{scope} claims a title/meta/canonical/JSON-LD absence from the raw "
+                "response without stating what the hydrated-DOM pass returned (issue "
+                "#102) — a zero-match raw pass is unresolved, not absent"
+            )
+
+    for finding in findings:
+        verdict(f"finding '{finding.title}'", f"{finding.title}\n{finding.body}")
+
+    prose = FINDING_RE.sub("", report_text)
+    for finding in findings:
+        prose = prose.replace(finding.body, "")
+    verdict("report prose", prose)
+
+    return result
 
 
 def check_audit_contract(
@@ -141,6 +202,8 @@ def check_audit_contract(
             "report contains inclusion/ranking/placement guarantee language, which "
             "the skill's guardrails forbid"
         )
+
+    result.failures.extend(check_hydration_crosscheck(report_text).failures)
 
     return result
 

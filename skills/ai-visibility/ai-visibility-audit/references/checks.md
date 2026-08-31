@@ -38,12 +38,18 @@ curl -s -o /dev/null -w "%{http_code}\n" "$SITE/llms.txt"
 ## Hydrated-DOM fallback verification
 
 If any of the four checks above returns **zero** matches, the check is unresolved, not failed.
-Re-run it against the hydrated DOM before concluding the tag or block is absent. Headless
-Chromium is already a dependency of this pack (`scripts/render-audit-pdf.py`), so this needs no
-new tooling:
+Re-run it against the hydrated DOM before concluding the tag or block is absent. This needs a
+local Chromium-family browser. The pack does not pin one — `scripts/render-audit-pdf.py`
+auto-detects whichever of Chrome/Edge/Chromium happens to be installed and degrades when none
+is — so detect it the same way and handle the no-browser case explicitly:
 
 ```bash
-CHROME=$(command -v google-chrome || command -v chromium || command -v chromium-browser)
+CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium \
+  || command -v chromium-browser || command -v microsoft-edge || true)
+if [ -z "$CHROME" ]; then
+  echo "no Chromium-family browser available, hydration cross-check not performed"
+  exit 0
+fi
 "$CHROME" --headless=new --disable-gpu --virtual-time-budget=10000 --dump-dom "$URL" > /tmp/hydrated.html
 
 grep -oiE '<title[^>]*>[^<]*' /tmp/hydrated.html
@@ -75,11 +81,21 @@ Report the comparison, never just the hydrated answer:
 | absent | found | **Present in the rendered DOM but absent from the initial server response** — invisible to non-JS-executing crawlers (GPTBot, ClaudeBot, PerplexityBot). `[Measured]`, scored under Pillar 2 (rubric 2.8), not as a Pillar 3 absence. |
 | absent | absent | Genuinely absent. `[Measured]`, score the relevant absence check. |
 | found | absent | Client-side script removes or overwrites the server-sent tag — report both observations rather than picking one. |
+| absent | **not run** (no browser) | Unresolved. Report as `[Derived]` with the words "no browser available, hydration cross-check not performed". Never write it up as either absent or present. |
 
 State both observations in the evidence line (raw `curl` output *and* `--dump-dom` output) so the
-crawler-visibility conclusion is reproducible. A zero-match raw pass reported as absence without
-this second pass is `[Derived]`, not `[Measured]`, and must be labeled that way if the fallback
-could not be run (no local Chromium available).
+crawler-visibility conclusion is reproducible.
+
+### When no headless browser is available at all
+
+The fallback is then impossible, and a zero-match raw pass stays unresolved. Report it as
+`[Derived]` with an explicit "no browser available, hydration cross-check not performed"
+disclosure — never silently as "absent" and never as "present". Rubric 2.8 (the raw-vs-hydrated
+delivery gap) is `N/A` in that situation because the divergence cannot be observed, but the
+underlying rubric items are **not** withheld: score them from the raw pass and carry the
+`[Derived]` label. Items whose N/A column reads "Never" (3.1 `Organization` identity, 5.3 entity
+backing) stay reachable this way, so a missing-browser runtime cannot turn a real absence into an
+unscored gap.
 
 ## Server-rendered content test
 
