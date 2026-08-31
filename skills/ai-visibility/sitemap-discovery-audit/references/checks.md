@@ -4,11 +4,78 @@ Replace `$SITE` with the site origin and `$URL` with a representative sitemap UR
 
 ## Find sitemap declarations
 
+Follow what the site declares first; guess filenames last. Skipping the first two steps is how a
+site that publishes its sitemap at a framework default gets reported as having none.
+
+### 1. `Sitemap:` directives in robots.txt
+
 ```bash
-curl -s "$SITE/robots.txt" | grep -i "^sitemap"
-curl -s -o /dev/null -w "%{http_code}\n" "$SITE/sitemap.xml"
-curl -s -o /dev/null -w "%{http_code}\n" "$SITE/sitemap_index.xml"
+curl -s "$SITE/robots.txt" | grep -iE "^[[:space:]]*sitemap:" | sed -E 's/^[[:space:]]*[Ss]itemap:[[:space:]]*//'
 ```
+
+Fetch every URL this returns, including ones on a different host — a cross-host declaration is
+legal, and it is also where host-mismatch problems surface (step 4).
+
+### 2. `<link rel="sitemap">` in the homepage `<head>`
+
+```bash
+curl -s "$SITE" | grep -oiE '<link[^>]+rel="sitemap"[^>]*>'
+curl -s "$SITE" | grep -oiE '<link[^>]+rel="sitemap"[^>]*>' | grep -oiE 'href="[^"]+"' | sed 's/href="//;s/"$//'
+```
+
+Match `rel="sitemap"` anywhere inside the tag — `href` and `type` frequently precede `rel`, and
+an adjacent-token pattern misses those.
+
+### 3. Probe common default paths
+
+Only once steps 1 and 2 come up empty. Generators write different defaults, and the hyphenated
+and underscored spellings are different files:
+
+```bash
+for path in \
+  /sitemap.xml /sitemap_index.xml /sitemap-index.xml /sitemap/sitemap-index.xml \
+  /sitemap/ /sitemap.xml.gz /sitemap-0.xml /sitemap1.xml /wp-sitemap.xml \
+  /page-sitemap.xml /post-sitemap.xml; do
+  printf "%-28s %s\n" "$path" "$(curl -s -o /dev/null -w '%{http_code}' "$SITE$path")"
+done
+```
+
+- `/sitemap-index.xml` is `gatsby-plugin-sitemap`'s default output (it chains to `/sitemap-0.xml`).
+- `/sitemap_index.xml`, `/wp-sitemap.xml`, `/page-sitemap.xml`, `/post-sitemap.xml` cover Yoast,
+  core WordPress, and similar plugin layouts.
+- `/sitemap.xml` covers Next.js route handlers, Hugo, Jekyll, and most hand-rolled setups.
+
+A `200` whose `content-type` is `text/html` is an SPA fallback shell, not a sitemap:
+
+```bash
+curl -sI "$SITE/sitemap.xml" | grep -i "^content-type"
+```
+
+Report "no sitemap found" only when all three steps come up empty. When a sitemap exists but
+`robots.txt` does not declare it, the missing `Sitemap:` directive is the finding — not a missing
+sitemap.
+
+### 4. Verify the sitemap's declared host actually serves the site
+
+`<loc>` entries can advertise a host that never resolves, refuses TLS, or simply is not the
+canonical host. Every entry then points crawlers at a dead address even though the sitemap
+itself is well-formed and reachable.
+
+```bash
+SITEMAP_URL="$SITE/sitemap.xml"   # or whichever URL steps 1-3 actually found
+curl -s "$SITEMAP_URL" | grep -oE '<loc>[^<]+</loc>' | sed -e 's/<loc>//' -e 's/<\/loc>//' \
+  | awk -F/ '{print $1"//"$3}' | sort -u
+
+curl -s "$SITE" | grep -oiE '<link[^>]+rel="canonical"[^>]*>'
+
+for host in $(curl -s "$SITEMAP_URL" | grep -oE '<loc>[^<]+</loc>' | sed -e 's/<loc>//' -e 's/<\/loc>//' | awk -F/ '{print $1"//"$3}' | sort -u); do
+  printf "%-40s %s\n" "$host" "$(curl -s -o /dev/null -m 10 -w '%{http_code}' "$host/" || echo CONNECT-FAIL)"
+done
+```
+
+A sitemap host that times out, fails TLS, or differs from the canonical host is a discovery
+failure. Report it with the observed status (or connection failure) alongside the canonical host
+it should have used.
 
 ## Fetch and validate sitemap structure
 
