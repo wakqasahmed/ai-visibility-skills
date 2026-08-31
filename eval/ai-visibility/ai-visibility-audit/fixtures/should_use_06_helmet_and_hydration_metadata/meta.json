@@ -1,0 +1,9 @@
+{
+  "category": "should_use",
+  "mode": "audit",
+  "description": "Gatsby + React Helmet head tags (present in raw HTML behind a data-react-helmet attribute) plus Next.js-style JSON-LD that only exists after hydration. The audit must not report either as absent (issue #102).",
+  "expected_min_findings": 1,
+  "expected_max_findings": 2,
+  "expected_severities": ["important"],
+  "expected_delegates": ["schema-markup-audit"]
+}

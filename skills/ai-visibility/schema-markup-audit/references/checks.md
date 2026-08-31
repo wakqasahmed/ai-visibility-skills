@@ -2,10 +2,62 @@
 
 ## Extract structured data
 
+Match `application/ld+json` anywhere inside the `<script>` tag, never as an adjacent token
+straight after `<script` — an `id`, `nonce`, or framework attribute in front of `type=` is
+common, and an adjacent-token pattern silently misses those blocks.
+
 ```bash
-curl -s "$URL" | grep -oE '<script type="application/ld\+json">[^<]*' | sed 's/^<script[^>]*>//' | python3 -m json.tool
+curl -s "$URL" | grep -oiE '<script[^>]+application/ld\+json[^>]*>[^<]*' | sed 's/^<script[^>]*>//' | python3 -m json.tool
 curl -s "$URL" | grep -oiE 'itemtype="[^"]*"' | sort -u
 ```
+
+### Hydrated-DOM re-check when the raw pass finds nothing
+
+Zero JSON-LD blocks in the raw response is an unresolved check, not a finding. Frameworks
+serialize schema into a streaming payload (Next.js App Router: `self.__next_f.push(...)`, often
+including a block injected via `dangerouslySetInnerHTML`) or inject it during hydration (React
+Helmet), so it exists only after JavaScript has run. The second pass needs a local
+Chromium-family browser; the pack does not pin one (`scripts/render-audit-pdf.py` only
+auto-detects whichever of Chrome/Edge/Chromium is installed), so detect it and handle its
+absence explicitly:
+
+```bash
+CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium \
+  || command -v chromium-browser || command -v microsoft-edge || true)
+if [ -z "$CHROME" ]; then
+  echo "no Chromium-family browser available, hydration cross-check not performed"
+  exit 0
+fi
+"$CHROME" --headless=new --disable-gpu --virtual-time-budget=10000 --dump-dom "$URL" > /tmp/hydrated.html
+grep -oiE '<script[^>]+application/ld\+json[^>]*>' /tmp/hydrated.html | wc -l
+python3 -c "
+import json, re, sys
+html = open('/tmp/hydrated.html', encoding='utf-8', errors='replace').read()
+blocks = re.findall(r'<script[^>]+application/ld\+json[^>]*>(.*?)</script>', html, re.S | re.I)
+print(f'{len(blocks)} JSON-LD block(s) in hydrated DOM')
+for block in blocks:
+    try:
+        print(json.loads(block).get('@type'))
+    except json.JSONDecodeError as exc:
+        print(f'unparseable block: {exc}')
+"
+```
+
+Report the comparison, not just the pass that found something:
+
+- **raw 0 / hydrated 0** — genuinely no structured data; report as missing.
+- **raw 0 / hydrated N** — the entities exist, so never report them missing. Report them as
+  present in the rendered DOM but absent from the initial server response, therefore invisible
+  to non-JS-executing crawlers (GPTBot, ClaudeBot, PerplexityBot), and audit the blocks'
+  properties as normal on top of that delivery finding.
+- **raw N / hydrated M** with `M > N` — some blocks are server-rendered and others are not; say
+  which are which rather than reporting a single count.
+- **raw 0 / no browser available** — unresolved, not missing. Report it as `[Derived]` with the
+  words "no browser available, hydration cross-check not performed"; never write it up as either
+  present or absent.
+
+Cite both observations (the `curl` count and the `--dump-dom` count) so the delivery conclusion
+is reproducible by whoever implements the fix.
 
 List all `@type` values found:
 

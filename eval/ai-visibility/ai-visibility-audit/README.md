@@ -55,10 +55,30 @@ finding bullets and still never uses guarantee language.
 
 Pre-existing (issue #3). A hand-maintained Python reimplementation of the
 commands in `skills/ai-visibility/ai-visibility-audit/references/checks.md`, run against one frozen `fixture/`
-snapshot (robots.txt blocking GPTBot, missing JSON-LD, thin FAQ answers) and
-asserted against severity/evidence/delegation/guardrail rules. Unchanged by
-this update — see the header comment in `run_eval.py` for what it does and
-does not prove.
+snapshot (robots.txt blocking GPTBot, hydration-only JSON-LD, thin FAQ answers)
+and asserted against severity/evidence/delegation/guardrail rules. See the
+header comment in `run_eval.py` for what it does and does not prove.
+
+The snapshot has two page files, because the checks it mirrors now have two
+passes (issue #102): `fixture/index.html` is the initial server response and
+`fixture/hydrated.html` is the same page's DOM after JavaScript runs. The raw
+response carries React-Helmet-attributed head tags
+(`<meta data-react-helmet="true" name="description" ...>`) that an adjacent-token
+pattern would miss, and no JSON-LD; the hydrated DOM adds an `Organization`
+block. `assert_hydration_methodology()` fails the run if either false-negative
+shape comes back — a head tag that is present being reported absent, or a
+hydration-only JSON-LD block being reported as a flat absence instead of a
+raw-vs-hydrated divergence. Title, meta description and canonical go through the
+same two-pass resolution as JSON-LD, and the assertions cover both the
+raw-absent/hydrated-present case for each of them and the no-browser case, where
+every zero-match raw result must come back as `[Derived]` with an explicit
+"hydration cross-check not performed" disclosure rather than as absent.
+
+`contract.py` enforces the same rule at the report level for every fixture
+(`check_hydration_crosscheck`): any finding — or any report prose — claiming a
+title, meta description, canonical or JSON-LD is absent must also state what the
+hydrated pass returned, or disclose that no browser was available and label itself
+`[Derived]`.
 
 ```bash
 python3 eval/ai-visibility/ai-visibility-audit/run_eval.py
@@ -86,7 +106,7 @@ for a given input — that is what Layer 3 answers.
 
 ### Fixtures (`fixtures/`)
 
-10 scenarios, 5 should-use and 5 should-not-use/near-miss:
+11 scenarios, 6 should-use and 5 should-not-use/near-miss:
 
 **Should-use** (site inputs that should produce a ranked, evidenced audit report):
 
@@ -97,6 +117,7 @@ for a given input — that is what Layer 3 answers.
 | `should_use_03_broken_sitemap` | sitemap.xml declared in robots.txt 404s, 200+ pages undiscoverable otherwise | important | sitemap-discovery-audit |
 | `should_use_04_thin_content_faq` | FAQ answers are one to two words, too thin to cite (discoverability otherwise clean) | optional | answer-engine-content-audit |
 | `should_use_05_multi_issue_ecommerce` | three simultaneous findings across all three severities and three different delegates | critical/important/optional | robots-ai-crawler-audit, schema-markup-audit, citation-readiness-audit |
+| `should_use_06_helmet_and_hydration_metadata` | React-Helmet head tags present in the raw response, plus JSON-LD that only exists in the hydrated DOM — neither may be reported as absent (issue #102) | important | schema-markup-audit |
 
 **Should-not-use / near-miss** (should not produce a fabricated or forced audit report):
 
