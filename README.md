@@ -1,5 +1,7 @@
 # AI Visibility Skills
 
+📖 [**Prompt Guide** — how to get the best results from this pack](docs/PROMPT_GUIDE.md)
+
 Canonical source for AI visibility, AEO, GEO, crawler, sitemap, schema, and citation-readiness skills.
 
 **In plain terms:** you ask whether a site is visible to AI search and answer engines (ChatGPT, Perplexity, Google AI Overviews) and the matching skill runs the relevant audit — crawler access, structured data, citation readiness, content gaps — then turns findings into a prioritized remediation checklist instead of a vague "improve your SEO."
