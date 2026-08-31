@@ -28,8 +28,9 @@ an adjacent-token pattern misses those.
 
 ### 3. Probe common default paths
 
-Only once steps 1 and 2 come up empty. Generators write different defaults, and the hyphenated
-and underscored spellings are different files:
+Run this step every time and record what it returned; only *rely on* the guess-list once steps 1
+and 2 come up empty. Generators write different defaults, and the hyphenated and underscored
+spellings are different files:
 
 ```bash
 for path in \
@@ -69,9 +70,14 @@ curl -s "$SITEMAP_URL" | grep -oE '<loc>[^<]+</loc>' | sed -e 's/<loc>//' -e 's/
 curl -s "$SITE" | grep -oiE '<link[^>]+rel="canonical"[^>]*>'
 
 for host in $(curl -s "$SITEMAP_URL" | grep -oE '<loc>[^<]+</loc>' | sed -e 's/<loc>//' -e 's/<\/loc>//' | awk -F/ '{print $1"//"$3}' | sort -u); do
-  printf "%-40s %s\n" "$host" "$(curl -s -o /dev/null -m 10 -w '%{http_code}' "$host/" || echo CONNECT-FAIL)"
+  code=$(curl -s -o /dev/null -m 10 -w '%{http_code}' "$host/" || true)
+  [ "$code" = "000" ] && code="000 (no response: DNS, TLS or connection failure)"
+  printf "%-40s %s\n" "$host" "$code"
 done
 ```
+
+`curl` prints `000` and exits non-zero when it cannot complete a request, so `000` is the
+connection-failure signal — do not append a separate placeholder to it.
 
 A sitemap host that times out, fails TLS, or differs from the canonical host is a discovery
 failure. Report it with the observed status (or connection failure) alongside the canonical host

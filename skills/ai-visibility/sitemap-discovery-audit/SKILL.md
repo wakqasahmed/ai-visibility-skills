@@ -15,10 +15,13 @@ Scope: discovery paths only. Access rules (robots, headers, bot blocks) belong t
    1. every `Sitemap:` directive in `robots.txt`, including ones pointing at another host;
    2. `<link rel="sitemap">` in the homepage `<head>` — how most SSG plugins advertise a
       non-default path;
-   3. only then probe the common default paths (`/sitemap.xml`, `/sitemap_index.xml`,
-      `/sitemap-index.xml`, and the rest of the list in `references/checks.md`).
-   A filename guess-list on its own is not a discovery pass. Report "no sitemap found" only
-   after all three steps come up empty, and name which step found it when one does.
+   3. probe the common default paths (`/sitemap.xml`, `/sitemap_index.xml`,
+      `/sitemap-index.xml`, and the rest of the list in `references/checks.md`) — only *rely on*
+      the guess-list once steps 1 and 2 come up empty.
+   Run and record all three steps every time, even when an earlier one succeeds: the report must
+   show what each step returned. A filename guess-list on its own is not a discovery pass. Report
+   "no sitemap found" only after all three steps come up empty, and name which step found it when
+   one does.
 2. Inspect sitemap indexes, URL sets, lastmod values, and obvious stale entries.
 3. Compare sitemap URLs with navigation, important landing pages, docs, products, policies, and support pages.
 4. Check representative URLs for status codes, redirects, canonical tags, and noindex. Compare the

@@ -53,12 +53,13 @@ NO_SITEMAP_CLAIM_RE = re.compile(
 )
 ROBOTS_CHECK_RE = re.compile(r"robots\.txt", re.IGNORECASE)
 HEAD_LINK_CHECK_RE = re.compile(r'rel="sitemap"|<link[^>]*sitemap', re.IGNORECASE)
-PROBED_PATH_RE = re.compile(r"/(?:wp-)?sitemap[\w.\-/]*", re.IGNORECASE)
+PROBED_PATH_RE = re.compile(r"/[\w-]*sitemap[\w.\-/]*", re.IGNORECASE)
 HOST_MISMATCH_RE = re.compile(
-    r"host (mismatch|differs|does not match)|different host|wrong host|canonical host|"
-    r"does not serve",
+    r"host mismatch|mismatched host|host differs|hosts? do(?:es)? not match|"
+    r"different host|wrong host|host[^.\n]{0,60}?\bdiffers from\b",
     re.IGNORECASE,
 )
+NEGATED_MISMATCH_RE = re.compile(r"\b(?:no|not|never|without)\b[^.\n]{0,20}$", re.IGNORECASE)
 DATE_DIRECTION_RE = re.compile(
     r"(?P<date>\d{4}-\d{2}-\d{2})[^\n]{0,120}?"
     r"(?P<days>\d+)\s+days?\s+(?P<direction>before|after)\s+(?:the\s+)?"
@@ -135,6 +136,20 @@ def check_date_direction(report_text: str) -> ContractResult:
     return result
 
 
+def _flags_host_mismatch(report_text: str) -> bool:
+    """True only when the report actually concludes a host mismatch.
+
+    The phrase must not be immediately preceded by a negation, so reports that
+    conclude the opposite ("no host mismatch", "the hosts do not differ from
+    each other") are not counted as having flagged one.
+    """
+    for match in HOST_MISMATCH_RE.finditer(report_text):
+        preceding = report_text[max(0, match.start() - 40):match.start()]
+        if not NEGATED_MISMATCH_RE.search(preceding):
+            return True
+    return False
+
+
 def check_discovery_completeness(report_text: str, meta: dict) -> ContractResult:
     """Enforce SKILL.md's three-step discovery order (issue #103).
 
@@ -174,13 +189,20 @@ def check_discovery_completeness(report_text: str, meta: dict) -> ContractResult
                 "fixture's sitemap is discoverable via a declaration, but the report still "
                 "claims no sitemap exists"
             )
-        if not HEAD_LINK_CHECK_RE.search(paths_section) and not ROBOTS_CHECK_RE.search(paths_section):
+        if not ROBOTS_CHECK_RE.search(paths_section):
             result.add(
                 "fixture's sitemap is discoverable via a declaration, but 'Sitemap paths "
-                "found' cites neither the robots.txt directive nor the homepage link"
+                "found' does not cite the robots.txt 'Sitemap:' check — all three discovery "
+                "steps must be attempted, not just the one that happened to succeed"
+            )
+        if not HEAD_LINK_CHECK_RE.search(paths_section):
+            result.add(
+                "fixture's sitemap is discoverable via a declaration, but 'Sitemap paths "
+                "found' does not cite the homepage <link rel=\"sitemap\"> check — all three "
+                "discovery steps must be attempted, not just the one that happened to succeed"
             )
 
-    if meta.get("expects_host_mismatch_flag") and not HOST_MISMATCH_RE.search(report_text):
+    if meta.get("expects_host_mismatch_flag") and not _flags_host_mismatch(report_text):
         result.add(
             "fixture's sitemap <loc> host differs from the site's working/canonical host, "
             "but the report never flags it"

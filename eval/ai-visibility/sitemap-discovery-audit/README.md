@@ -40,8 +40,11 @@ behavior. A correct run produces a report where:
    from `SKILL.md` — the `robots.txt` `Sitemap:` directive, the homepage
    `<link rel="sitemap">`, and the default-path list — is shown in `Sitemap
    paths found`. A sitemap found via a declaration is never reported as
-   missing, and a `<loc>` host that differs from the site's working/canonical
-   host is flagged (`check_discovery_completeness`, issue #103).
+   missing, and both declaration steps must be cited even when one of them
+   succeeded — an `or` there would bless a report that skipped the head-link
+   check. A `<loc>` host that differs from the site's working/canonical host is
+   flagged, and the flag must be an actual mismatch conclusion rather than any
+   sentence mentioning hosts (`check_discovery_completeness`, issue #103).
 
 For inputs this skill should **not** turn into a full sitemap-audit report
 (wrong scope — robots.txt/bot-blocking belongs to `robots-ai-crawler-audit`,
