@@ -1,0 +1,1 @@
+The user is asking for Stripe payment gateway checkout integration. This is out of scope; delegate to agentic commerce skills.

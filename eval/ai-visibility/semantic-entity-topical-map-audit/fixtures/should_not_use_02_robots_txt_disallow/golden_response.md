@@ -1,0 +1,1 @@
+The user wants to configure robots.txt disallow rules. This does not apply to semantic entity mapping; delegate to `robots-ai-crawler-audit`.

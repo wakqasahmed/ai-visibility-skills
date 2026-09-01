@@ -1,0 +1,1 @@
+The user is asking to measure LCP and CLS Core Web Vitals. This is out of scope for semantic entity audits; please refer to the `core-web-vitals` or `site-reliability-skills`.

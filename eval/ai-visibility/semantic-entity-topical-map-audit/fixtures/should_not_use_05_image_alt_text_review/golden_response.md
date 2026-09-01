@@ -1,0 +1,1 @@
+The user wants to audit image alt tags for hero images. This is out of scope; refer to the `image-audit` skill.
