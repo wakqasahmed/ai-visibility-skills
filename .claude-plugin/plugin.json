@@ -18,6 +18,8 @@
     "./skills/ai-visibility/international-seo-hreflang-audit",
     "./skills/ai-visibility/docs-api-visibility-audit",
     "./skills/ai-visibility/paywall-access-audit",
+    "./skills/ai-visibility/semantic-entity-topical-map-audit",
+    "./skills/ai-visibility/indexnow-instant-indexing-audit",
     "./skills/ai-visibility/ai-share-of-voice-audit"
   ]
 }

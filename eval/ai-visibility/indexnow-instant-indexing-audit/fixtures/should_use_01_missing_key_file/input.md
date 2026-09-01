@@ -1,0 +1,1 @@
+We publish 10-15 articles a day on https://example.com from a Next.js App Router site. Bing takes days to pick up new articles while Google finds them within hours. Audit our IndexNow setup and tell us why instant indexing is not working.

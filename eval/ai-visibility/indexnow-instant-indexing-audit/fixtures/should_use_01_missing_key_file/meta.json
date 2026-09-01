@@ -1,0 +1,4 @@
+{
+  "type": "should_use",
+  "focus": "key file absent at host root, submissions return 403"
+}

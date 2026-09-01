@@ -1,0 +1,1 @@
+Our company is called Apex and the name collides with a lot of unrelated businesses. Audit https://apex.io and tell us what machine-readable identity signals we are missing so that our brand is not confusable with same-named entities in other industries.

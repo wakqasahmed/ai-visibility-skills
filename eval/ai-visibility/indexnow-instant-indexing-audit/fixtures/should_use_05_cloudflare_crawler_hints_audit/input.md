@@ -1,0 +1,1 @@
+We run https://app.example.com behind Cloudflare with Crawler Hints turned on and never created an IndexNow key file on the origin. Audit whether our IndexNow instant-indexing coverage is actually working, and whether our staging and preview subdomains are leaking into it.

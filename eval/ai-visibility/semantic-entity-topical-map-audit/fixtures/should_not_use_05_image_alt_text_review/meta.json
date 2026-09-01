@@ -1,0 +1,4 @@
+{
+  "type": "should_not_use",
+  "reason": "Image alt-text and image fetchability belong to image-audit."
+}

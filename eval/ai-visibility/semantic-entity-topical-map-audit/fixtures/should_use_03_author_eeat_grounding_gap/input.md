@@ -1,0 +1,1 @@
+Our health publication https://medicalnews.org is reviewed by licensed physicians, but the bylines are plain text and I do not think any of that shows up in our structured data. Audit our author entity markup and the interlinking of our cardiology content.

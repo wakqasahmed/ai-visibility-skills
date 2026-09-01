@@ -41,5 +41,12 @@
   "OPENAPI-SPEC-01": "https://spec.openapis.org/oas/v3.1.0",
   "COMMONMARK-CODE-01": "https://spec.commonmark.org/0.31.2/#fenced-code-blocks",
   "GOOGLE-PAYWALL-SCHEMA-01": "https://developers.google.com/search/docs/appearance/structured-data/paywalled-content",
-  "SCHEMA-ISACCESSIBLEFORFREE-01": "https://schema.org/isAccessibleForFree"
+  "SCHEMA-ISACCESSIBLEFORFREE-01": "https://schema.org/isAccessibleForFree",
+  "SCHEMA-SAMEAS-01": "https://schema.org/sameAs",
+  "GOOGLE-ORG-SCHEMA-01": "https://developers.google.com/search/docs/appearance/structured-data/organization",
+  "SCHEMA-PERSON-01": "https://schema.org/Person",
+  "GOOGLE-EEAT-AUTHOR-01": "https://developers.google.com/search/docs/fundamentals/creating-helpful-content",
+  "WIKIDATA-DATA-ACCESS-01": "https://www.wikidata.org/wiki/Wikidata:Data_access",
+  "AHREFS-TOPIC-CLUSTERS-01": "https://ahrefs.com/blog/topic-clusters/",
+  "INDEXNOW-SPEC-01": "https://www.indexnow.org/documentation"
 }

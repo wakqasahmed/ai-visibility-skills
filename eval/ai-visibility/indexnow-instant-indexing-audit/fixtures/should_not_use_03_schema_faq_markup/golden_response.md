@@ -1,0 +1,1 @@
+The user wants to generate FAQ Schema JSON-LD markup. This does not apply to IndexNow protocols. Please delegate to `schema-markup-audit`.

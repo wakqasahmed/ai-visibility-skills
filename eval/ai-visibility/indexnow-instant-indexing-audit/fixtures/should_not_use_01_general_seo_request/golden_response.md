@@ -1,0 +1,1 @@
+The user is requesting a general SEO keyword audit for an ecommerce store. This falls out of scope for the indexnow-instant-indexing-audit skill. We recommend delegating to the `ai-visibility-audit` or `answer-engine-content-audit` skills.

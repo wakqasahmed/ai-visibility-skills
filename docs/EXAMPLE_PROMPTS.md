@@ -333,7 +333,48 @@ Fed into `ai-search-remediation-plan`, which turns those findings into:
 
 ---
 
-## Example 16 — AI share of voice and competitor displacement audit
+## Example 16 — IndexNow instant indexing and push-discovery audit
+
+**Skill invoked:** [`indexnow-instant-indexing-audit`](../skills/ai-visibility/indexnow-instant-indexing-audit/SKILL.md)
+
+**Prompt:**
+
+> "We publish 10-15 articles a day on `https://example.com` from a Next.js App Router site. Bing takes
+> days to pick up new articles while Google finds them within hours. Audit our IndexNow setup — key
+> hosting, submission payload, and whether publishing actually triggers a push."
+
+**Expected output shape:**
+
+- IndexNow Key Verification Status (key file HTTP status, exact-body match, 8-128 char `a-z A-Z 0-9 -` conformance)
+- Submission Endpoint & Payload Configuration (`host`/`key`/`keyLocation`/`urlList`, `keyLocation` path scoping vs. `urlList` paths, expected response code — `403` key invalid vs. `422` path-scope violation)
+- CMS & Webhook Push Integration (what triggers a push, on which events, what is excluded)
+- Recommended fixes with key placement, payload corrections, and read-only curl verification commands
+
+Live submissions are never performed as part of the audit — a POST to an IndexNow endpoint enters URLs
+into Bing's and Yandex's queues and requires explicit operator authorization.
+
+## Example 17 — semantic entity and topical map audit
+
+**Skill invoked:** [`semantic-entity-topical-map-audit`](../skills/ai-visibility/semantic-entity-topical-map-audit/SKILL.md)
+
+**Prompt:**
+
+> "Our brand name collides with several unrelated companies. Audit the entity identity on
+> `https://apex.io` — is there a stable `@id`, are there `sameAs` reference pages, do our articles
+> reference the canonical organization entity, and are our subtopic pages actually linked from
+> their pillar?"
+
+**Expected output shape:**
+
+- Entity Disambiguation & Knowledge Graph Grounding, with a single
+  `Entity clarity classification: **AMBIGUOUS | PARTIALLY_GROUNDED | FULLY_RECONCILED**` line
+- Schema Graph Reconciliation (canonical `@id` reuse across `Article`/`WebSite`/`Product`, author
+  `Person` completeness: `jobTitle`, `worksFor`, `alumniOf`, `sameAs`)
+- Topical Map & Cluster Structure (pillar pages, cluster depth, orphan subtopic pages)
+- Recommended fixes with copy-pasteable JSON-LD using placeholder Wikidata Q-ids, plus the
+  reproducible verification commands that produced each finding
+
+## Example 18 — AI share of voice and competitor displacement audit
 
 **Skill invoked:** [`ai-share-of-voice-audit`](../skills/ai-visibility/ai-share-of-voice-audit/SKILL.md)
 

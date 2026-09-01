@@ -1,0 +1,1 @@
+Audit the entity identity of our developer-tools company at https://techbrand.com. Our Organization JSON-LD has a name and a logo but no sameAs links anywhere, and our blog posts just put our company name in the publisher field as plain text. Is there anything machine-readable pinning down who we are?
