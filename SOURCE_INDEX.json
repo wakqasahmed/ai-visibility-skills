@@ -41,5 +41,14 @@
   "OPENAPI-SPEC-01": "https://spec.openapis.org/oas/v3.1.0",
   "COMMONMARK-CODE-01": "https://spec.commonmark.org/0.31.2/#fenced-code-blocks",
   "GOOGLE-PAYWALL-SCHEMA-01": "https://developers.google.com/search/docs/appearance/structured-data/paywalled-content",
-  "SCHEMA-ISACCESSIBLEFORFREE-01": "https://schema.org/isAccessibleForFree"
+  "SCHEMA-ISACCESSIBLEFORFREE-01": "https://schema.org/isAccessibleForFree",
+  "INDEXNOW-SPEC-01": "https://www.indexnow.org/documentation",
+  "RFC-8288-01": "https://www.rfc-editor.org/rfc/rfc8288",
+  "RFC-9727-01": "https://www.rfc-editor.org/rfc/rfc9727",
+  "RFC-9728-01": "https://www.rfc-editor.org/rfc/rfc9728",
+  "RFC-8414-01": "https://www.rfc-editor.org/rfc/rfc8414",
+  "OIDC-DISCOVERY-01": "https://openid.net/specs/openid-connect-discovery-1_0.html",
+  "WEBMCP-SPEC-01": "https://webmachinelearning.github.io/webmcp/",
+  "AGENT-SKILLS-RFC-01": "https://github.com/cloudflare/agent-skills-discovery-rfc",
+  "MCP-SERVER-CARD-01": "https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2127"
 }
