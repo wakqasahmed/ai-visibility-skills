@@ -14,6 +14,17 @@ REQUIRED_SECTIONS = [
 
 SECTION_HEADING_RE = re.compile(r"^#{1,3}\s+(.+)$", re.MULTILINE)
 
+
+def _normalize_heading(text: str) -> str:
+    # "&" and "and" are interchangeable in a heading a model writes freehand, and
+    # numbered Output Format items arrive as "1. Topical Map ...".
+    text = text.strip().lower().replace("&", " and ")
+    text = re.sub(r"^\d+[.)]\s*", "", text)
+    return re.sub(r"[^a-z0-9]+", " ", text).strip()
+
+
+NORMALIZED_REQUIRED_SECTIONS = [_normalize_heading(s) for s in REQUIRED_SECTIONS]
+
 GUARANTEE_WORD_RE = re.compile(
     r"\bguarantee[sd]?\b|\bwill definitely\b|\bwill certainly\b|"
     r"\b100% (cited|indexed|ranked|guaranteed)\b|"
@@ -66,9 +77,9 @@ def validate_report_contract(text: str) -> ValidationResult:
         result.add_failure("report is empty")
         return result
 
-    headings = [h.strip().lower() for h in SECTION_HEADING_RE.findall(text)]
-    for required in REQUIRED_SECTIONS:
-        if not any(required in h for h in headings):
+    headings = [_normalize_heading(h) for h in SECTION_HEADING_RE.findall(text)]
+    for required, normalized in zip(REQUIRED_SECTIONS, NORMALIZED_REQUIRED_SECTIONS):
+        if not any(normalized in h for h in headings):
             result.add_failure(f"missing required section: '{required}'")
 
     if _has_affirmative_guarantee(text):
@@ -118,8 +129,12 @@ def validate_decline_contract(text: str, expected_topic: str | None = None) -> V
 
     # A response that emits the audit report's own section structure has not declined,
     # whatever boundary language it also contains.
-    headings = [h.strip().lower() for h in SECTION_HEADING_RE.findall(text)]
-    emitted = [s for s in REQUIRED_SECTIONS if any(s in h for h in headings)]
+    headings = [_normalize_heading(h) for h in SECTION_HEADING_RE.findall(text)]
+    emitted = [
+        required
+        for required, normalized in zip(REQUIRED_SECTIONS, NORMALIZED_REQUIRED_SECTIONS)
+        if any(normalized in h for h in headings)
+    ]
     if emitted:
         result.add_failure(
             f"decline still emits audit report sections: {emitted}"
