@@ -13,6 +13,7 @@ Audit multilingual and multi-regional website configurations to ensure search en
    - Inspect sampled URLs across language/regional prefixes (`/en/`, `/es/`, `/de/`, `/fr-ca/`), subdomains (`uk.example.com`), or ccTLDs.
    - Extract `<link rel="alternate" hreflang="..." href="...">` tags in HTML `<head>` and `Link:` HTTP response headers `[GOOGLE-HREFLANG-01]`.
    - Inspect XML sitemaps for `xhtml:link` localized alternate declarations `[GOOGLE-HREFLANG-01]`.
+   - **Cross-Check Hydrated DOM for Client-Rendered Hreflang Tags**: If raw HTML yields 0 hreflang tags on a JS-powered site (React Helmet, Next.js CSR), run a headless Chromium `--dump-dom` pass before declaring absence. If hreflang exists only after JS execution, report as *Present in rendered DOM but absent from initial server response* (invisible to non-JS crawlers). If no browser is available, report as `[Derived]` with explicit disclosure.
 
 2. **Verify Language & Region Code Validity**:
    - Validate language subtags against ISO 639-1 (e.g., `en`, `es`, `de`, `fr`, `zh`) `[W3C-ISO-LANG-01]`.

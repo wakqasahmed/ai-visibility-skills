@@ -16,6 +16,7 @@ Scope: public-signal image audit against a live site (alt text, image sitemap, `
 3. Check whether `sitemap.xml` declares `<image:image>` entries for those same images.
 4. Check whether `ImageObject` schema is present and complete where relevant (e.g. `Product.image` as a full `ImageObject` vs a bare URL string).
 5. Check fetchability: whether the image is reachable without executing JavaScript, and whether a `<noscript>` fallback exists for JS-only lazy-loaded images; whether the image request requires authentication or returns a geo-blocked response.
+   - **Cross-Check Hydrated DOM for Client-Rendered Images**: If raw HTML yields 0 `<img>` elements or missing `alt` attributes on a JS-powered site (Next.js `<Image>`, dynamic product image carousels), run a headless Chromium `--dump-dom` pass before declaring absence. If images/alt text exist only after JS execution, report as *Present in rendered DOM but absent from initial server response* (invisible to non-JS vision crawlers). If no browser is available, report as `[Derived]` with explicit disclosure.
 6. Prioritize fixes that unblock the most images with the least effort (e.g. a missing `<noscript>` fallback template affects every lazy-loaded image site-wide).
 
 Use the extraction and fetch commands in `references/checks.md`.

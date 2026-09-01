@@ -80,6 +80,16 @@ curl -s "$URL" | grep -ozE '<noscript>.*?</noscript>' | strings | grep -oiE '<im
 curl -s -o /dev/null -w "%{http_code}\n" "$IMAGE_URL"
 curl -s -o /dev/null -w "%{http_code}\n" -A "GPTBot" "$IMAGE_URL"
 curl -s -o /dev/null -w "%{http_code}\n" -A "ClaudeBot" "$IMAGE_URL"
+
+# Hydrated DOM cross-check when raw HTML has 0 images or missing alt attributes
+CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium \
+  || command -v chromium-browser || command -v microsoft-edge || true)
+if [ -n "$CHROME" ]; then
+  "$CHROME" --headless=new --disable-gpu --virtual-time-budget=10000 --dump-dom "$URL" > /tmp/hydrated_images.html
+  grep -oiE '<img[^>]*>' /tmp/hydrated_images.html
+else
+  echo "no Chromium-family browser available, hydration cross-check not performed"
+fi
 ```
 
 An `<img>` whose only source is a `data-src`/`data-lazy` attribute set by JavaScript, with
