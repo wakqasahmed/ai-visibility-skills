@@ -79,6 +79,7 @@ Then copy that skill's folder into your agent's skills directory as in method 3.
 | [`paywall-access-audit`](skills/ai-visibility/paywall-access-audit/SKILL.md) | Audit whether paywalled, metered, and subscription-gated publications follow Schema.org paywall specifications, provide crawlable lead-in snippets, and correctly configure AI crawler access policies. |
 | [`robots-ai-crawler-audit`](skills/ai-visibility/robots-ai-crawler-audit/SKILL.md) | Review robots.txt, meta robots, headers, and AI crawler rules for search and AI-agent access. |
 | [`schema-markup-audit`](skills/ai-visibility/schema-markup-audit/SKILL.md) | Audit schema.org JSON-LD and structured data for AI search, answer engines, rich results, and agent understanding. |
+| [`semantic-entity-topical-map-audit`](skills/ai-visibility/semantic-entity-topical-map-audit/SKILL.md) | Audit entity disambiguation, knowledge graph grounding (`sameAs` reference pages such as Wikidata), and topical pillar-cluster completeness for generative AI search engines. |
 | [`sitemap-discovery-audit`](skills/ai-visibility/sitemap-discovery-audit/SKILL.md) | Audit sitemap coverage, canonical URLs, indexable pages, redirects, and crawl discovery paths. |
 
 ## Running an audit on your own machine

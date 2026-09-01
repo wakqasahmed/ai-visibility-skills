@@ -1,0 +1,1 @@
+We think our structured data is already in good shape at https://authorityhub.io - we have a Wikidata item, a Wikipedia article, a Crunchbase page and a GitHub org all in sameAs, and one shared @id reused across WebSite, Organization and every Article. Can you check the entity graph and topical clusters and tell us if anything is actually missing?

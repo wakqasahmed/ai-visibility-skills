@@ -352,3 +352,24 @@ Fed into `ai-search-remediation-plan`, which turns those findings into:
 
 Live submissions are never performed as part of the audit — a POST to an IndexNow endpoint enters URLs
 into Bing's and Yandex's queues and requires explicit operator authorization.
+
+## Example 17 — semantic entity and topical map audit
+
+**Skill invoked:** [`semantic-entity-topical-map-audit`](../skills/ai-visibility/semantic-entity-topical-map-audit/SKILL.md)
+
+**Prompt:**
+
+> "Our brand name collides with several unrelated companies. Audit the entity identity on
+> `https://apex.io` — is there a stable `@id`, are there `sameAs` reference pages, do our articles
+> reference the canonical organization entity, and are our subtopic pages actually linked from
+> their pillar?"
+
+**Expected output shape:**
+
+- Entity Disambiguation & Knowledge Graph Grounding, with a single
+  `Entity clarity classification: **AMBIGUOUS | PARTIALLY_GROUNDED | FULLY_RECONCILED**` line
+- Schema Graph Reconciliation (canonical `@id` reuse across `Article`/`WebSite`/`Product`, author
+  `Person` completeness: `jobTitle`, `worksFor`, `alumniOf`, `sameAs`)
+- Topical Map & Cluster Structure (pillar pages, cluster depth, orphan subtopic pages)
+- Recommended fixes with copy-pasteable JSON-LD using placeholder Wikidata Q-ids, plus the
+  reproducible verification commands that produced each finding
