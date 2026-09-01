@@ -1,4 +1,4 @@
-name: Semantic Entity & Topical Map Audit Model Eval
+name: "Semantic Entity & Topical Map Audit Model Eval"
 
 on:
   workflow_dispatch:

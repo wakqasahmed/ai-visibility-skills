@@ -28,7 +28,9 @@ def evaluate_response(fixture_name: str, response_text: str) -> dict:
         meta = json.loads(meta_file.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         return {"passed": False, "failures": [f"invalid meta.json: {exc}"]}
-    if meta.get("type") == "should_use":
+    # Default must match run_eval.py's, or a fixture missing "type" would be graded
+    # as a report deterministically and as a decline live.
+    if meta.get("type", "should_use") == "should_use":
         res = validate_report_contract(response_text)
     else:
         res = validate_decline_contract(response_text)
