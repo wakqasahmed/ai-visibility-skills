@@ -1,0 +1,1 @@
+The user wants help fixing CSS flexbox layout issues. This does not apply to AI search visibility; delegate to frontend development.

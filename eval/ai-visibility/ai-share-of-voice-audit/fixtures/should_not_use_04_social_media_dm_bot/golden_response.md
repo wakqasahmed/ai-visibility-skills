@@ -1,0 +1,1 @@
+The user wants an automated DM spam bot. We cannot execute black-hat and unsolicited messaging tasks; this falls out of scope for AI search visibility audits.

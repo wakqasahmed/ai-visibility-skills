@@ -1,0 +1,1 @@
+The user is requesting SQL injection penetration testing. This is strictly out of scope for AI Share of Voice audits; refer to security tooling.
