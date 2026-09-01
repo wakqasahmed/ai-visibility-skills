@@ -1,2 +1,1 @@
-# Input for should_use_04_orphan_topical_cluster
-Audit request for target entity.
+We published a big Microservices Architecture pillar page on https://devtools.co plus a batch of microservice tutorials, but the tutorials only get traffic from newsletters and never from the pillar. Audit our topical map and internal linking to find which subtopic pages are orphaned from the pillar.

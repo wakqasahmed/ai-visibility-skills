@@ -1,3 +1,4 @@
 {
-  "type": "should_use"
+  "type": "should_use",
+  "focus": "author Person entity markup completeness (jobTitle, worksFor, sameAs)"
 }

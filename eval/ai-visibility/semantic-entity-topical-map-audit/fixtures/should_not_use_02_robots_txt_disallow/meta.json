@@ -1,3 +1,4 @@
 {
-  "type": "should_not_use"
+  "type": "should_not_use",
+  "reason": "Crawler access directives belong to robots-ai-crawler-audit; this skill inspects entity markup, not access rules."
 }

@@ -1,2 +1,1 @@
-# Input for should_not_use_04_server_ssh_hardening
-Audit request for target entity.
+Harden SSH on our production VPS - disable password auth, change the port, and set up fail2ban.

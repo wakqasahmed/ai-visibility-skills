@@ -1,3 +1,4 @@
 {
-  "type": "should_not_use"
+  "type": "should_not_use",
+  "reason": "Core Web Vitals / page-performance measurement is a rendering-performance task, not an entity-identity or topical-structure audit."
 }

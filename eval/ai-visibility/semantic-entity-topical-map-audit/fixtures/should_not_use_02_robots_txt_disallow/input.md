@@ -1,2 +1,1 @@
-# Input for should_not_use_02_robots_txt_disallow
-Audit request for target entity.
+Rewrite our robots.txt so GPTBot and ClaudeBot cannot train on our content but OAI-SearchBot and PerplexityBot can still crawl us for citations.

@@ -1,1 +1,1 @@
-The user is requesting server SSH configuration changes. We cannot assist with direct server infrastructure provisioning here.
+This request is out of scope for `semantic-entity-topical-map-audit`, and I cannot carry it out here. SSH configuration, port changes, and fail2ban setup are server infrastructure hardening tasks with no relationship to entity identity markup or topical-cluster structure, and this skill performs read-only public-page inspection rather than changes to live server configuration.

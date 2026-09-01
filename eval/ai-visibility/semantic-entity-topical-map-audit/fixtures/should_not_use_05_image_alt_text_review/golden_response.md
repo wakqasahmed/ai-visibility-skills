@@ -1,1 +1,1 @@
-The user wants to audit image alt tags for hero images. This is out of scope; refer to the `image-audit` skill.
+This request is out of scope for `semantic-entity-topical-map-audit`. Alt-text quality, image fetchability, and image sitemap coverage are visual-asset accessibility checks; this skill inspects `Organization`/`Person` entity markup and pillar-cluster internal linking, and does not evaluate image attributes. Please refer to `image-audit` for alt-text and image discoverability review.

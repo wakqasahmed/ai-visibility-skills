@@ -1,1 +1,1 @@
-The user wants to configure robots.txt disallow rules. This does not apply to semantic entity mapping; delegate to `robots-ai-crawler-audit`.
+This request is out of scope for `semantic-entity-topical-map-audit`. Separating AI training crawlers (GPTBot, ClaudeBot) from AI search citation crawlers (OAI-SearchBot, PerplexityBot) is a crawler access-control task governed by `robots.txt` user-agent rules, not an entity-identity or topical-structure question. Please delegate this to `robots-ai-crawler-audit`, which covers `robots.txt`, meta robots, and header directives.

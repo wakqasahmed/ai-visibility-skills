@@ -1,2 +1,1 @@
-# Input for should_not_use_03_payment_gateway_checkout
-Audit request for target entity.
+Integrate Stripe Checkout into our storefront and wire up the webhook that marks an order paid.

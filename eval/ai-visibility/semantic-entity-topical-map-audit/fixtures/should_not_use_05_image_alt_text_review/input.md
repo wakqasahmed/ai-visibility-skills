@@ -1,2 +1,1 @@
-# Input for should_not_use_05_image_alt_text_review
-Audit request for target entity.
+Review the alt text on our hero images and product photos and tell me which ones are missing or keyword-stuffed.

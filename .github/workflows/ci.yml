@@ -54,3 +54,5 @@ jobs:
         run: python3 eval/ai-visibility/docs-api-visibility-audit/run_eval.py
       - name: Run paywall-access-audit deterministic contract eval
         run: python3 eval/ai-visibility/paywall-access-audit/run_eval.py
+      - name: Run semantic-entity-topical-map-audit deterministic contract eval
+        run: python3 eval/ai-visibility/semantic-entity-topical-map-audit/run_eval.py

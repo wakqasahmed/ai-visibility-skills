@@ -1,3 +1,4 @@
 {
-  "type": "should_not_use"
+  "type": "should_not_use",
+  "reason": "Payment gateway implementation is neither an audit nor within the AI-visibility pack's scope."
 }

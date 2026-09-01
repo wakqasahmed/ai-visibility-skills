@@ -1,1 +1,1 @@
-The user is asking for Stripe payment gateway checkout integration. This is out of scope; delegate to agentic commerce skills.
+This request does not apply to `semantic-entity-topical-map-audit`. Integrating Stripe Checkout and handling a payment webhook is production payment-flow implementation work; this skill is a read-only audit of entity markup and topical linking structure and makes no code changes to a storefront. It is also outside the AI-visibility pack entirely — checkout and payment surfaces belong to the agentic-commerce skills.

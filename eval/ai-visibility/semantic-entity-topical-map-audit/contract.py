@@ -37,10 +37,16 @@ def _has_affirmative_guarantee(text: str) -> bool:
 
 
 EVIDENCE_KEYWORD_RE = re.compile(
-    r"sameas|wikidata|organization|schema\.org|@id|topical|cluster|pillar",
+    r"sameas|wikidata|crunchbase|@id|jobtitle|json-ld|ld\+json",
     re.IGNORECASE,
 )
 INLINE_CODE_RE = re.compile(r"`[^`]+`")
+
+CLASSIFICATIONS = ("AMBIGUOUS", "PARTIALLY_GROUNDED", "FULLY_RECONCILED")
+CLASSIFICATION_LINE_RE = re.compile(
+    r"^\s*[-*]?\s*Entity clarity classification:\s*\**\s*([A-Z_]+)\s*\**\s*$",
+    re.MULTILINE,
+)
 
 
 @dataclass
@@ -74,6 +80,18 @@ def validate_report_contract(text: str) -> ValidationResult:
     if not INLINE_CODE_RE.search(text) and "```" not in text:
         result.add_failure("report contains no code snippets or inline command evidence")
 
+    found = CLASSIFICATION_LINE_RE.findall(text)
+    if not found:
+        result.add_failure(
+            "report has no 'Entity clarity classification: **VALUE**' line"
+        )
+    elif len(found) > 1:
+        result.add_failure(f"report emits {len(found)} classification lines, expected exactly 1")
+    elif found[0] not in CLASSIFICATIONS:
+        result.add_failure(
+            f"classification '{found[0]}' is not one of {'/'.join(CLASSIFICATIONS)}"
+        )
+
     return result
 
 
@@ -87,8 +105,24 @@ def validate_decline_contract(text: str, expected_topic: str | None = None) -> V
         result.add_failure("decline makes an outcome guarantee")
 
     lower = text.lower()
-    decline_signals = ["out of scope", "not applicable", "does not apply", "delegate", "refer to", "cannot", "recommend"]
+    decline_signals = [
+        "out of scope",
+        "not applicable",
+        "does not apply",
+        "delegate",
+        "refer to",
+        "cannot",
+    ]
     if not any(sig in lower for sig in decline_signals):
         result.add_failure("response does not clearly state boundary or redirection")
+
+    # A response that emits the audit report's own section structure has not declined,
+    # whatever boundary language it also contains.
+    headings = [h.strip().lower() for h in SECTION_HEADING_RE.findall(text)]
+    emitted = [s for s in REQUIRED_SECTIONS if any(s in h for h in headings)]
+    if emitted:
+        result.add_failure(
+            f"decline still emits audit report sections: {emitted}"
+        )
 
     return result

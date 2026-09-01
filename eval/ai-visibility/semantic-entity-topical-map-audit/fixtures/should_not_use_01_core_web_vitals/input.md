@@ -1,2 +1,1 @@
-# Input for should_not_use_01_core_web_vitals
-Audit request for target entity.
+Measure the Core Web Vitals on our homepage - I want our LCP, CLS and INP numbers from CrUX and PageSpeed Insights, plus what is making the largest contentful paint so slow.
