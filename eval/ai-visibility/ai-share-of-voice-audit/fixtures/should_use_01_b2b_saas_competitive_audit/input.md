@@ -1,0 +1,1 @@
+We are a mid-market CRM at https://crmpro.example. I have pasted 20 answer transcripts from ChatGPT Search, Claude Search, Perplexity, and Google AI Overviews for "best mid-market CRM" style queries, captured 2026-08-24. Work out our share of voice against SalesHub and PipelineX and where they are displacing us.

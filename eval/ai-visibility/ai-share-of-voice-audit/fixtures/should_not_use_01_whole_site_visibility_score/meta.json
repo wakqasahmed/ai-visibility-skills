@@ -1,0 +1,5 @@
+{
+  "type": "should_not_use",
+  "reason": "Whole-site visibility scoring and pillar orchestration belong to the orchestrator skill, not to a brand share-of-voice measurement.",
+  "expected_topic": "ai-visibility-audit"
+}

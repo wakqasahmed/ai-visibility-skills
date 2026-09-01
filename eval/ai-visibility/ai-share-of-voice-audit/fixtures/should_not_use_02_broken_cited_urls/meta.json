@@ -1,0 +1,5 @@
+{
+  "type": "should_not_use",
+  "reason": "The brand is already mentioned and cited; the failure is cited-URL stability, which is the citation-readiness boundary, not a share-of-voice measurement.",
+  "expected_topic": "citation-readiness-audit"
+}

@@ -66,6 +66,7 @@ Then copy that skill's folder into your agent's skills directory as in method 3.
 | Skill | What it covers |
 |---|---|
 | [`ai-search-remediation-plan`](skills/ai-visibility/ai-search-remediation-plan/SKILL.md) | Convert AI visibility, AEO, GEO, crawler, schema, sitemap, and citation audit findings into prioritized implementation tickets or a practical remediation checklist. |
+| [`ai-share-of-voice-audit`](skills/ai-visibility/ai-share-of-voice-audit/SKILL.md) | Measure brand mention frequency, citation share of voice, and competitor displacement across ChatGPT, Claude, Perplexity, Gemini, and Google AI Overviews, from answer transcripts the operator supplies. Cohort-scoped sample statistic, not a platform-reported metric. |
 | [`ai-visibility-audit`](skills/ai-visibility/ai-visibility-audit/SKILL.md) | Audit whether ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews, and other AI agents can discover, understand, cite, and recommend a website. |
 | [`answer-engine-content-audit`](skills/ai-visibility/answer-engine-content-audit/SKILL.md) | Find content gaps that prevent AI answer engines from explaining, comparing, recommending, or supporting a company, product, service, or site. |
 | [`citation-readiness-audit`](skills/ai-visibility/citation-readiness-audit/SKILL.md) | Audit whether a website has stable, specific, trustworthy pages that AI systems can cite for claims, pricing, policies, docs, support answers, and company identity. |

@@ -1,0 +1,5 @@
+{
+  "type": "should_not_use",
+  "reason": "Converting existing findings into engineering tickets is the remediation-planning boundary; the measurement work is already done.",
+  "expected_topic": "ai-search-remediation-plan"
+}

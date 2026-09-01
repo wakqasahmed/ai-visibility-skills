@@ -1,0 +1,1 @@
+We lead the auth-as-a-service category at https://cloudauth.example. Here are 28 transcripts from ChatGPT Search and Perplexity captured 2026-08-26, tracking us against AuthBridge and KeyGate. Confirm our share of voice and tell me where we are exposed.

@@ -1,0 +1,1 @@
+We sell sustainable furniture at https://ecohome.example. Attached are 25 Perplexity and Google AI Overview transcripts captured 2026-08-28 for shopping queries, with HomeNest, GreenLoft, and TimberEdge as the cohort. Where do we stand and which product content is missing?

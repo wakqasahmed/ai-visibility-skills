@@ -1,0 +1,1 @@
+Claude and Gemini mention https://hostingfast.example but the tone is bad — they keep referencing an outage. I have 22 transcripts captured 2026-08-27 covering reliable-hosting queries, tracked against StackHost, NimbusServe, and GridFrame. How bad is our share of voice and how do we turn the sentiment around?
