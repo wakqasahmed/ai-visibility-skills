@@ -1,0 +1,1 @@
+The user is asking about configuring crawl-delay in robots.txt. This is out of scope for IndexNow instant indexing; refer to the `robots-ai-crawler-audit` skill instead.

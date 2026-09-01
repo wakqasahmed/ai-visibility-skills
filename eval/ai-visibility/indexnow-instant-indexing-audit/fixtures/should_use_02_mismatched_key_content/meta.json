@@ -1,0 +1,4 @@
+{
+  "type": "should_use",
+  "focus": "key file returns 200 but body is an HTML error page, not the key"
+}

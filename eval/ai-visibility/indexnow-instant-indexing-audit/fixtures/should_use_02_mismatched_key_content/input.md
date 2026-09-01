@@ -1,0 +1,1 @@
+Our WooCommerce store at https://shop.example.com had IndexNow working, but Bing Webmaster Tools now reports our submissions are failing. The key file URL loads fine in a browser. Audit the IndexNow key verification for us.

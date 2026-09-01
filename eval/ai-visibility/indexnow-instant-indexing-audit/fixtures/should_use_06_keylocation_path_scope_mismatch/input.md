@@ -1,0 +1,1 @@
+Our platform team moved our IndexNow key file out of the web root to https://example.com/static/keys/ for security. The key file returns 200, but Bing has not picked up a single new URL since. Audit our IndexNow submissions on https://example.com.

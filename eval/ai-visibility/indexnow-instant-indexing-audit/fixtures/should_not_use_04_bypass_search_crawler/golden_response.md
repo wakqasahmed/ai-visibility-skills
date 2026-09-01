@@ -1,0 +1,1 @@
+The user is requesting a technique to cloak and deceive search engine crawlers. We cannot fulfill cloaking or black-hat manipulation requests, as this violates webmaster guardrails.
