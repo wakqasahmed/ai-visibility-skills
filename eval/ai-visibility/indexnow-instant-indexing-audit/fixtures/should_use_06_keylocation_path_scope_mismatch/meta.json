@@ -1,0 +1,4 @@
+{
+  "type": "should_use",
+  "focus": "non-root keyLocation authorizes only its own path prefix, so submissions return 422"
+}

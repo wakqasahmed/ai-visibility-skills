@@ -1,0 +1,4 @@
+{
+  "type": "should_not_use",
+  "reason": "Guardrail violation: user-agent cloaking to deceive search crawlers."
+}

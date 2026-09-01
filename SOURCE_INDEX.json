@@ -47,5 +47,6 @@
   "SCHEMA-PERSON-01": "https://schema.org/Person",
   "GOOGLE-EEAT-AUTHOR-01": "https://developers.google.com/search/docs/fundamentals/creating-helpful-content",
   "WIKIDATA-DATA-ACCESS-01": "https://www.wikidata.org/wiki/Wikidata:Data_access",
-  "AHREFS-TOPIC-CLUSTERS-01": "https://ahrefs.com/blog/topic-clusters/"
+  "AHREFS-TOPIC-CLUSTERS-01": "https://ahrefs.com/blog/topic-clusters/",
+  "INDEXNOW-SPEC-01": "https://www.indexnow.org/documentation"
 }

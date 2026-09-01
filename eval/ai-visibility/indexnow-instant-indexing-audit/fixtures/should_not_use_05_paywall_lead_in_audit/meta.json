@@ -1,0 +1,4 @@
+{
+  "type": "should_not_use",
+  "reason": "Paywall markup and lead-in snippet checks belong to paywall-access-audit."
+}

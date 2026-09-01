@@ -1,0 +1,4 @@
+{
+  "type": "should_use",
+  "rejects": "report states no observed HTTP status code, so findings are ungrounded"
+}

@@ -56,3 +56,5 @@ jobs:
         run: python3 eval/ai-visibility/paywall-access-audit/run_eval.py
       - name: Run semantic-entity-topical-map-audit deterministic contract eval
         run: python3 eval/ai-visibility/semantic-entity-topical-map-audit/run_eval.py
+      - name: Run indexnow-instant-indexing-audit deterministic contract eval
+        run: python3 eval/ai-visibility/indexnow-instant-indexing-audit/run_eval.py
