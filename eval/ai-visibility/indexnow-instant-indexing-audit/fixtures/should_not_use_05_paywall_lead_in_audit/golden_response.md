@@ -1,0 +1,1 @@
+The user is asking to audit subscription paywall CSS selectors. This is out of scope for IndexNow; refer to `paywall-access-audit`.

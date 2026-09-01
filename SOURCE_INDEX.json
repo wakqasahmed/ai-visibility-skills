@@ -41,5 +41,6 @@
   "OPENAPI-SPEC-01": "https://spec.openapis.org/oas/v3.1.0",
   "COMMONMARK-CODE-01": "https://spec.commonmark.org/0.31.2/#fenced-code-blocks",
   "GOOGLE-PAYWALL-SCHEMA-01": "https://developers.google.com/search/docs/appearance/structured-data/paywalled-content",
-  "SCHEMA-ISACCESSIBLEFORFREE-01": "https://schema.org/isAccessibleForFree"
+  "SCHEMA-ISACCESSIBLEFORFREE-01": "https://schema.org/isAccessibleForFree",
+  "INDEXNOW-SPEC-01": "https://www.indexnow.org/documentation"
 }
