@@ -1,2 +1,1 @@
-# Input for should_use_03_valid_indexnow_setup
-Audit request for target domain.
+We push documentation releases from GitHub Actions to https://docs.example.com and believe IndexNow is wired up correctly. Audit our IndexNow key hosting, submission payload, and CI trigger to confirm nothing is misconfigured before we scale the batch size.

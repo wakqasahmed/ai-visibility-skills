@@ -330,3 +330,25 @@ Fed into `ai-search-remediation-plan`, which turns those findings into:
 - Lead-In Snippet Renderability & Visibility (SSR check of introductory paragraph)
 - AI Crawler Policy Separation (training bots vs. citation bots in `robots.txt`)
 - Recommended Schema.org JSON-LD templates and robots policy adjustments
+
+---
+
+## Example 16 — IndexNow instant indexing and push-discovery audit
+
+**Skill invoked:** [`indexnow-instant-indexing-audit`](../skills/ai-visibility/indexnow-instant-indexing-audit/SKILL.md)
+
+**Prompt:**
+
+> "We publish 10-15 articles a day on `https://example.com` from a Next.js App Router site. Bing takes
+> days to pick up new articles while Google finds them within hours. Audit our IndexNow setup — key
+> hosting, submission payload, and whether publishing actually triggers a push."
+
+**Expected output shape:**
+
+- IndexNow Key Verification Status (key file HTTP status, exact-body match, 8-128 char `a-z A-Z 0-9 -` conformance)
+- Submission Endpoint & Payload Configuration (`host`/`key`/`keyLocation`/`urlList`, `keyLocation` path scoping vs. `urlList` paths, expected response code — `403` key invalid vs. `422` path-scope violation)
+- CMS & Webhook Push Integration (what triggers a push, on which events, what is excluded)
+- Recommended fixes with key placement, payload corrections, and read-only curl verification commands
+
+Live submissions are never performed as part of the audit — a POST to an IndexNow endpoint enters URLs
+into Bing's and Yandex's queues and requires explicit operator authorization.

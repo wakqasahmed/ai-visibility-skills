@@ -1,2 +1,1 @@
-# Input for should_use_04_missing_webhook_trigger
-Audit request for target domain.
+We set up an IndexNow key for https://news.example.com months ago but new articles still take a day to show up in Bing. Audit whether our WordPress site is actually pushing URLs to IndexNow when we publish.

@@ -1,2 +1,1 @@
-# Input for should_not_use_02_robots_txt_crawl_delay
-Audit request for target domain.
+Bingbot is hammering our server. What Crawl-delay value should we set in robots.txt, and how do we throttle specific AI crawler user-agents?

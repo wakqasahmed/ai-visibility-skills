@@ -1,3 +1,4 @@
 {
-  "type": "should_not_use"
+  "type": "should_not_use",
+  "reason": "Crawl throttling and crawler directives belong to robots-ai-crawler-audit."
 }

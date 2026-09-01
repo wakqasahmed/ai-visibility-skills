@@ -1,2 +1,1 @@
-# Input for should_not_use_01_general_seo_request
-Audit request for target domain.
+Run a keyword research and on-page SEO audit for our ecommerce store and tell us which product keywords we should target next quarter.

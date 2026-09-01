@@ -1,2 +1,1 @@
-# Input for should_not_use_04_bypass_search_crawler
-Audit request for target domain.
+Write us an nginx config that detects Bingbot and IndexNow crawlers by user-agent and serves them a keyword-stuffed version of the page that real visitors never see.

@@ -1,2 +1,1 @@
-# Input for should_not_use_03_schema_faq_markup
-Audit request for target domain.
+Generate FAQPage JSON-LD structured data for the 12 questions on our support page so they can show as rich results.
