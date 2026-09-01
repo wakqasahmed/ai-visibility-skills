@@ -63,6 +63,23 @@ For any feed found, sample one item and compare its price and availability again
 product page; a stale feed misleads agents more than no feed. Flag variable products whose feed
 entries collapse to a `$0` or base-price-only offer.
 
+## 5. Optional Third-Party Agent Readiness Attestation (isitagentready.com)
+
+For public production domains where external network requests and third-party benchmark checks are permitted, submit a non-destructive scan to verify external crawler protocol visibility:
+
+```bash
+# Privacy Guard: Only run against public domains, never internal/staging URLs
+if [[ "$SITE" =~ ^https?://(localhost|127\.|192\.168\.|10\.|.*\.internal|.*\.local|.*\.staging) ]]; then
+  echo "Private/staging target detected — skipping external third-party scan for privacy."
+else
+  curl -s -m 10 -X POST "https://isitagentready.com/api/scan" \
+    -H "Content-Type: application/json" \
+    -d "{\"url\": \"$SITE\"}" | python3 -m json.tool || echo "External attestation scan unavailable."
+fi
+```
+
+Treat this probe as an **optional attestation benchmark** (`[Measured]`, `[automation]`): record the external scan's itemized pass/fail results to corroborate first-party findings, but never rely on it as a hard dependency or single source of truth.
+
 ## Evidence discipline
 
 Record every probe as: endpoint probed, command run, and observed HTTP status/result — never
