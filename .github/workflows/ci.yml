@@ -54,3 +54,5 @@ jobs:
         run: python3 eval/ai-visibility/docs-api-visibility-audit/run_eval.py
       - name: Run paywall-access-audit deterministic contract eval
         run: python3 eval/ai-visibility/paywall-access-audit/run_eval.py
+      - name: Run ai-share-of-voice-audit deterministic contract eval
+        run: python3 eval/ai-visibility/ai-share-of-voice-audit/run_eval.py

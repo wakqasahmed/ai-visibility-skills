@@ -25,22 +25,36 @@ NEGATION_BEFORE_RE = re.compile(
     r"n't|without any)\b",
     re.IGNORECASE,
 )
+SENTENCE_HEAD_RE = re.compile(r"(?:^|[.!?\n])([^.!?\n]*)$")
 
 
 def _has_affirmative_guarantee(text: str) -> bool:
     for match in GUARANTEE_WORD_RE.finditer(text):
-        preceding = text[max(0, match.start() - 40):match.start()]
+        head = SENTENCE_HEAD_RE.search(text[: match.start()])
+        preceding = head.group(1) if head else ""
         if NEGATION_BEFORE_RE.search(preceding):
             continue
         return True
     return False
 
 
+# Deliberately orthogonal to REQUIRED_SECTIONS and to CAPTURE_DATE_RE: these terms
+# appear only in actual transcript evidence, so this check can fail independently of
+# the heading and capture-date checks.
 EVIDENCE_KEYWORD_RE = re.compile(
-    r"share of voice|sov|perplexity|chatgpt|claude|gemini|displacement|competitor",
+    r"\bmentioned\b|\bunmentioned\b|\bexcluded\b|cited url|\btranscript\b|"
+    r"\bcurl\b|\bschema\b",
     re.IGNORECASE,
 )
 INLINE_CODE_RE = re.compile(r"`[^`]+`")
+
+# "12 / 34 = 35.3%" - every reported percentage must be recomputable from the
+# counts printed beside it (SKILL.md step 3).
+SOV_RATIO_RE = re.compile(r"(\d+)\s*/\s*(\d+)\s*=\s*([\d.]+)\s*%")
+PROVENANCE_RE = re.compile(r"\[(Measured|Derived)\]")
+CAPTURE_DATE_RE = re.compile(r"capture date[^\n]*\d{4}-\d{2}-\d{2}", re.IGNORECASE)
+
+RATIO_TOLERANCE_PCT = 0.1
 
 
 @dataclass
@@ -51,6 +65,33 @@ class ValidationResult:
     def add_failure(self, reason: str) -> None:
         self.passed = False
         self.failures.append(reason)
+
+
+def _check_numeric_coherence(text: str, result: ValidationResult) -> None:
+    matches = SOV_RATIO_RE.findall(text)
+    if not matches:
+        result.add_failure(
+            "no share of voice figure printed as 'brand / total = pct%' "
+            "(percentages must be recomputable from printed counts)"
+        )
+        return
+
+    for numerator, denominator, stated in matches:
+        num, den, pct = int(numerator), int(denominator), float(stated)
+        if den == 0:
+            result.add_failure(f"share of voice figure '{num} / {den}' divides by zero")
+            continue
+        if num > den:
+            result.add_failure(
+                f"share of voice figure '{num} / {den}' exceeds its own denominator"
+            )
+            continue
+        expected = num / den * 100.0
+        if abs(expected - pct) > RATIO_TOLERANCE_PCT:
+            result.add_failure(
+                f"share of voice figure '{num} / {den} = {stated}%' does not reconcile "
+                f"(recomputes to {expected:.1f}%)"
+            )
 
 
 def validate_report_contract(text: str) -> ValidationResult:
@@ -74,6 +115,14 @@ def validate_report_contract(text: str) -> ValidationResult:
     if not INLINE_CODE_RE.search(text) and "```" not in text:
         result.add_failure("report contains no code snippets or inline command evidence")
 
+    if not PROVENANCE_RE.search(text):
+        result.add_failure("report labels no figure [Measured] or [Derived]")
+
+    if not CAPTURE_DATE_RE.search(text):
+        result.add_failure("report states no capture date for the prompt corpus")
+
+    _check_numeric_coherence(text, result)
+
     return result
 
 
@@ -87,8 +136,13 @@ def validate_decline_contract(text: str, expected_topic: str | None = None) -> V
         result.add_failure("decline makes an outcome guarantee")
 
     lower = text.lower()
-    decline_signals = ["out of scope", "not applicable", "does not apply", "delegate", "refer to", "cannot", "recommend"]
+    decline_signals = ["out of scope", "not applicable", "does not apply", "delegate", "refer to", "cannot"]
     if not any(sig in lower for sig in decline_signals):
         result.add_failure("response does not clearly state boundary or redirection")
+
+    if expected_topic and expected_topic.lower() not in lower:
+        result.add_failure(
+            f"decline does not name the expected redirect target: '{expected_topic}'"
+        )
 
     return result

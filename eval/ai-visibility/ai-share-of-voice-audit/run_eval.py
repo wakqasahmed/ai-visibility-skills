@@ -47,7 +47,7 @@ def run_eval() -> int:
                 failures.append((fix.name, "missing golden_response.md"))
                 continue
             text = response_file.read_text(encoding="utf-8")
-            res = validate_decline_contract(text)
+            res = validate_decline_contract(text, meta.get("expected_topic"))
 
         if res.passed:
             passed += 1

@@ -330,3 +330,27 @@ Fed into `ai-search-remediation-plan`, which turns those findings into:
 - Lead-In Snippet Renderability & Visibility (SSR check of introductory paragraph)
 - AI Crawler Policy Separation (training bots vs. citation bots in `robots.txt`)
 - Recommended Schema.org JSON-LD templates and robots policy adjustments
+
+---
+
+## Example 16 — AI share of voice and competitor displacement audit
+
+**Skill invoked:** [`ai-share-of-voice-audit`](../skills/ai-visibility/ai-share-of-voice-audit/SKILL.md)
+
+**Prompt:**
+
+> "I have pasted 20 answer transcripts from ChatGPT Search, Claude Search, Perplexity, and Google
+> AI Overviews for our category, captured 2026-08-24. Compute our share of voice for
+> `https://crmpro.example` against the cohort SalesHub and PipelineX, and show which queries they
+> are displacing us on and which sources they are cited from."
+
+**Expected output shape:**
+
+- Multi-Model Brand Mention & Citation Matrix (engines, prompt-corpus size, capture date, per-query `MENTIONED` / `UNMENTIONED` / `EXCLUDED` and `CITED` / `UNLINKED`)
+- Share of Voice Calculation & Benchmark (declared cohort, `Total Category Mentions`, every percentage printed as `brand / total = pct%`, each figure labelled `[Measured]` or `[Derived]`)
+- Competitor Displacement & Source Attribution (displaced queries and the competitor source cited in the transcript)
+- Prioritized Remediation & Displacement Playbook, plus a capture record for reproducibility
+
+Note: transcripts must be operator-supplied. This skill does not query answer engines or paid
+observation APIs on its own, and the resulting percentage is a sample statistic over the supplied
+corpus on the stated date, not a platform-reported metric.

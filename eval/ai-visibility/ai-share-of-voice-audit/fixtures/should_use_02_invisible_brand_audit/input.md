@@ -1,2 +1,1 @@
-# Input for should_use_02_invisible_brand_audit
-Audit request for target query corpus.
+Our payments startup https://newfintech.example never comes up in AI answers. I have 20 transcripts from ChatGPT, Claude, and Perplexity for developer payment-gateway queries captured 2026-08-25, plus the answers naming PayRail, Ledgerly, and Transactly instead. Why are we invisible and what do we fix first?

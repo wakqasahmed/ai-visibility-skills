@@ -1,0 +1,5 @@
+{
+  "type": "should_not_use",
+  "reason": "Ranking-weighted organic keyword share of voice from a rank-tracker export is traditional organic search measurement, not answer-engine mention and citation share.",
+  "expected_topic": "traditional organic search"
+}

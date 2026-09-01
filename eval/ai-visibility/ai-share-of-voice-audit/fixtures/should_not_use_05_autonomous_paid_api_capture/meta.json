@@ -1,0 +1,5 @@
+{
+  "type": "should_not_use",
+  "reason": "Guardrail boundary: the skill does not autonomously query answer engines or paid third-party observation APIs, and cannot report figures it did not see evidence for.",
+  "expected_topic": "operator-supplied transcripts"
+}
