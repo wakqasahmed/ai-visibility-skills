@@ -51,7 +51,8 @@
 ## Detailed Evidence & Observations
 
 ### 1. Crawler & User-Agent Access
-- **Observed Command:** `for ua in GPTBot ClaudeBot PerplexityBot Google-Extended CCBot Amazonbot; do ...; done`
+- **Observed Command:** `for ua in GPTBot ClaudeBot PerplexityBot CCBot Amazonbot; do ...; done`
+- **Robots-only token:** Inspect `Google-Extended` in `robots.txt`; it has no separate HTTP user-agent to probe.
 - **Observed Output:**
   ```text
   {{CRAWLER_CURL_OUTPUT}}

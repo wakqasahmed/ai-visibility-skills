@@ -21,8 +21,11 @@ is the path a two-probe guess-list misses).
 
 ## AI crawler access (edge blocks don't show in robots.txt)
 
+Do not live-fetch as `Google-Extended`: it is a `robots.txt`-only control token and has no
+separate HTTP user-agent string [GOOGLE-EXTENDED-01].
+
 ```bash
-for ua in GPTBot ClaudeBot PerplexityBot Google-Extended CCBot; do
+for ua in GPTBot ClaudeBot PerplexityBot CCBot; do
   printf "%-16s " "$ua"; curl -s -o /dev/null -w "%{http_code}\n" -A "$ua" "$URL"
 done
 ```

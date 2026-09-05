@@ -69,6 +69,14 @@ ALLOW_DIRECTIVE_RE = re.compile(r"^\s*allow\s*:\s*(\S+)", re.IGNORECASE | re.MUL
 
 BOT_DIRECTIVE_RE = re.compile(r"^\s*user-agent\s*:", re.IGNORECASE | re.MULTILINE)
 DISALLOW_OR_ALLOW_RE = re.compile(r"^\s*(disallow|allow)\s*:", re.IGNORECASE | re.MULTILINE)
+DIRECT_GOOGLE_EXTENDED_PROBE_RE = re.compile(
+    r"curl[^\n]*\s-A\s+[\"']?Google-Extended", re.IGNORECASE
+)
+LOOP_GOOGLE_EXTENDED_PROBE_RE = re.compile(
+    r"for\s+\w+\s+in[^\n;]*\bGoogle-Extended\b[^\n;]*;\s*do"
+    r"(?:(?!\bdone\b).)*?curl[^\n]*\s-A\s+[\"']?\$\w+",
+    re.IGNORECASE | re.DOTALL,
+)
 
 
 @dataclass
@@ -143,6 +151,14 @@ def check_audit_contract(text: str) -> ContractResult:
             result.add(
                 "'Verification commands' section has no curl (or equivalent "
                 "re-runnable) command"
+            )
+        if (
+            DIRECT_GOOGLE_EXTENDED_PROBE_RE.search(verification)
+            or LOOP_GOOGLE_EXTENDED_PROBE_RE.search(verification)
+        ):
+            result.add(
+                "'Verification commands' live-probes Google-Extended, which is a "
+                "robots.txt-only control token with no separate HTTP user-agent"
             )
 
     blocked_section = extract_section(text, "blocked high-value paths")

@@ -30,6 +30,4 @@ crawl delay.
 ```
 $ curl -s -o /dev/null -w "%{http_code}\n" -A "PerplexityBot" https://example.com/
 200
-$ curl -s -o /dev/null -w "%{http_code}\n" -A "Google-Extended" https://example.com/
-200
 ```
