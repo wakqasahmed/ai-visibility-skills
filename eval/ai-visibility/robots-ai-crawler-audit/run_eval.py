@@ -63,6 +63,21 @@ def check_google_extended_probe_regression() -> list[str]:
     return []
 
 
+def check_citation_path_classification_regression() -> list[str]:
+    report = (
+        FIXTURES_DIR
+        / "should_use_08_oai_searchbot_citation_block"
+        / "golden_report.md"
+    ).read_text()
+    invalid_report = report.replace("citation-path crawler", "search crawler")
+    failures = contract.check_audit_contract(invalid_report).failures
+    if not any("citation-path" in failure for failure in failures):
+        return [
+            "contract accepted a citation-bot block without citation-path classification"
+        ]
+    return []
+
+
 def main() -> int:
     fixture_dirs = sorted(p for p in FIXTURES_DIR.iterdir() if p.is_dir())
     if len(fixture_dirs) < 10:
@@ -76,6 +91,13 @@ def main() -> int:
     regression_failures = check_google_extended_probe_regression()
     status = "PASS" if not regression_failures else "FAIL"
     print(f"[{status}] contract rejects Google-Extended HTTP user-agent probes")
+    for failure in regression_failures:
+        print(f"    - {failure}")
+        total_failures += 1
+
+    regression_failures = check_citation_path_classification_regression()
+    status = "PASS" if not regression_failures else "FAIL"
+    print(f"[{status}] contract requires citation-path classification for citation-bot blocks")
     for failure in regression_failures:
         print(f"    - {failure}")
         total_failures += 1

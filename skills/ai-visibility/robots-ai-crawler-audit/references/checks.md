@@ -20,16 +20,21 @@ curl -s "$SITE/robots.txt" | awk 'BEGIN{IGNORECASE=1} /^user-agent:/{ua=$0} /^di
 ## Known AI crawler user-agents to check for explicit rules
 
 Per each platform's own crawler documentation: GPTBot, OAI-SearchBot, and ChatGPT-User
-are OpenAI's [OPENAI-BOTS-01]; ClaudeBot, Claude-Web, and anthropic-ai are Anthropic's
-[ANTHROPIC-BOTS-01]; PerplexityBot is Perplexity's [PERPLEXITY-BOTS-01]; Google-Extended
-is Google's AI-training opt-out token [GOOGLE-EXTENDED-01]; Applebot-Extended is Apple's
-AI-training opt-out token [APPLE-BOTS-01]; CCBot is Common Crawl's [COMMONCRAWL-CCBOT-01];
-Amazonbot is Amazon's [AMAZON-BOTS-01]. Bytespider (ByteDance) has no verified first-party
-crawler-documentation page as of this review — treat any robots.txt rule for it as
-unconfirmed against an authoritative source.
+are OpenAI's [OPENAI-BOTS-01]; ClaudeBot, Claude-User, and Claude-SearchBot are
+Anthropic's [ANTHROPIC-BOTS-01]; PerplexityBot is Perplexity's [PERPLEXITY-BOTS-01];
+Google-Extended is Google's AI-training opt-out token [GOOGLE-EXTENDED-01];
+Applebot-Extended is Apple's AI-training opt-out token [APPLE-BOTS-01]; CCBot is Common
+Crawl's [COMMONCRAWL-CCBOT-01]; Amazonbot is Amazon's [AMAZON-BOTS-01]. Bytespider
+(ByteDance) has no verified first-party crawler-documentation page as of this review —
+treat any robots.txt rule for it as unconfirmed against an authoritative source.
+
+Distinguish policy classes in the report: GPTBot and ClaudeBot are training crawlers;
+Google-Extended and Applebot-Extended are training-use opt-out tokens; OAI-SearchBot,
+Claude-SearchBot, and PerplexityBot are citation-path search crawlers; ChatGPT-User and
+Claude-User are user-triggered fetchers. State which class each observed rule blocks.
 
 ```bash
-for ua in GPTBot ChatGPT-User OAI-SearchBot ClaudeBot Claude-Web anthropic-ai PerplexityBot Google-Extended Applebot-Extended Bytespider CCBot Amazonbot; do
+for ua in GPTBot ChatGPT-User OAI-SearchBot ClaudeBot Claude-User Claude-SearchBot PerplexityBot Google-Extended Applebot-Extended Bytespider CCBot Amazonbot; do
   printf "%-20s\n" "$ua"
   curl -s "$SITE/robots.txt" | awk -v target="$ua" '
     function finish() {
@@ -65,7 +70,7 @@ Do not live-fetch as `Google-Extended`: it is a `robots.txt`-only control token 
 separate HTTP user-agent string [GOOGLE-EXTENDED-01].
 
 ```bash
-for ua in GPTBot ClaudeBot PerplexityBot CCBot Amazonbot; do
+for ua in GPTBot OAI-SearchBot ClaudeBot Claude-SearchBot PerplexityBot CCBot Amazonbot; do
   printf "%-16s " "$ua"
   curl -s -o /dev/null -w "%{http_code}\n" -A "$ua" "$URL"
 done

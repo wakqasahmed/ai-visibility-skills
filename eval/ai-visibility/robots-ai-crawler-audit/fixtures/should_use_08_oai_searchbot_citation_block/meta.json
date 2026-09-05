@@ -1,0 +1,6 @@
+{
+  "id": "should_use_08_oai_searchbot_citation_block",
+  "category": "should_use",
+  "description": "robots.txt explicitly allows OpenAI's training crawler GPTBot but blocks the citation-path crawler OAI-SearchBot site-wide.",
+  "expects_full_report": true
+}

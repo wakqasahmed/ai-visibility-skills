@@ -77,6 +77,11 @@ LOOP_GOOGLE_EXTENDED_PROBE_RE = re.compile(
     r"(?:(?!\bdone\b).)*?curl[^\n]*\s-A\s+[\"']?\$\w+",
     re.IGNORECASE | re.DOTALL,
 )
+CITATION_PATH_BOT_RE = re.compile(
+    r"\b(?:OAI-SearchBot|Claude-SearchBot|PerplexityBot)\b", re.IGNORECASE
+)
+NONEMPTY_DISALLOW_RE = re.compile(r"\bDisallow:\s*/\S*", re.IGNORECASE)
+CITATION_PATH_LABEL_RE = re.compile(r"\bcitation[- ]path\b", re.IGNORECASE)
 
 
 @dataclass
@@ -126,6 +131,8 @@ def check_audit_contract(text: str) -> ContractResult:
     - every finding bullet under "Blocked high-value paths" carries inline
       evidence (a status code, a robots.txt directive, or a header name) -
       evidence discipline from references/checks.md
+    - a robots.txt block for a citation bot is classified as a citation-path
+      impact in "AI crawler implications"
     - no outcome-guarantee language anywhere (shared guardrails.md)
     - no recommendation to Allow crawlers into private/sensitive paths
       (shared guardrails.md)
@@ -174,6 +181,19 @@ def check_audit_contract(text: str) -> ContractResult:
                     f"finding bullet lacks cited evidence (status code, robots.txt "
                     f"directive, or header) in inline code: {bullet.strip()!r}"
                 )
+
+        citation_path_block = bool(
+            CITATION_PATH_BOT_RE.search(blocked_section)
+            and NONEMPTY_DISALLOW_RE.search(blocked_section)
+        )
+        implications = extract_section(text, "ai crawler implications")
+        if citation_path_block and (
+            implications is None or not CITATION_PATH_LABEL_RE.search(implications)
+        ):
+            result.add(
+                "citation bot is blocked by robots.txt but 'AI crawler implications' "
+                "does not identify the citation-path impact"
+            )
 
     if _has_affirmative_guarantee(text):
         result.add(
