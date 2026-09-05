@@ -33,6 +33,8 @@ Audit multilingual and multi-regional website configurations to ensure search en
 6. **Classify Findings & Deliver Remediation**:
    - Report missing bidirectional links, uncanonicalized alternates, invalid ISO codes, and missing `x-default` declarations with curl reproduction commands.
 
+Use the commands in `references/checks.md` for each check.
+
 ## Delegation
 
 - Whole-site visibility scoring and orchestration → `ai-visibility-audit`

@@ -31,6 +31,8 @@ Audit technical documentation, API reference portals, OpenAPI/Swagger specificat
 6. **Classify Findings & Deliver Remediation**:
    - Provide concrete fixes: schema hosting, SSR static generation, language fencing, and developer ticket blueprints.
 
+Use the commands in `references/checks.md` for each check.
+
 ## Delegation
 
 - Whole-site visibility scoring and orchestration → `ai-visibility-audit`
