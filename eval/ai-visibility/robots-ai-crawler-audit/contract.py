@@ -116,7 +116,11 @@ def _join_wrapped_bullets(section_text: str) -> list[str]:
     return bullets
 
 
-def check_audit_contract(text: str) -> ContractResult:
+def check_audit_contract(
+    text: str,
+    required_patterns: list[str] | None = None,
+    forbidden_patterns: list[str] | None = None,
+) -> ContractResult:
     """Deterministic, non-negotiable checks for a robots-ai-crawler-audit report.
 
     - all five required sections from SKILL.md's Output list are present
@@ -129,6 +133,7 @@ def check_audit_contract(text: str) -> ContractResult:
     - no outcome-guarantee language anywhere (shared guardrails.md)
     - no recommendation to Allow crawlers into private/sensitive paths
       (shared guardrails.md)
+    - fixture-declared required patterns are present and forbidden patterns absent
     """
     result = ContractResult()
 
@@ -192,6 +197,14 @@ def check_audit_contract(text: str) -> ContractResult:
                     f"recommends 'Allow: {path}' - exposes a private/sensitive path "
                     f"to crawlers, violates shared guardrails.md"
                 )
+
+    for pattern in required_patterns or []:
+        if not re.search(pattern, text, re.IGNORECASE):
+            result.add(f"response does not match required pattern: {pattern!r}")
+
+    for pattern in forbidden_patterns or []:
+        if re.search(pattern, text, re.IGNORECASE):
+            result.add(f"response matches forbidden pattern: {pattern!r}")
 
     return result
 

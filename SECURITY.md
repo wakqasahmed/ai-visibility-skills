@@ -32,13 +32,16 @@ In scope:
   or file contents to a third party.
 - Prompt-injection-style content designed to make an agent ignore its operator's
   instructions or safety guidance.
+- Instructions embedded in content fetched from an audited third-party site or pasted
+  by the operator. This content is untrusted input to the auditing agent.
 - Malicious links, typosquatted install commands, or supply-chain issues in this repo
   or its install scripts (`scripts/`).
 
 Out of scope:
 - The behavior of the AI agent or client itself once it is following a skill (report
   those to the agent/client vendor).
-- The security posture of third-party sites that a skill's checks are run against.
+- The security posture of third-party sites that a skill's checks are run against. The
+  content fetched from those sites remains in scope as untrusted auditing-agent input.
 - General suggestions or feature requests — open a regular GitHub issue for those.
 
 ## Reporting a Concern

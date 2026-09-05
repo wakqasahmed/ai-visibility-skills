@@ -1,6 +1,6 @@
 ---
 name: ai-share-of-voice-audit
-description: Audit brand mention frequency, citation share of voice (SoV), and competitor displacement across ChatGPT, Claude, Perplexity, Gemini, and Google AI Overviews.
+description: Use to analyze operator-supplied answer transcripts for brand mention frequency, citation share of voice (SoV), and competitor displacement across ChatGPT, Claude, Perplexity, Gemini, and Google AI Overviews. This skill does not collect or query live answers.
 ---
 
 # AI Share of Voice (SoV) & Multi-Model Citation Audit

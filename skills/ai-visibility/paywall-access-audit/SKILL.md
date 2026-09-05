@@ -28,6 +28,8 @@ Audit subscription-gated publications, research portals, newsletters, and premiu
 5. **Classify Findings & Deliver Remediation**:
    - Provide concrete fixes: Schema.org `isAccessibleForFree` JSON-LD templates, CSS selector alignments, and `robots.txt` crawler policies.
 
+Use the commands in `references/checks.md` for each check.
+
 ## Delegation
 
 - Whole-site visibility scoring and orchestration → `ai-visibility-audit`

@@ -20,6 +20,8 @@ Turn audit findings into execution-ready work.
 4. Include acceptance criteria and verification commands (`curl`, `dig`, or schema validators, per [references/checks.md](references/checks.md)) for each item, carrying forward the source audit's re-runnable check.
 5. Mark work that needs owner approval, policy decisions, credentials, CMS access, or legal review.
 
+Use the commands in `references/checks.md` for each check.
+
 ## Output
 
 - **Prioritized Action Plan**: P0 (Immediate), P1 (Next), P2 (Improve), P3 (Optional/Experimental) backlog.
