@@ -129,6 +129,96 @@ curl -sI "$URL" | grep -i "x-robots-tag"
 curl -s "$URL" | grep -oiE '<link[^>]+rel="canonical"[^>]*>'
 ```
 
+For every key URL, isolate Google's snippet preview controls in both page-level
+delivery channels — the general `name="robots"` meta tag and the Google-specific
+`name="googlebot"` form Google's own robots-meta documentation uses for this same
+directive — then sweep body elements for text-level exclusions:
+
+```bash
+curl -sI "$URL" | grep -i '^x-robots-tag:' | grep -iE 'nosnippet|max-snippet|max-image-preview'
+PAGE=$(mktemp)
+curl -s "$URL" > "$PAGE"
+python3 - "$PAGE" <<'PY'
+import re
+import sys
+
+html = open(sys.argv[1], encoding="utf-8", errors="replace").read()
+# Match every <meta ...> tag first, then read its name/content attributes
+# independently of their order inside the tag — a fixed adjacent-token pattern
+# (`<meta[^>]+robots[^>]+>`) misses `<meta content="max-snippet:0" name="robots">`,
+# where `name="robots"` is the tag's last attribute, because HTML attribute order
+# is not significant. HTML also permits an unquoted attribute value
+# (`content=max-snippet:0`) and a bare boolean attribute with no value at all
+# (`data-nosnippet`, Google's own documented form) — both alternatives below
+# cover those so a valid but unquoted or valueless directive isn't missed.
+ATTR_RE = re.compile(
+    r'''(\w[\w-]*)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?'''
+)
+
+
+def tag_attrs(attribute_text: str) -> dict:
+    """Parses only the attribute portion of a start tag (no leading `<name`
+    or trailing `>`) into a name->value dict. A bare boolean attribute (no
+    `=value`) maps to None, distinct from an attribute with an empty value
+    (`data-nosnippet=""` maps to ""); both count as "present" for `in` checks."""
+    attrs = {}
+    for m in ATTR_RE.finditer(attribute_text):
+        value = m.group(2) if m.group(2) is not None else (
+            m.group(3) if m.group(3) is not None else m.group(4)
+        )
+        attrs[m.group(1).lower()] = value
+    return attrs
+
+
+for attr_text in re.findall(r'<meta\b([^>]*)>', html, re.I):
+    attrs = tag_attrs(attr_text)
+    name = (attrs.get("name") or "").lower()
+    if name in ("robots", "googlebot"):
+        content = attrs.get("content", "")
+        if re.search(r"nosnippet|max-snippet|max-image-preview", content, re.I):
+            print(f'name="{name}" content="{content}"')
+
+# `data-nosnippet` is only valid — and only takes effect — on div, span, and
+# section elements; Google documents any other element carrying it as invalid
+# markup, not an active restriction. Check the parsed attribute NAME, not a
+# raw substring match against the tag's attribute text — a substring check
+# would misfire on an unrelated attribute or class that merely contains the
+# string "data-nosnippet" (e.g. class="data-nosnippet-caption") without the
+# boolean data-nosnippet attribute actually being present.
+for tag_name, attr_text in re.findall(r'<(\w+)((?:\s+[^<>]*)?)>', html, re.I):
+    attrs = tag_attrs(attr_text)
+    if "data-nosnippet" not in attrs:
+        continue
+    if tag_name.lower() in ("div", "span", "section"):
+        print(f"data-nosnippet on <{tag_name.lower()}>: active snippet exclusion")
+    else:
+        print(f"data-nosnippet on <{tag_name.lower()}>: invalid markup, not honored by Google")
+PY
+rm -f "$PAGE"
+```
+
+Interpret the observed directives as follows [GOOGLE-ROBOTS-META-01]:
+
+- `nosnippet` or `max-snippet:0` prevents Google from showing a text snippet for
+  the page. Because snippet eligibility is required for a supporting link in Google
+  AI Overviews and AI Mode, flag either directive on a key page as a critical
+  AI-feature exclusion [GOOGLE-AI-FEATURES-01]. This applies equally whether the
+  directive was declared via `name="robots"` or the Google-specific `name="googlebot"`.
+- A positive `max-snippet:N` limits the text snippet to `N` characters and limits
+  how much content Google may use as direct input for AI Overviews and AI Mode.
+- `max-image-preview:none`, `standard`, or `large` controls the maximum image-preview
+  size; report the observed value as an image-preview restriction, not a text or
+  indexing block.
+- `data-nosnippet` excludes text inside a marked `div`, `span`, or `section` from
+  snippets. Record the affected region; do not describe it as a page-wide block. The
+  same attribute on any other element is invalid markup Google does not honor — report
+  it as a markup defect, never as an active exclusion.
+
+These controls also affect classic Google Search previews. Confirm the site's intended
+content policy before recommending removal. `Google-Extended` is a separate control for
+other Google AI systems and does not override these Google Search AI-feature controls
+[GOOGLE-AI-FEATURES-01].
+
 ## Security headers
 
 Missing security headers are a real technical-SEO/trust signal (and can affect

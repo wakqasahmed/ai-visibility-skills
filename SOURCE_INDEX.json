@@ -3,6 +3,8 @@
   "ANTHROPIC-BOTS-01": "https://support.claude.com/en/articles/8896518",
   "PERPLEXITY-BOTS-01": "https://docs.perplexity.ai/docs/resources/perplexity-crawlers",
   "GOOGLE-EXTENDED-01": "https://developers.google.com/search/docs/crawling-indexing/google-common-crawlers",
+  "GOOGLE-AI-FEATURES-01": "https://developers.google.com/search/docs/appearance/ai-features",
+  "GOOGLE-ROBOTS-META-01": "https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag",
   "APPLE-BOTS-01": "https://support.apple.com/en-us/119829",
   "COMMONCRAWL-CCBOT-01": "https://commoncrawl.org/ccbot",
   "AMAZON-BOTS-01": "https://developer.amazon.com/amazonbot",
