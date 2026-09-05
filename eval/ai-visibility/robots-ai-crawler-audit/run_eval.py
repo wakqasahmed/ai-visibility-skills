@@ -18,6 +18,7 @@ requires ANTHROPIC_API_KEY and is gated to a separate, non-PR workflow.
 Exit code 0 = pass, 1 = fail.
 """
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -25,6 +26,14 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import contract  # noqa: E402
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
+CHECKS_MD = (
+    Path(__file__).resolve().parents[3]
+    / "skills"
+    / "ai-visibility"
+    / "robots-ai-crawler-audit"
+    / "references"
+    / "checks.md"
+)
 
 
 def load_fixture(fixture_dir: Path) -> dict:
@@ -78,6 +87,77 @@ def check_citation_path_classification_regression() -> list[str]:
     return []
 
 
+def check_checks_md_uses_corrected_anthropic_tokens() -> list[str]:
+    """Regression check that the skill's OWN instructions (references/checks.md), not
+    just an eval fixture, actually name Anthropic's corrected crawler tokens and probe
+    the citation-path bots live — proving a live model following this file would
+    reproduce the fix, not just that a hand-edited fixture happens to satisfy the
+    contract."""
+    text = CHECKS_MD.read_text(encoding="utf-8")
+    failures = []
+
+    for stale_token in ("Claude-Web", "anthropic-ai"):
+        if re.search(rf"\b{re.escape(stale_token)}\b", text):
+            failures.append(
+                f"checks.md still names the unverified/removed token '{stale_token}'"
+            )
+
+    for corrected_token in ("Claude-User", "Claude-SearchBot"):
+        if not re.search(rf"\b{re.escape(corrected_token)}\b", text):
+            failures.append(f"checks.md does not name the corrected token '{corrected_token}'")
+
+    live_fetch_loops = re.findall(r"for ua in ([^;]+); do", text)
+    if not any(
+        "OAI-SearchBot" in loop and "Claude-SearchBot" in loop for loop in live_fetch_loops
+    ):
+        failures.append(
+            "no live-fetch loop probes both citation-path bots (OAI-SearchBot, "
+            "Claude-SearchBot) for a differential status"
+        )
+
+    return failures
+
+
+def check_citation_bot_correlation_regression() -> list[str]:
+    """Regression check for per-bullet bot/directive correlation: a report where one
+    bullet blocks a NON-citation-path bot (GPTBot) and a SEPARATE bullet explicitly
+    allows a citation-path bot (OAI-SearchBot) must not be misread as the citation-path
+    bot being blocked — the old whole-section search matched CITATION_PATH_BOT_RE and
+    NONEMPTY_DISALLOW_RE independently anywhere in the section, so the two unrelated
+    bullets together would satisfy both and wrongly require a citation-path
+    classification for OAI-SearchBot."""
+    report = (
+        FIXTURES_DIR
+        / "should_use_08_oai_searchbot_citation_block"
+        / "golden_report.md"
+    ).read_text()
+    mixed_report = report.replace(
+        "- Every public path is blocked for OAI-SearchBot: `robots.txt` places\n"
+        "  `Disallow: /` under `User-agent: OAI-SearchBot`.",
+        "- `User-agent: GPTBot` has `Disallow: /`, blocking OpenAI's training crawler\n"
+        "  entirely.\n"
+        "- OAI-SearchBot is explicitly allowed and returns `200` on a live fetch,\n"
+        "  unaffected by the GPTBot rule above.",
+    ).replace(
+        "- OAI-SearchBot is OpenAI's citation-path crawler, so this rule prevents it from\n"
+        "  indexing public pages for ChatGPT search results. Allowing GPTBot does not\n"
+        "  offset this block because GPTBot is the separate training crawler.",
+        "- GPTBot is OpenAI's training crawler, so this rule stops the site's content\n"
+        "  from being used to train OpenAI's models. This has no bearing on citation\n"
+        "  paths, since OAI-SearchBot is unaffected and remains free to crawl.",
+    )
+    if mixed_report == report:
+        return ["fixture text to substitute was not found — update this regression case"]
+    failures = contract.check_audit_contract(mixed_report).failures
+    if any("citation-path" in failure for failure in failures):
+        return [
+            "contract required citation-path classification for OAI-SearchBot even "
+            "though only GPTBot (not a citation-path bot) is blocked in this report, "
+            "and OAI-SearchBot is explicitly described as allowed"
+        ]
+    return []
+
+
 def main() -> int:
     fixture_dirs = sorted(p for p in FIXTURES_DIR.iterdir() if p.is_dir())
     if len(fixture_dirs) < 10:
@@ -91,6 +171,20 @@ def main() -> int:
     regression_failures = check_google_extended_probe_regression()
     status = "PASS" if not regression_failures else "FAIL"
     print(f"[{status}] contract rejects Google-Extended HTTP user-agent probes")
+    for failure in regression_failures:
+        print(f"    - {failure}")
+        total_failures += 1
+
+    regression_failures = check_checks_md_uses_corrected_anthropic_tokens()
+    status = "PASS" if not regression_failures else "FAIL"
+    print(f"[{status}] checks.md names corrected Anthropic tokens and probes citation-path bots")
+    for failure in regression_failures:
+        print(f"    - {failure}")
+        total_failures += 1
+
+    regression_failures = check_citation_bot_correlation_regression()
+    status = "PASS" if not regression_failures else "FAIL"
+    print(f"[{status}] contract correlates a citation-path bot to its own Disallow directive")
     for failure in regression_failures:
         print(f"    - {failure}")
         total_failures += 1

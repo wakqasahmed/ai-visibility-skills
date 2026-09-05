@@ -182,9 +182,14 @@ def check_audit_contract(text: str) -> ContractResult:
                     f"directive, or header) in inline code: {bullet.strip()!r}"
                 )
 
-        citation_path_block = bool(
-            CITATION_PATH_BOT_RE.search(blocked_section)
-            and NONEMPTY_DISALLOW_RE.search(blocked_section)
+        # Correlate the bot name and the Disallow directive within the SAME bullet,
+        # not just anywhere in the section — otherwise a bullet naming a citation-path
+        # bot as explicitly *allowed* (in a report that also blocks a different bot,
+        # e.g. GPTBot) would wrongly count as that citation bot being blocked, since
+        # the two regexes would each independently match somewhere in the section.
+        citation_path_block = any(
+            CITATION_PATH_BOT_RE.search(bullet) and NONEMPTY_DISALLOW_RE.search(bullet)
+            for bullet in bullets
         )
         implications = extract_section(text, "ai crawler implications")
         if citation_path_block and (
