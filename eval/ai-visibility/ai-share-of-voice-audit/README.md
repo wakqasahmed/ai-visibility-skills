@@ -25,11 +25,23 @@ ask for transcripts when their availability is unclear.
   well-formed, not that a model behaves.
 - **Model-graded** (`model_harness.py`, run by
   `.github/workflows/ai-share-of-voice-audit-model-eval.yml` when `ANTHROPIC_API_KEY` is
-  configured): feeds each fixture's `input.md` to a live model and grades the response through
-  `evaluate_response()`, which applies the same contract.
+  configured): feeds each fixture's `input.md` to a live model twice (skill-enabled vs.
+  skill-disabled) over multiple trials, and grades every response with the same `contract.py`
+  functions Layer 1 uses — `validate_report_contract` for `should_use`, `validate_decline_contract`
+  for `should_not_use` and `should_clarify`. Reports the skill-enabled vs. skill-disabled pass-rate
+  delta; exits `0` (`PASS`) when the skill-enabled pass rate meets `--threshold`, exits `0`
+  (`SKIP`) with no model call when `ANTHROPIC_API_KEY` is unset.
 
 ## Running the Eval
 
 ```bash
 python3 eval/ai-visibility/ai-share-of-voice-audit/run_eval.py
+```
+
+```bash
+pip install anthropic
+export ANTHROPIC_API_KEY=sk-ant-...
+python3 eval/ai-visibility/ai-share-of-voice-audit/model_harness.py \
+  --trials 4 --threshold 0.8 --model claude-sonnet-4-5 \
+  --output /tmp/ai-share-of-voice-audit-eval-results.json
 ```
