@@ -57,7 +57,9 @@ def _has_affirmative_guarantee(text: str) -> bool:
 
 EVIDENCE_STATUS_CODE_RE = re.compile(r"\b[1-5]\d{2}\b")
 EVIDENCE_KEYWORD_RE = re.compile(
-    r"disallow|noindex|x-robots-tag|curl|nofollow", re.IGNORECASE
+    r"disallow|noindex|x-robots-tag|curl|nofollow|nosnippet|max-snippet|"
+    r"data-nosnippet|max-image-preview",
+    re.IGNORECASE,
 )
 INLINE_CODE_RE = re.compile(r"`[^`]+`")
 
@@ -124,7 +126,8 @@ def check_audit_contract(text: str) -> ContractResult:
       (User-agent + Allow/Disallow), not vague prose only
     - "Verification commands" contains a re-runnable curl command
     - every finding bullet under "Blocked high-value paths" carries inline
-      evidence (a status code, a robots.txt directive, or a header name) -
+      evidence (a status code, a robots.txt directive, a page-level preview
+      directive, or a header name) -
       evidence discipline from references/checks.md
     - no outcome-guarantee language anywhere (shared guardrails.md)
     - no recommendation to Allow crawlers into private/sensitive paths

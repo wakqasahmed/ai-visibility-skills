@@ -1,0 +1,6 @@
+{
+  "id": "should_use_08_meta_robots_max_snippet_zero",
+  "category": "should_use",
+  "description": "robots.txt and indexing directives are permissive, but a <meta name=\"robots\" content=\"max-snippet:0\"> tag makes a key page ineligible for snippets and therefore excludes it from Google AI Overviews and AI Mode.",
+  "expects_full_report": true
+}

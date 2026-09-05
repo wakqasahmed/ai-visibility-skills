@@ -81,6 +81,34 @@ curl -sI "$URL" | grep -i "x-robots-tag"
 curl -s "$URL" | grep -oiE '<link[^>]+rel="canonical"[^>]*>'
 ```
 
+For every key URL, isolate Google's snippet preview controls in both page-level
+delivery channels, then sweep body elements for text-level exclusions:
+
+```bash
+curl -s "$URL" | grep -oiE '<meta[^>]+robots[^>]+>' | grep -iE 'nosnippet|max-snippet|max-image-preview'
+curl -sI "$URL" | grep -i '^x-robots-tag:' | grep -iE 'nosnippet|max-snippet|max-image-preview'
+curl -s "$URL" | grep -oiE '<[^>]+data-nosnippet([^>]*)?>'
+```
+
+Interpret the observed directives as follows [GOOGLE-ROBOTS-META-01]:
+
+- `nosnippet` or `max-snippet:0` prevents Google from showing a text snippet for
+  the page. Because snippet eligibility is required for a supporting link in Google
+  AI Overviews and AI Mode, flag either directive on a key page as a critical
+  AI-feature exclusion [GOOGLE-AI-FEATURES-01].
+- A positive `max-snippet:N` limits the text snippet to `N` characters and limits
+  how much content Google may use as direct input for AI Overviews and AI Mode.
+- `max-image-preview:none`, `standard`, or `large` controls the maximum image-preview
+  size; report the observed value as an image-preview restriction, not a text or
+  indexing block.
+- `data-nosnippet` excludes text inside the marked `div`, `span`, or `section` from
+  snippets. Record the affected region; do not describe it as a page-wide block.
+
+These controls also affect classic Google Search previews. Confirm the site's intended
+content policy before recommending removal. `Google-Extended` is a separate control for
+other Google AI systems and does not override these Google Search AI-feature controls
+[GOOGLE-AI-FEATURES-01].
+
 ## Security headers
 
 Missing security headers are a real technical-SEO/trust signal (and can affect

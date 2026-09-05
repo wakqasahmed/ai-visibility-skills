@@ -26,6 +26,8 @@ of known fixture finding-sets against it, and asserts:
    absent (no deduction) on a non-ecommerce site.
 6. AI-training opt-out controls are reported as a supporting signal and never
    misclassified as critical crawler blocks.
+7. Google `nosnippet` / `max-snippet:0` exclusion on a key page triggers the
+   Critical Foundation deduction in Answer Readiness.
 
 This does not invoke an LLM — it proves the rubric's arithmetic is
 well-defined and reproducible, which is the property the reporting
@@ -102,6 +104,7 @@ RUBRIC = {
         "4.5_vague": {"deduction": 3},
         "4.6": {"deduction": 10},
         "4.7": {"deduction": 10, "cap": 20, "per_occurrence": True},  # per flagged thin category page
+        "4.8": {"deduction": 25},
     },
     "trust_authority": {
         "5.1": {"deduction": 25},
@@ -398,6 +401,15 @@ def run_hydration_divergence_scoring() -> list:
     return failures
 
 
+def run_snippet_exclusion_scoring() -> list:
+    """4.8 (nosnippet or max-snippet:0 on a key page, -25) scores correctly."""
+    failures = []
+    answer = score_pillar("answer_readiness", {"4.8": 1})
+    if answer.score != 75.0:
+        failures.append(f"expected 4.8 to deduct -25 (score 75), got {answer.score}")
+    return failures
+
+
 def main() -> int:
     all_failures = []
     checks = [
@@ -413,6 +425,7 @@ def main() -> int:
         ("docs-api-visibility-audit check (3.7) scores correctly", run_openapi_checks_scoring),
         ("paywall-access-audit check (3.8) scores correctly", run_paywall_checks_scoring),
         ("hydration-divergence check (2.8) scores correctly", run_hydration_divergence_scoring),
+        ("Google snippet-exclusion check (4.8) scores correctly", run_snippet_exclusion_scoring),
     ]
 
     for label, fn in checks:

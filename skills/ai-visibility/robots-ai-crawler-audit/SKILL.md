@@ -13,7 +13,9 @@ Scope: access rules only. Sitemap coverage belongs to `sitemap-discovery-audit`;
 
 1. Fetch `/robots.txt`.
 2. Identify global disallow rules, sitemap declarations, crawl delays, and user-agent specific rules. On ecommerce/marketplace sites, check specifically whether product, category, and policy paths are blocked — these are usually the pages a shopper or AI agent needs to read.
-3. Check page-level `noindex`, `nofollow`, canonical tags, and `X-Robots-Tag` headers on key URLs.
+3. Check page-level `noindex`, `nofollow`, canonical tags, and Google snippet preview controls on key URLs.
+   - Inspect both `<meta name="robots">` and `X-Robots-Tag` for `nosnippet`, `max-snippet:N`, and `max-image-preview:{none|standard|large}`, then sweep arbitrary body elements for `data-nosnippet` [GOOGLE-ROBOTS-META-01].
+   - Treat `nosnippet` and `max-snippet:0` as Google AI Overviews and AI Mode exclusions. Report positive `max-snippet` limits, `max-image-preview` limits, and `data-nosnippet` regions as scoped preview restrictions rather than full-page indexing blocks [GOOGLE-AI-FEATURES-01].
 4. Check response security headers (`Strict-Transport-Security`, `X-Content-Type-Options`, `X-Frame-Options`) on key URLs — a real technical-SEO/trust signal, and missing ones can also indicate a misconfigured origin worth flagging alongside crawler-access findings.
 5. Look for AI crawler-specific rules for major bots where visible.
 6. Compare access rules against the user's visibility goals.
@@ -25,6 +27,8 @@ Scope: access rules only. Sitemap coverage belongs to `sitemap-discovery-audit`;
 - Current crawler policy summary
 - Blocked high-value paths
 - AI crawler implications
+- Google snippet preview restrictions (`nosnippet`, `max-snippet`, and `max-image-preview`) by key URL and delivery channel (meta tag or header)
+- `data-nosnippet` regions found on each key URL
 - Security header gaps (HSTS, X-Content-Type-Options, X-Frame-Options)
 - [EXPERIMENTAL] Emerging protocol signals (Content Signals, Web Bot Auth, DNS-AID) — clearly labeled as optional draft standards
 - Recommended robots.txt changes

@@ -109,8 +109,9 @@ Source skills: `schema-markup-audit`, `docs-api-visibility-audit` (API platform 
 
 ## Pillar 4 — Answer Readiness (weight: 20%)
 
-Source skills: `answer-engine-content-audit`, `ecommerce-technical-seo-audit`
-(catalog-specific extractability check 4.7, ecommerce sites only).
+Source skills: `answer-engine-content-audit`, `robots-ai-crawler-audit`,
+`ecommerce-technical-seo-audit` (catalog-specific extractability check 4.7,
+ecommerce sites only).
 
 | # | Check | Tier | Deduction | N/A condition | Rationale |
 |---|---|---|---|---|---|
@@ -121,6 +122,7 @@ Source skills: `answer-engine-content-audit`, `ecommerce-technical-seo-audit`
 | 4.5 | Meta description on a sampled key page is missing, or present but empty/boilerplate/over ~160 characters ("vague") | Supporting Signal | −5 missing / −3 vague | Never | Per the task's own calibration example, this is "a minor citation-quality signal" — it affects how a snippet reads, not whether the underlying content can be found or understood, so it sits well below the title check and the structural answer checks above. |
 | 4.6 | No freshness signal (`article:published_time`/`article:modified_time` meta, or a visible "updated"/"last modified" string) on time-sensitive content (pricing, docs, guides) | Supporting Signal | −10 | N/A if the sampled content is genuinely evergreen with no freshness claim to make (rare — most business content benefits from a dateline) | Freshness is a supporting trust/recency signal, not a blocker to extracting the answer itself, consistent with its Tier-3 framing in the V3 design doc's "content freshness" example. |
 | 4.7 | A sampled category/collection page has under ~300 words of unique, non-boilerplate, non-product-grid text *and* that text duplicates another category's copy (`ecommerce-technical-seo-audit`'s two-part thin-content test) | Important Improvement | −10 per flagged sampled page, capped at −20 | N/A if the site has no category/collection page structure (e.g. a single-product store or a non-ecommerce site) | A category page this thin gives an agent nothing distinct to extract or cite about that specific category — it can only paraphrase the product grid or fall back to a near-identical sibling page's copy. This is a real but non-catastrophic extractability gap, not the "promised then empty" failure of 4.1 (a dedicated FAQ section is a much stronger, explicit signal to a reader that an answer exists here), so it sits at the same Important tier and weight as 4.2/4.3 rather than 4.1's Critical tier. The check requires *both* low word count and duplication, per the skill's own guardrail against flagging a page as thin from word count alone (a low count can be a legitimate short category with no duplication problem) and against extrapolating a small sample into a catalog-wide count — the −20 cap keeps a 3-5 page sample from swinging the pillar further than the sample itself justifies. |
+| 4.8 | `<meta name="robots">` or `X-Robots-Tag` contains `nosnippet` or `max-snippet:0` on a sampled key page | Critical Foundation | −25 | Never | Google requires a page to be eligible for a snippet before it can appear as a supporting link in AI Overviews or AI Mode; `nosnippet` and the equivalent `max-snippet:0` prevent that eligibility and direct-input use `[GOOGLE-AI-FEATURES-01]` `[GOOGLE-ROBOTS-META-01]`. This is an explicit page-level answer exclusion, but it also suppresses classic Google Search text snippets; report the trade-off and confirm the site's intended content policy rather than blindly recommending removal. |
 
 ## Pillar 5 — Trust & Authority (weight: 15%)
 
