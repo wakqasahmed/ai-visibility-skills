@@ -18,6 +18,7 @@ import html
 import math
 import subprocess
 import shutil
+import tempfile
 from pathlib import Path
 
 
@@ -1067,15 +1068,25 @@ def render_pdf(html_path: str, pdf_path: str, browser_path: str) -> tuple[bool, 
                 except Exception:
                     pass
 
+    user_data_dir = tempfile.mkdtemp(prefix="ai-visibility-pdf-")
     cmd = [
         browser_path,
         "--headless=new",
         "--disable-gpu",
-        "--no-sandbox",
+        "--disable-extensions",
+        "--disable-dev-shm-usage",
+        f"--user-data-dir={user_data_dir}",
         "--no-pdf-header-footer",
         f"--print-to-pdf={str(target_path)}",
         str(html_path)
     ]
+    if os.environ.get("AI_VISIBILITY_PDF_NO_SANDBOX") == "1":
+        print(
+            "[WARNING] Browser sandbox disabled by AI_VISIBILITY_PDF_NO_SANDBOX=1",
+            file=sys.stderr,
+        )
+        cmd.insert(3, "--no-sandbox")
+
     try:
         res = subprocess.run(
             cmd,
@@ -1089,6 +1100,8 @@ def render_pdf(html_path: str, pdf_path: str, browser_path: str) -> tuple[bool, 
     except Exception as e:
         print(f"Error executing browser PDF export: {e}", file=sys.stderr)
         return False, str(target_path)
+    finally:
+        shutil.rmtree(user_data_dir, ignore_errors=True)
 
 
 def main():
