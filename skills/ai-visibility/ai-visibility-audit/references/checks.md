@@ -24,11 +24,13 @@ is the path a two-probe guess-list misses).
 Do not live-fetch as `Google-Extended`: it is a `robots.txt`-only control token and has no
 separate HTTP user-agent string [GOOGLE-EXTENDED-01].
 
-```bash
-for ua in GPTBot ClaudeBot PerplexityBot CCBot; do
-  printf "%-16s " "$ua"; curl -s -o /dev/null -w "%{http_code}\n" -A "$ua" "$URL"
-done
-```
+Run `robots-ai-crawler-audit`'s `references/checks.md` live-fetch procedure. It uses the
+vendors' documented full/example request user-agents and compares them with a default fetch.
+A status differential from a hand-set header is spoofable and therefore `[Derived]` evidence
+under rubric 1.2a, not proof that the real crawler is blocked. Escalate to `[Measured]` rubric
+1.2b only with the operator log/IP, vendor-specific forward-confirmed reverse DNS, or
+vendor-webmaster corroboration that procedure requires; never deduct both checks for the same
+finding [BINGBOT-VERIFY-01].
 
 ## Machine-readable context
 
