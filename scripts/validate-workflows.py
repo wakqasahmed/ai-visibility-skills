@@ -1,0 +1,79 @@
+#!/usr/bin/env python3
+import re
+import sys
+from pathlib import Path
+
+
+FULL_SHA = re.compile(r"[0-9a-f]{40}")
+USES = re.compile(r"^\s*(?:-\s+)?uses:\s*([^\s#]+)", re.MULTILINE)
+PERMISSIONS = re.compile(r"^(?P<indent>\s*)permissions:\s*(?P<value>[^#]*?)\s*(?:#.*)?$")
+PERMISSION_ENTRY = re.compile(r"^\s+([a-z-]+):\s*(read|write|none)\s*(?:#.*)?$")
+ALLOWED_WRITE_PERMISSIONS = {
+    "ocr-manual-review.yml": {"issues", "pull-requests"},
+    "open-code-review.yml": {"pull-requests"},
+}
+
+
+def permission_blocks(text: str) -> list[dict[str, str]]:
+    lines = text.splitlines()
+    blocks = []
+    for index, line in enumerate(lines):
+        match = PERMISSIONS.match(line)
+        if not match:
+            continue
+        if match.group("value"):
+            blocks.append({"*": match.group("value")})
+            continue
+
+        indent = len(match.group("indent"))
+        block = {}
+        for entry_line in lines[index + 1 :]:
+            if not entry_line.strip() or entry_line.lstrip().startswith("#"):
+                continue
+            entry_indent = len(entry_line) - len(entry_line.lstrip())
+            if entry_indent <= indent:
+                break
+            entry = PERMISSION_ENTRY.match(entry_line)
+            if entry:
+                block[entry.group(1)] = entry.group(2)
+        blocks.append(block)
+    return blocks
+
+
+root = Path(__file__).resolve().parents[1]
+workflows_dir = root / ".github" / "workflows"
+workflow_paths = sorted((*workflows_dir.glob("*.yml"), *workflows_dir.glob("*.yaml")))
+errors = []
+action_count = 0
+
+for path in workflow_paths:
+    relative_path = path.relative_to(root)
+    text = path.read_text()
+
+    for action in USES.findall(text):
+        if action.startswith("./"):
+            continue
+        action_count += 1
+        if "@" not in action or not FULL_SHA.fullmatch(action.rsplit("@", 1)[1]):
+            errors.append(f"{relative_path}: action is not pinned to a full SHA: {action}")
+
+    blocks = permission_blocks(text)
+    allowed_writes = ALLOWED_WRITE_PERMISSIONS.get(path.name, set())
+    for block in blocks:
+        if "*" in block:
+            if block["*"] not in {"{}", "read-all"}:
+                errors.append(f"{relative_path}: unsupported or writable inline permissions")
+            continue
+        for permission, access in block.items():
+            if access == "write" and permission not in allowed_writes:
+                errors.append(f"{relative_path}: unexpected write permission: {permission}")
+
+    if path.name.endswith("-model-eval.yml") and blocks != [{"contents": "read"}]:
+        errors.append(f"{relative_path}: model eval permissions must be contents: read only")
+
+if errors:
+    for error in errors:
+        print(f"ERROR: {error}", file=sys.stderr)
+    sys.exit(1)
+
+print(f"validated {action_count} pinned action references across {len(workflow_paths)} workflows")
