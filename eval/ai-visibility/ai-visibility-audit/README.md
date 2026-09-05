@@ -12,6 +12,8 @@ intentionally separate:
 
 `run_outcome_eval.py` and `model_harness.py` both import `contract.py`, so they
 score outcomes the same way and cannot silently define "correct" differently.
+The deterministic outcome eval also reuses the Layer 1 raw multi-line JSON-LD
+fixture assertion so a server-rendered block cannot acquire a rubric 2.8 finding.
 
 `run_rubric_eval.py` is a separate, narrower layer that encodes
 [`docs/SCORING_RUBRIC.md`](../../../docs/SCORING_RUBRIC.md)'s deduction table as
@@ -55,7 +57,7 @@ finding bullets and still never uses guarantee language.
 
 Pre-existing (issue #3). A hand-maintained Python reimplementation of the
 commands in `skills/ai-visibility/ai-visibility-audit/references/checks.md`, run against one frozen `fixture/`
-snapshot (robots.txt blocking GPTBot, hydration-only JSON-LD, thin FAQ answers)
+snapshot (robots.txt blocking GPTBot, server-rendered multi-line JSON-LD, thin FAQ answers)
 and asserted against severity/evidence/delegation/guardrail rules. See the
 header comment in `run_eval.py` for what it does and does not prove.
 
@@ -64,11 +66,12 @@ passes (issue #102): `fixture/index.html` is the initial server response and
 `fixture/hydrated.html` is the same page's DOM after JavaScript runs. The raw
 response carries React-Helmet-attributed head tags
 (`<meta data-react-helmet="true" name="description" ...>`) that an adjacent-token
-pattern would miss, and no JSON-LD; the hydrated DOM adds an `Organization`
-block. `assert_hydration_methodology()` fails the run if either false-negative
-shape comes back — a head tag that is present being reported absent, or a
-hydration-only JSON-LD block being reported as a flat absence instead of a
-raw-vs-hydrated divergence. Title, meta description and canonical go through the
+pattern would miss, plus a pretty-printed `Organization` JSON-LD block carrying
+an `id` before `type`. `assert_hydration_methodology()` fails the run if either
+false-negative shape comes back — a head tag that is present being reported absent,
+or server-rendered multi-line JSON-LD being reported as a raw-vs-hydrated divergence.
+It also checks the genuine hydration-only case against an isolated raw input. Title,
+meta description and canonical go through the
 same two-pass resolution as JSON-LD, and the assertions cover both the
 raw-absent/hydrated-present case for each of them and the no-browser case, where
 every zero-match raw result must come back as `[Derived]` with an explicit
@@ -86,11 +89,11 @@ python3 eval/ai-visibility/ai-visibility-audit/run_eval.py
 
 ## Layer 2 — deterministic outcome-contract check (`run_outcome_eval.py`)
 
-No network, no credentials, no LLM call. Loads every fixture under
-`fixtures/*/` and asserts its golden output (`golden_report.md` for `mode:
-audit`, `golden_response.md` for `mode: decline`) satisfies `contract.py`'s
-rules, and that the fixture set has at least 5 `should_use` and 5
-`should_not_use` cases.
+No network, no credentials, no LLM call. Verifies the raw multi-line JSON-LD
+regression fixture, then loads every fixture under `fixtures/*/` and asserts its
+golden output (`golden_report.md` for `mode: audit`, `golden_response.md` for
+`mode: decline`) satisfies `contract.py`'s rules, and that the fixture set has
+at least 5 `should_use` and 5 `should_not_use` cases.
 
 ```bash
 python3 eval/ai-visibility/ai-visibility-audit/run_outcome_eval.py

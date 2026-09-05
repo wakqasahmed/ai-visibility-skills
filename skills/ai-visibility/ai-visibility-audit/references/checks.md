@@ -35,12 +35,29 @@ done
 Attributes are matched anywhere inside the tag, not adjacent to the tag name: frameworks
 inject their own attributes first (`<meta data-react-helmet="true" name="description" ...>`),
 and an adjacent-token pattern silently misses those tags.
+Define the JSON-LD extractor once in the audit shell; it accepts a file path or reads stdin
+when the path is omitted, so the raw and hydrated passes use identical matching semantics.
 
 ```bash
+extract_json_ld() {
+  python3 -c '
+import json, re, sys
+source = sys.argv[1]
+html = open(source, encoding="utf-8", errors="replace").read() if source else sys.stdin.read()
+blocks = re.findall(r"<script[^>]+application/ld\+json[^>]*>(.*?)</script>", html, re.S | re.I)
+print(f"{len(blocks)} JSON-LD block(s)")
+for block in blocks:
+    try:
+        print(json.dumps(json.loads(block), indent=2)[:400])
+    except json.JSONDecodeError as exc:
+        print(f"unparseable JSON-LD block: {exc}")
+' "${1:-}"
+}
+
 curl -s "$URL" | grep -oiE '<title[^>]*>[^<]*'
 curl -s "$URL" | grep -oiE '<meta[^>]+name="description"[^>]*>'
 curl -s "$URL" | grep -oiE '<link[^>]+rel="canonical"[^>]*>'
-curl -s "$URL" | grep -oiE '<script[^>]+application/ld\+json[^>]*>[^<]*' | sed 's/^<script[^>]*>//' | python3 -m json.tool
+curl -s "$URL" | extract_json_ld
 curl -s -o /dev/null -w "%{http_code}\n" "$SITE/llms.txt"
 ```
 
@@ -64,17 +81,7 @@ fi
 grep -oiE '<title[^>]*>[^<]*' /tmp/hydrated.html
 grep -oiE '<meta[^>]+name="description"[^>]*>' /tmp/hydrated.html
 grep -oiE '<link[^>]+rel="canonical"[^>]*>' /tmp/hydrated.html
-python3 - /tmp/hydrated.html <<'PY'
-import json, re, sys
-html = open(sys.argv[1], encoding="utf-8", errors="replace").read()
-blocks = re.findall(r'<script[^>]+application/ld\+json[^>]*>(.*?)</script>', html, re.S | re.I)
-print(f"{len(blocks)} JSON-LD block(s) in hydrated DOM")
-for block in blocks:
-    try:
-        print(json.dumps(json.loads(block), indent=2)[:400])
-    except json.JSONDecodeError as exc:
-        print(f"unparseable JSON-LD block: {exc}")
-PY
+extract_json_ld /tmp/hydrated.html
 ```
 
 Frameworks that stream head/schema content into the page rather than serving it as static tags
