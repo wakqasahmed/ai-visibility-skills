@@ -6,9 +6,20 @@ import json
 import sys
 from pathlib import Path
 
-from contract import validate_decline_contract, validate_report_contract
+from contract import (
+    validate_decline_contract,
+    validate_report_contract,
+    validate_trigger_contract,
+)
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
+SKILL_MD = (
+    Path(__file__).resolve().parents[3]
+    / "skills"
+    / "ai-visibility"
+    / "ai-share-of-voice-audit"
+    / "SKILL.md"
+)
 
 
 def run_eval() -> int:
@@ -17,9 +28,22 @@ def run_eval() -> int:
         print("FAIL: No fixtures found in", FIXTURES_DIR)
         return 1
 
-    total = len(fixtures)
+    total = len(fixtures) + 1
     passed = 0
     failures = []
+
+    trigger_result = validate_trigger_contract(SKILL_MD.read_text(encoding="utf-8"))
+    if trigger_result.passed:
+        passed += 1
+        print("  [PASS] frontmatter_trigger_contract")
+    else:
+        failures.append(
+            ("frontmatter_trigger_contract", "; ".join(trigger_result.failures))
+        )
+        print(
+            "  [FAIL] frontmatter_trigger_contract: "
+            f"{'; '.join(trigger_result.failures)}"
+        )
 
     for fix in fixtures:
         meta_path = fix / "meta.json"

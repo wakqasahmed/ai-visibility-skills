@@ -5,9 +5,36 @@
 Match `application/ld+json` anywhere inside the `<script>` tag, never as an adjacent token
 straight after `<script` — an `id`, `nonce`, or framework attribute in front of `type=` is
 common, and an adjacent-token pattern silently misses those blocks.
+Define the extractor once in the audit shell; it accepts a file path or reads stdin when the
+path is omitted, so the raw and hydrated passes use identical matching semantics.
 
 ```bash
-curl -s "$URL" | grep -oiE '<script[^>]+application/ld\+json[^>]*>[^<]*' | sed 's/^<script[^>]*>//' | python3 -m json.tool
+extract_json_ld() {
+  python3 -c '
+import json, re, sys
+source, mode = sys.argv[1:]
+html = open(source, encoding="utf-8", errors="replace").read() if source else sys.stdin.read()
+blocks = re.findall(r"<script[^>]+application/ld\+json[^>]*>(.*?)</script>", html, re.S | re.I)
+print(f"{len(blocks)} JSON-LD block(s)")
+def types(value):
+    if isinstance(value, dict):
+        if "@type" in value:
+            print(value["@type"])
+        for child in value.values():
+            types(child)
+    elif isinstance(value, list):
+        for child in value:
+            types(child)
+for block in blocks:
+    try:
+        data = json.loads(block)
+        types(data) if mode == "types" else print(json.dumps(data, indent=2))
+    except json.JSONDecodeError as exc:
+        print(f"unparseable JSON-LD block: {exc}")
+' "${1:-}" "${2:-json}"
+}
+
+curl -s "$URL" | extract_json_ld
 curl -s "$URL" | grep -oiE 'itemtype="[^"]*"' | sort -u
 ```
 
@@ -34,17 +61,34 @@ if [ -z "$CHROME" ]; then
 fi
 "$CHROME" --headless=new --disable-gpu --virtual-time-budget=10000 --dump-dom "$URL" > "$WORK"/schema-markup-audit-hydrated.html
 grep -oiE '<script[^>]+application/ld\+json[^>]*>' "$WORK"/schema-markup-audit-hydrated.html | wc -l
-python3 - "$WORK"/schema-markup-audit-hydrated.html <<'PY'
+# extract_json_ld is defined in the "Extract structured data" fence above, but
+# each ```bash fence is a separately-invoked shell — the function is not in
+# scope here, so it is redefined rather than called across fences.
+extract_json_ld() {
+  python3 -c '
 import json, re, sys
-html = open(sys.argv[1], encoding='utf-8', errors='replace').read()
-blocks = re.findall(r'<script[^>]+application/ld\+json[^>]*>(.*?)</script>', html, re.S | re.I)
-print(f'{len(blocks)} JSON-LD block(s) in hydrated DOM')
+source, mode = sys.argv[1:]
+html = open(source, encoding="utf-8", errors="replace").read() if source else sys.stdin.read()
+blocks = re.findall(r"<script[^>]+application/ld\+json[^>]*>(.*?)</script>", html, re.S | re.I)
+print(f"{len(blocks)} JSON-LD block(s)")
+def types(value):
+    if isinstance(value, dict):
+        if "@type" in value:
+            print(value["@type"])
+        for child in value.values():
+            types(child)
+    elif isinstance(value, list):
+        for child in value:
+            types(child)
 for block in blocks:
     try:
-        print(json.loads(block).get('@type'))
+        data = json.loads(block)
+        types(data) if mode == "types" else print(json.dumps(data, indent=2))
     except json.JSONDecodeError as exc:
-        print(f'unparseable block: {exc}')
-PY
+        print(f"unparseable JSON-LD block: {exc}")
+' "${1:-}" "${2:-json}"
+}
+extract_json_ld "$WORK"/schema-markup-audit-hydrated.html types
 ```
 
 Report the comparison, not just the pass that found something:
@@ -66,18 +110,7 @@ is reproducible by whoever implements the fix.
 List all `@type` values found:
 
 ```bash
-curl -s "$URL" | grep -oE '<script type="application/ld\+json">[^<]*' | sed 's/^<script[^>]*>//' | python3 -c "
-import json,sys
-def types(o):
-    if isinstance(o,dict):
-        t=o.get('@type');
-        if t: print(t)
-        [types(v) for v in o.values()]
-    elif isinstance(o,list): [types(v) for v in o]
-for block in sys.stdin.read().split('\n'):
-    try: types(json.loads(block))
-    except Exception: pass
-"
+curl -s "$URL" | extract_json_ld /dev/stdin types
 ```
 
 ## Property checklists by page type

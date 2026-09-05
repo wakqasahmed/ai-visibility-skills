@@ -15,6 +15,8 @@ Turn audit findings into execution-ready work.
 4. Include acceptance criteria and verification for each item.
 5. Mark work that needs owner approval, policy decisions, credentials, CMS access, or legal review.
 
+Use the commands in `references/checks.md` for each check.
+
 ## Output
 
 - Priority roadmap
