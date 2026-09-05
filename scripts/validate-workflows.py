@@ -3,54 +3,37 @@ import re
 import sys
 from pathlib import Path
 
-
-def _unquote(token: str) -> str:
-    if len(token) >= 2 and token[0] == token[-1] and token[0] in "'\"":
-        return token[1:-1]
-    return token
-
+import yaml
 
 FULL_SHA = re.compile(r"[0-9a-f]{40}")
-# The `uses`/`permissions` mapping keys accept an optional matching pair of quotes in
-# YAML (`'uses': x` and `uses: x` are the same key) — match both, so a quoted key
-# cannot silently bypass the checks below the way an unquoted-only pattern would.
-USES = re.compile(r"^\s*(?:-\s+)?(['\"]?)uses\1:\s*([^\s#]+)", re.MULTILINE)
-PERMISSIONS = re.compile(
-    r"^(?P<indent>\s*)(['\"]?)permissions\2:\s*(?P<value>[^#]*?)\s*(?:#.*)?$"
-)
-PERMISSION_ENTRY = re.compile(
-    r"^\s+(['\"]?)([a-z-]+)\1:\s*(['\"]?)(read|write|none)\3\s*(?:#.*)?$"
-)
 ALLOWED_WRITE_PERMISSIONS = {
     "ocr-manual-review.yml": {"issues", "pull-requests"},
     "open-code-review.yml": {"pull-requests"},
 }
 
 
-def permission_blocks(text: str) -> list[dict[str, str]]:
-    lines = text.splitlines()
-    blocks = []
-    for index, line in enumerate(lines):
-        match = PERMISSIONS.match(line)
-        if not match:
+def iter_uses(workflow: dict):
+    jobs = workflow.get("jobs") or {}
+    if not isinstance(jobs, dict):
+        return
+    for job in jobs.values():
+        if not isinstance(job, dict):
             continue
-        if match.group("value"):
-            blocks.append({"*": _unquote(match.group("value"))})
-            continue
+        for step in job.get("steps") or []:
+            if isinstance(step, dict) and "uses" in step:
+                yield step["uses"]
 
-        indent = len(match.group("indent"))
-        block = {}
-        for entry_line in lines[index + 1 :]:
-            if not entry_line.strip() or entry_line.lstrip().startswith("#"):
-                continue
-            entry_indent = len(entry_line) - len(entry_line.lstrip())
-            if entry_indent <= indent:
-                break
-            entry = PERMISSION_ENTRY.match(entry_line)
-            if entry:
-                block[entry.group(2)] = entry.group(4)
-        blocks.append(block)
-    return blocks
+
+def iter_permission_blocks(workflow: dict):
+    top = workflow.get("permissions")
+    if top is not None:
+        yield top
+    jobs = workflow.get("jobs") or {}
+    if not isinstance(jobs, dict):
+        return
+    for job in jobs.values():
+        if isinstance(job, dict) and "permissions" in job:
+            yield job["permissions"]
 
 
 root = Path(__file__).resolve().parents[1]
@@ -62,21 +45,31 @@ action_count = 0
 for path in workflow_paths:
     relative_path = path.relative_to(root)
     text = path.read_text()
+    try:
+        workflow = yaml.safe_load(text)
+    except yaml.YAMLError as error:
+        errors.append(f"{relative_path}: could not parse YAML: {error}")
+        continue
+    if not isinstance(workflow, dict):
+        errors.append(f"{relative_path}: workflow did not parse to a mapping")
+        continue
 
-    for raw_action in USES.findall(text):
-        action = _unquote(raw_action[1])
-        if action.startswith("./"):
+    for action in iter_uses(workflow):
+        if not isinstance(action, str) or action.startswith("./"):
             continue
         action_count += 1
         if "@" not in action or not FULL_SHA.fullmatch(action.rsplit("@", 1)[1]):
             errors.append(f"{relative_path}: action is not pinned to a full SHA: {action}")
 
-    blocks = permission_blocks(text)
+    blocks = list(iter_permission_blocks(workflow))
     allowed_writes = ALLOWED_WRITE_PERMISSIONS.get(path.name, set())
     for block in blocks:
-        if "*" in block:
-            if block["*"] not in {"{}", "read-all"}:
+        if isinstance(block, str):
+            if block not in {"read-all"}:
                 errors.append(f"{relative_path}: unsupported or writable inline permissions")
+            continue
+        if not isinstance(block, dict):
+            errors.append(f"{relative_path}: unrecognized permissions value: {block!r}")
             continue
         for permission, access in block.items():
             if access == "write" and permission not in allowed_writes:

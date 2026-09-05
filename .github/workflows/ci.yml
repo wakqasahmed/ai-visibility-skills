@@ -15,7 +15,9 @@ jobs:
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
       - name: Validate workflow security
-        run: python3 scripts/validate-workflows.py
+        run: |
+          pip install pyyaml
+          python3 scripts/validate-workflows.py
       - name: List skills
         run: scripts/list-skills.sh | grep -q "skills/ai-visibility/ai-visibility-audit/SKILL.md"
       - name: Validate plugin paths

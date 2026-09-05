@@ -108,6 +108,67 @@ jobs:
         result = self.run_validator()
         self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_rejects_mutable_ref_with_whitespace_before_the_uses_colon(self):
+        # YAML permits separation whitespace before a mapping colon, so
+        # `uses : x` is the same key as `uses: x`. A validator that only
+        # recognizes the no-space form would let this bypass SHA pinning.
+        self.write_workflow(
+            "spaced-colon.yml",
+            """\
+name: Bad
+on: push
+jobs:
+  build:
+    permissions:
+      contents: read
+    steps:
+      - uses : attacker/action@main
+""",
+        )
+        result = self.run_validator()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("attacker/action@main", result.stderr)
+
+    def test_rejects_write_permission_with_whitespace_before_the_permissions_colon(self):
+        self.write_workflow(
+            "spaced-permissions.yml",
+            f"""\
+name: Bad
+on: push
+jobs:
+  build:
+    permissions :
+      pull-requests: write
+    steps:
+      - uses: {PINNED_CHECKOUT}
+""",
+        )
+        result = self.run_validator()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("pull-requests", result.stderr)
+
+    def test_ignores_a_permissions_named_action_input(self):
+        # A step's `with:` inputs are arbitrary action-defined keys and may
+        # happen to be named "permissions" — that is not a workflow/job
+        # permissions block and must not be scanned as one.
+        self.write_workflow(
+            "action-input.yml",
+            f"""\
+name: OK
+on: push
+jobs:
+  build:
+    permissions:
+      contents: read
+    steps:
+      - uses: {PINNED_CHECKOUT}
+        with:
+          permissions: write-all
+""",
+        )
+        result = self.run_validator()
+        self.assertEqual(result.returncode, 0, result.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()
