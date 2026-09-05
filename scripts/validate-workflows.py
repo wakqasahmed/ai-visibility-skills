@@ -4,10 +4,23 @@ import sys
 from pathlib import Path
 
 
+def _unquote(token: str) -> str:
+    if len(token) >= 2 and token[0] == token[-1] and token[0] in "'\"":
+        return token[1:-1]
+    return token
+
+
 FULL_SHA = re.compile(r"[0-9a-f]{40}")
-USES = re.compile(r"^\s*(?:-\s+)?uses:\s*([^\s#]+)", re.MULTILINE)
-PERMISSIONS = re.compile(r"^(?P<indent>\s*)permissions:\s*(?P<value>[^#]*?)\s*(?:#.*)?$")
-PERMISSION_ENTRY = re.compile(r"^\s+([a-z-]+):\s*(read|write|none)\s*(?:#.*)?$")
+# The `uses`/`permissions` mapping keys accept an optional matching pair of quotes in
+# YAML (`'uses': x` and `uses: x` are the same key) — match both, so a quoted key
+# cannot silently bypass the checks below the way an unquoted-only pattern would.
+USES = re.compile(r"^\s*(?:-\s+)?(['\"]?)uses\1:\s*([^\s#]+)", re.MULTILINE)
+PERMISSIONS = re.compile(
+    r"^(?P<indent>\s*)(['\"]?)permissions\2:\s*(?P<value>[^#]*?)\s*(?:#.*)?$"
+)
+PERMISSION_ENTRY = re.compile(
+    r"^\s+(['\"]?)([a-z-]+)\1:\s*(['\"]?)(read|write|none)\3\s*(?:#.*)?$"
+)
 ALLOWED_WRITE_PERMISSIONS = {
     "ocr-manual-review.yml": {"issues", "pull-requests"},
     "open-code-review.yml": {"pull-requests"},
@@ -22,7 +35,7 @@ def permission_blocks(text: str) -> list[dict[str, str]]:
         if not match:
             continue
         if match.group("value"):
-            blocks.append({"*": match.group("value")})
+            blocks.append({"*": _unquote(match.group("value"))})
             continue
 
         indent = len(match.group("indent"))
@@ -35,7 +48,7 @@ def permission_blocks(text: str) -> list[dict[str, str]]:
                 break
             entry = PERMISSION_ENTRY.match(entry_line)
             if entry:
-                block[entry.group(1)] = entry.group(2)
+                block[entry.group(2)] = entry.group(4)
         blocks.append(block)
     return blocks
 
@@ -50,7 +63,8 @@ for path in workflow_paths:
     relative_path = path.relative_to(root)
     text = path.read_text()
 
-    for action in USES.findall(text):
+    for raw_action in USES.findall(text):
+        action = _unquote(raw_action[1])
         if action.startswith("./"):
             continue
         action_count += 1
