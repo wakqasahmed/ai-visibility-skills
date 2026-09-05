@@ -1,4 +1,4 @@
-<!-- Bundled copy of docs/templates/AUDIT_REPORT_TEMPLATE_V3.md, kept here so single-skill installs are self-contained (issue #91). Keep both copies in sync when editing either. -->
+<!-- Keep this canonical document and its bundled single-skill copy in sync. Only their relative link targets may differ. -->
 
 # AI Visibility & Website Readiness Audit: {{TARGET_URL}}
 
@@ -14,7 +14,7 @@
 > **Readiness Statement:** {{EXECUTIVE_SUMMARY_TEXT}}  
 > *Note: This score reflects audited discoverability, machine-readability, answerability, and trust signals. It represents readiness for search engines and AI systems, not a commercial guarantee of ranking, citations, or traffic.*
 >
-> **Every point on this page is traceable.** Each pillar score below is derived mechanically from the deduction table in [`references/scoring_rubric.md`](scoring_rubric.md) — not a free-form estimate. Section 4's "Score Derivation" subsection under each pillar lists the exact rubric check IDs and point deductions that produced that pillar's number. If a check does not apply to this site type (e.g. no ecommerce checks on a docs site), it is marked N/A there rather than silently scored as a pass or a fail — see the rubric's "Handling inapplicable checks and pillars" section for how N/A pillars are excluded and the remaining weights are reproportioned.
+> **Every point on this page is traceable.** Each pillar score below is derived mechanically from the deduction table in the [scoring rubric](scoring_rubric.md) — not a free-form estimate. Section 4's "Score Derivation" subsection under each pillar lists the exact rubric check IDs and point deductions that produced that pillar's number. If a check does not apply to this site type (e.g. no ecommerce checks on a docs site), it is marked N/A there rather than silently scored as a pass or a fail — see the rubric's "Handling inapplicable checks and pillars" section for how N/A pillars are excluded and the remaining weights are reproportioned.
 
 ### Six-Pillar AI Visibility Scorecard
 
@@ -98,7 +98,7 @@
 
 > **Pillar Score:** `{{DISCOVERY_SCORE}}/100` — `{{DISCOVERY_BADGE}}`
 
-**Score Derivation** *(rubric: [`references/scoring_rubric.md`](scoring_rubric.md) § Pillar 1)*
+**Score Derivation** *(see the [scoring rubric](scoring_rubric.md) § Pillar 1)*
 
 | Rubric Check | Result | Deduction |
 |---|---|---|
@@ -134,7 +134,7 @@
 
 > **Pillar Score:** `{{TECH_ACCESS_SCORE}}/100` — `{{TECH_ACCESS_BADGE}}`
 
-**Score Derivation** *(rubric: [`references/scoring_rubric.md`](scoring_rubric.md) § Pillar 2)*
+**Score Derivation** *(see the [scoring rubric](scoring_rubric.md) § Pillar 2)*
 
 | Rubric Check | Result | Deduction |
 |---|---|---|
@@ -165,7 +165,7 @@
 
 > **Pillar Score:** `{{UNDERSTANDING_SCORE}}/100` — `{{UNDERSTANDING_BADGE}}`
 
-**Score Derivation** *(rubric: [`references/scoring_rubric.md`](scoring_rubric.md) § Pillar 3)*
+**Score Derivation** *(see the [scoring rubric](scoring_rubric.md) § Pillar 3)*
 
 | Rubric Check | Result | Deduction |
 |---|---|---|
@@ -196,7 +196,7 @@
 
 > **Pillar Score:** `{{ANSWER_SCORE}}/100` — `{{ANSWER_BADGE}}`
 
-**Score Derivation** *(rubric: [`references/scoring_rubric.md`](scoring_rubric.md) § Pillar 4)*
+**Score Derivation** *(see the [scoring rubric](scoring_rubric.md) § Pillar 4)*
 
 | Rubric Check | Result | Deduction |
 |---|---|---|
@@ -228,7 +228,7 @@
 
 > **Pillar Score:** `{{TRUST_SCORE}}/100` — `{{TRUST_BADGE}}`
 
-**Score Derivation** *(rubric: [`references/scoring_rubric.md`](scoring_rubric.md) § Pillar 5)*
+**Score Derivation** *(see the [scoring rubric](scoring_rubric.md) § Pillar 5)*
 
 | Rubric Check | Result | Deduction |
 |---|---|---|
@@ -259,7 +259,7 @@
 
 > **Pillar Score:** `{{AGENT_SCORE}}/100` — `{{AGENT_BADGE}}`
 
-**Score Derivation** *(rubric: [`references/scoring_rubric.md`](scoring_rubric.md) § Pillar 6)*
+**Score Derivation** *(see the [scoring rubric](scoring_rubric.md) § Pillar 6)*
 
 | Rubric Check | Result | Deduction |
 |---|---|---|
@@ -267,7 +267,7 @@
 | {{AGENT_RUBRIC_CHECK_N}} | {{AGENT_RUBRIC_RESULT_N}} | {{AGENT_RUBRIC_DEDUCTION_N}} |
 | **Baseline 100, total deductions** | | **{{AGENT_TOTAL_DEDUCTION}} → {{AGENT_SCORE}}/100** |
 
-*If this pillar is wholly N/A for the site type (e.g. no commerce or conversion actions exist to check), write `N/A — pillar excluded, remaining weights reproportioned per references/scoring_rubric.md` here instead of a derivation table, and show the reproportioned weights used in the Overall Readiness Score calculation.*
+*If this pillar is wholly N/A for the site type (e.g. no commerce or conversion actions exist to check), write `N/A — pillar excluded, remaining weights reproportioned per the scoring rubric` here instead of a derivation table, and show the reproportioned weights used in the Overall Readiness Score calculation.*
 
 #### Finding 6.1: {{FINDING_6_TITLE}}
 - **Severity:** `{{FINDING_6_SEVERITY}}`
