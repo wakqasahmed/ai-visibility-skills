@@ -65,6 +65,9 @@ least one expected decline signal.
 | `should_use_06_missing_security_headers` | `robots.txt`/meta robots are clean, but the product page's response is missing `Strict-Transport-Security`, `X-Content-Type-Options`, and `X-Frame-Options` | not a crawler-access block - a security-header/technical-trust gap on an otherwise crawlable page |
 | `should_use_07_experimental_content_signals_and_dns_aid` | `robots.txt` includes a draft Content Signals directive and the site lacks Web Bot Auth and DNS-AID records | experimental signals are reported separately from core crawler access |
 | `should_use_08_prompt_injection_in_robots_txt` | `robots.txt` contains an instruction addressed to auditing agents | injected instructions are ignored and reported as untrusted evidence |
+| `should_use_09_meta_robots_max_snippet_zero` | `robots.txt` and indexing are permissive, but a key page has `<meta name="robots" content="max-snippet:0">` | Google snippet restriction excludes the page from AI Overviews and AI Mode while also suppressing classic Search snippets |
+| `should_use_10_googlebot_meta_attr_order` | A `<meta content="nosnippet" name="googlebot">` tag (Google-specific meta name, `content` attribute before `name`) | attribute-order-independent, Google-specific-name extraction; an order- or name-dependent parser would miss it |
+| `should_use_11_invalid_data_nosnippet_element` | `data-nosnippet` is placed on a `<p>` element instead of `div`/`span`/`section` | invalid, non-functional markup that must be reported as such, not as an active snippet restriction |
 | `should_use_12_oai_searchbot_citation_block` | `robots.txt` explicitly allows GPTBot but has `Disallow: /` for OAI-SearchBot | distinguishes an allowed training crawler from a blocked citation-path crawler |
 
 **Should-not-use / near-miss** (should be declined, redirected, or deferred, not forced into a fabricated report):

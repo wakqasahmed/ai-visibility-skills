@@ -5,7 +5,7 @@
 
 ## Coverage gaps
 
-- `comm -23 /tmp/nav-links.txt /tmp/sitemap-links.txt` shows 18 published `/guides/*` URLs (e.g. `https://www.driftwood-coffee.example/guides/pour-over-ratios`) reachable from on-site navigation but absent from `sitemap.xml` — orphaned pages crawlers may never discover.
+- `comm -23 "$WORK"/sitemap-discovery-internal-links.txt "$WORK"/sitemap-discovery-sitemap-links.txt` shows 18 published `/guides/*` URLs (e.g. `https://www.driftwood-coffee.example/guides/pour-over-ratios`) reachable from on-site navigation but absent from `sitemap.xml` — orphaned pages crawlers may never discover.
 
 ## Broken or blocked URLs
 

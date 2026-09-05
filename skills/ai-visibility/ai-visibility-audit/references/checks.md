@@ -71,19 +71,40 @@ local Chromium-family browser. The pack does not pin one — `scripts/render-aud
 auto-detects whichever of Chrome/Edge/Chromium happens to be installed and degrades when none
 is — so detect it the same way and handle the no-browser case explicitly:
 
+This skill owns the scratch directory created below. Do not reuse it for another skill; a
+multi-skill run must not cross-contaminate hydrated-page evidence.
+
 ```bash
+WORK=$(mktemp -d)
 CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium \
   || command -v chromium-browser || command -v microsoft-edge || true)
 if [ -z "$CHROME" ]; then
   echo "no Chromium-family browser available, hydration cross-check not performed"
   exit 0
 fi
-"$CHROME" --headless=new --disable-gpu --virtual-time-budget=10000 --dump-dom "$URL" > /tmp/hydrated.html
+"$CHROME" --headless=new --disable-gpu --virtual-time-budget=10000 --dump-dom "$URL" > "$WORK"/ai-visibility-audit-hydrated.html
 
-grep -oiE '<title[^>]*>[^<]*' /tmp/hydrated.html
-grep -oiE '<meta[^>]+name="description"[^>]*>' /tmp/hydrated.html
-grep -oiE '<link[^>]+rel="canonical"[^>]*>' /tmp/hydrated.html
-extract_json_ld /tmp/hydrated.html
+grep -oiE '<title[^>]*>[^<]*' "$WORK"/ai-visibility-audit-hydrated.html
+grep -oiE '<meta[^>]+name="description"[^>]*>' "$WORK"/ai-visibility-audit-hydrated.html
+grep -oiE '<link[^>]+rel="canonical"[^>]*>' "$WORK"/ai-visibility-audit-hydrated.html
+# extract_json_ld is defined in the "Machine-readable context" fence above, but
+# each ```bash fence is a separately-invoked shell — the function is not in
+# scope here, so it is redefined rather than called across fences.
+extract_json_ld() {
+  python3 -c '
+import json, re, sys
+source = sys.argv[1]
+html = open(source, encoding="utf-8", errors="replace").read() if source else sys.stdin.read()
+blocks = re.findall(r"<script[^>]+application/ld\+json[^>]*>(.*?)</script>", html, re.S | re.I)
+print(f"{len(blocks)} JSON-LD block(s)")
+for block in blocks:
+    try:
+        print(json.dumps(json.loads(block), indent=2)[:400])
+    except json.JSONDecodeError as exc:
+        print(f"unparseable JSON-LD block: {exc}")
+' "${1:-}"
+}
+extract_json_ld "$WORK"/ai-visibility-audit-hydrated.html
 ```
 
 Frameworks that stream head/schema content into the page rather than serving it as static tags
