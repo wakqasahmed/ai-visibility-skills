@@ -18,13 +18,15 @@ tickets. A correct run produces a remediation plan where:
 
 1. There is exactly one `## ` heading per ticket (independently countable and
    verifiable — `references/checks.md`'s `grep -c '^## '` check).
-2. Each ticket carries either a re-runnable verification command (a fenced
+2. The plan declares the complete P0 (Immediate), P1 (Next), P2 (Improve), and
+   P3 (Optional/Experimental) priority vocabulary.
+3. Each ticket carries either a re-runnable verification command (a fenced
    code block) or an explicit `Blocked on:` note — never neither.
-3. Any ticket whose text mentions blocker language (`credential`, `access`,
+4. Any ticket whose text mentions blocker language (`credential`, `access`,
    `legal`, `policy owner`, `cms access`, `approval`) is marked `Blocked on:`,
    not silently given a verification command instead — the blocker must not
    be dropped.
-4. No ticket bundles more than one fix domain (e.g. a crawler fix and a schema
+5. No ticket bundles more than one fix domain (e.g. a crawler fix and a schema
    fix and a content rewrite jammed into one ticket).
 
 For inputs this skill should **not** turn into a fabricated plan (no findings,

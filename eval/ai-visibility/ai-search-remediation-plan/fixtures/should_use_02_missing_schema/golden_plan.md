@@ -1,6 +1,9 @@
+**Prioritized Action Plan**: P0 (Immediate), P1 (Next), P2 (Improve), P3 (Optional/Experimental) backlog.
+
 ## Add Product JSON-LD to top 20 product pages
 
-- Priority: P1 (important — blocks rich-result and citation parsing)
+- Priority: P1 (Next)
+- Evidence Tier: Tier 2 — Important Improvement
 - Source finding: schema-markup-audit
 - Acceptance criteria: each of the 20 sampled product URLs serves a `<script type="application/ld+json">` block with `@type: Product`, `name`, `offers.price`, `offers.availability`.
 - Verification:
