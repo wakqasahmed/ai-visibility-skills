@@ -11,6 +11,7 @@ delegate skill, and no inclusion/ranking guarantee language appears.
 
 Exit code 0 = pass, 1 = fail.
 """
+import json
 import re
 import sys
 from pathlib import Path
@@ -28,13 +29,23 @@ META_DESCRIPTION_RE = re.compile(
 CANONICAL_RE = re.compile(
     r'<link[^>]+rel\s*=\s*["\']?canonical["\'\s>][^>]*>', re.IGNORECASE
 )
-JSON_LD_RE = re.compile(r"<script[^>]+application/ld\+json", re.IGNORECASE)
+JSON_LD_RE = re.compile(
+    r"<script[^>]+application/ld\+json[^>]*>(.*?)</script>",
+    re.DOTALL | re.IGNORECASE,
+)
 
 # The naive adjacent-token patterns this eval guards against: they miss any tag
 # whose framework attribute (data-react-helmet, nonce, id) precedes the attribute
 # being matched. Issue #102's zaavia.net false negative was exactly this.
 NAIVE_META_DESCRIPTION_RE = re.compile(r'<meta name="description"', re.IGNORECASE)
 NAIVE_JSON_LD_RE = re.compile(r'<script type="application/ld\+json"', re.IGNORECASE)
+
+CHECKS_PATHS = (
+    Path(__file__).resolve().parents[3]
+    / "skills/ai-visibility/ai-visibility-audit/references/checks.md",
+    Path(__file__).resolve().parents[3]
+    / "skills/ai-visibility/schema-markup-audit/references/checks.md",
+)
 
 FORBIDDEN_GUARANTEE_PATTERN = re.compile(
     r"guarantee[ds]?\b.{0,30}\b(inclusion|ranking|ranked|included|placement)",
@@ -142,6 +153,35 @@ def check_json_ld_delivery(page_html: str, hydrated_html: str | None) -> dict | 
     )
 
 
+def extract_json_ld(page_html: str) -> list[dict]:
+    return [json.loads(block) for block in JSON_LD_RE.findall(page_html)]
+
+
+def assert_raw_multiline_json_ld() -> list[str]:
+    failures = []
+    page_html = PAGE_PATH.read_text()
+    hydrated_html = HYDRATED_PAGE_PATH.read_text()
+
+    if NAIVE_JSON_LD_RE.search(page_html):
+        failures.append(
+            "fixture no longer exercises attribute-order tolerance: its JSON-LD "
+            "script has no id/nonce/framework attribute before type=\"application/ld+json\""
+        )
+    raw_types = {block.get("@type") for block in extract_json_ld(page_html)}
+    if "Organization" not in raw_types:
+        failures.append(
+            "multi-line Organization JSON-LD was not extracted from the raw response"
+        )
+
+    finding = check_json_ld_delivery(page_html, hydrated_html)
+    if finding is not None:
+        failures.append(
+            "server-rendered multi-line JSON-LD manufactured a hydration-divergence "
+            f"finding: {finding['title']!r}"
+        )
+    return failures
+
+
 def check_head_metadata(page_html: str, hydrated_html: str | None) -> list[dict]:
     """Mirrors the attribute-order-tolerant title/description/canonical patterns in
     references/checks.md. Framework attributes routinely sit between the tag name and
@@ -228,9 +268,7 @@ def render_report(findings: list[dict]) -> str:
 
 
 def assert_hydration_methodology() -> list[str]:
-    """Regression guard for issue #102: the two confirmed false-negative shapes —
-    React-Helmet-attributed head tags, and JSON-LD that only exists after hydration —
-    must not be reported as absent by a raw-HTML pass."""
+    """Regression guard for raw-vs-hydrated metadata comparisons."""
     failures = []
     page_html = PAGE_PATH.read_text()
     hydrated_html = HYDRATED_PAGE_PATH.read_text()
@@ -270,8 +308,9 @@ def assert_hydration_methodology() -> list[str]:
 
     # No browser at all: every zero-match raw result must be disclosed as unresolved,
     # never silently resolved to "absent" or "present".
+    raw_without_json_ld = JSON_LD_RE.sub("", page_html)
     no_browser = check_head_metadata(TITLE_RE.sub("", page_html), None)
-    no_browser.append(check_json_ld_delivery(page_html, None))
+    no_browser.append(check_json_ld_delivery(raw_without_json_ld, None))
     for finding in no_browser:
         if "hydration cross-check not performed" not in finding["evidence"]:
             failures.append(
@@ -283,15 +322,10 @@ def assert_hydration_methodology() -> list[str]:
                 f"no-browser finding is not labelled [Derived]: {finding['title']!r}"
             )
 
-    if NAIVE_JSON_LD_RE.search(page_html):
-        failures.append(
-            "fixture no longer exercises the hydration case: index.html itself now "
-            "carries a static JSON-LD block"
-        )
     if not JSON_LD_RE.search(hydrated_html):
         failures.append("hydrated.html carries no JSON-LD block to compare against")
 
-    finding = check_json_ld_delivery(page_html, hydrated_html)
+    finding = check_json_ld_delivery(raw_without_json_ld, hydrated_html)
     if finding is None:
         failures.append("hydration-only JSON-LD produced no finding at all")
     elif "hydrated DOM" not in finding["title"]:
@@ -299,6 +333,33 @@ def assert_hydration_methodology() -> list[str]:
             "hydration-only JSON-LD was reported as a flat absence instead of a "
             f"raw-vs-hydrated divergence: {finding['title']!r}"
         )
+    return failures
+
+
+def assert_documented_json_ld_extractor() -> list[str]:
+    failures = []
+    forbidden_patterns = (
+        r"grep -oiE '<script[^>]+application/ld\+json[^>]*>[^<]*'",
+        r"grep -oE '<script type=\"application/ld\+json\">[^<]*'",
+    )
+    for path in CHECKS_PATHS:
+        checks = path.read_text()
+        for pattern in forbidden_patterns:
+            if pattern in checks:
+                relative_path = path.relative_to(path.parents[3])
+                failures.append(
+                    f"{relative_path} retains line-based JSON-LD extraction"
+                )
+        if "extract_json_ld()" not in checks:
+            relative_path = path.relative_to(path.parents[3])
+            failures.append(
+                f"{relative_path} defines no shared JSON-LD extractor"
+            )
+        if "re.S | re.I" not in checks:
+            relative_path = path.relative_to(path.parents[3])
+            failures.append(
+                f"{relative_path} JSON-LD extractor is not multi-line"
+            )
     return failures
 
 
@@ -341,13 +402,15 @@ def assert_crawler_policy_methodology() -> list[str]:
 
 
 def assert_report(findings: list[dict], report: str) -> list[str]:
-    failures = assert_hydration_methodology()
+    failures = assert_raw_multiline_json_ld()
+    failures.extend(assert_hydration_methodology())
+    failures.extend(assert_documented_json_ld_extractor())
     failures.extend(assert_crawler_policy_methodology())
 
-    if len(findings) < 3:
-        failures.append(f"expected >=3 injected issues surfaced, got {len(findings)}")
+    if len(findings) < 2:
+        failures.append(f"expected >=2 injected issues surfaced, got {len(findings)}")
 
-    expected_severities = {"critical", "important", "optional"}
+    expected_severities = {"critical", "optional"}
     got_severities = {f["severity"] for f in findings}
     if expected_severities - got_severities:
         failures.append(
