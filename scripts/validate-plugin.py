@@ -59,14 +59,21 @@ missing = [skill for skill in skills if not (root / skill / "SKILL.md").is_file(
 if missing:
     raise SystemExit("Missing plugin skill paths: " + ", ".join(missing))
 
+unreferenced_checks = []
 for skill in skills:
     path = root / skill
+    skill_text = (path / "SKILL.md").read_text()
     name_line = next(
-        (line for line in (path / "SKILL.md").read_text().splitlines() if line.startswith("name: ")),
+        (line for line in skill_text.splitlines() if line.startswith("name: ")),
         None,
     )
     if name_line != f"name: {path.name}":
         raise SystemExit(f"Skill name does not match its directory: {path}")
+    if (path / "references" / "checks.md").is_file() and "checks.md" not in skill_text:
+        unreferenced_checks.append(skill)
+
+if unreferenced_checks:
+    raise SystemExit("SKILL.md does not reference checks.md: " + ", ".join(unreferenced_checks))
 
 if manifest.get("skill_count") != len(actual_skills):
     raise SystemExit(f"manifest.json skill_count is {manifest.get('skill_count')}, repo has {len(actual_skills)}")
