@@ -21,18 +21,22 @@ Chromium-family browser; the pack does not pin one (`scripts/render-audit-pdf.py
 auto-detects whichever of Chrome/Edge/Chromium is installed), so detect it and handle its
 absence explicitly:
 
+This skill owns the scratch directory created below. Do not reuse it for another skill; a
+multi-skill run must not cross-contaminate hydrated-page evidence.
+
 ```bash
+WORK=$(mktemp -d)
 CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium \
   || command -v chromium-browser || command -v microsoft-edge || true)
 if [ -z "$CHROME" ]; then
   echo "no Chromium-family browser available, hydration cross-check not performed"
   exit 0
 fi
-"$CHROME" --headless=new --disable-gpu --virtual-time-budget=10000 --dump-dom "$URL" > /tmp/hydrated.html
-grep -oiE '<script[^>]+application/ld\+json[^>]*>' /tmp/hydrated.html | wc -l
-python3 -c "
+"$CHROME" --headless=new --disable-gpu --virtual-time-budget=10000 --dump-dom "$URL" > "$WORK"/schema-markup-audit-hydrated.html
+grep -oiE '<script[^>]+application/ld\+json[^>]*>' "$WORK"/schema-markup-audit-hydrated.html | wc -l
+python3 - "$WORK"/schema-markup-audit-hydrated.html <<'PY'
 import json, re, sys
-html = open('/tmp/hydrated.html', encoding='utf-8', errors='replace').read()
+html = open(sys.argv[1], encoding='utf-8', errors='replace').read()
 blocks = re.findall(r'<script[^>]+application/ld\+json[^>]*>(.*?)</script>', html, re.S | re.I)
 print(f'{len(blocks)} JSON-LD block(s) in hydrated DOM')
 for block in blocks:
@@ -40,7 +44,7 @@ for block in blocks:
         print(json.loads(block).get('@type'))
     except json.JSONDecodeError as exc:
         print(f'unparseable block: {exc}')
-"
+PY
 ```
 
 Report the comparison, not just the pass that found something:

@@ -52,19 +52,23 @@ local Chromium-family browser. The pack does not pin one — `scripts/render-aud
 auto-detects whichever of Chrome/Edge/Chromium happens to be installed and degrades when none
 is — so detect it the same way and handle the no-browser case explicitly:
 
+This skill owns the scratch directory created below. Do not reuse it for another skill; a
+multi-skill run must not cross-contaminate hydrated-page evidence.
+
 ```bash
+WORK=$(mktemp -d)
 CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium \
   || command -v chromium-browser || command -v microsoft-edge || true)
 if [ -z "$CHROME" ]; then
   echo "no Chromium-family browser available, hydration cross-check not performed"
   exit 0
 fi
-"$CHROME" --headless=new --disable-gpu --virtual-time-budget=10000 --dump-dom "$URL" > /tmp/hydrated.html
+"$CHROME" --headless=new --disable-gpu --virtual-time-budget=10000 --dump-dom "$URL" > "$WORK"/ai-visibility-audit-hydrated.html
 
-grep -oiE '<title[^>]*>[^<]*' /tmp/hydrated.html
-grep -oiE '<meta[^>]+name="description"[^>]*>' /tmp/hydrated.html
-grep -oiE '<link[^>]+rel="canonical"[^>]*>' /tmp/hydrated.html
-python3 - /tmp/hydrated.html <<'PY'
+grep -oiE '<title[^>]*>[^<]*' "$WORK"/ai-visibility-audit-hydrated.html
+grep -oiE '<meta[^>]+name="description"[^>]*>' "$WORK"/ai-visibility-audit-hydrated.html
+grep -oiE '<link[^>]+rel="canonical"[^>]*>' "$WORK"/ai-visibility-audit-hydrated.html
+python3 - "$WORK"/ai-visibility-audit-hydrated.html <<'PY'
 import json, re, sys
 html = open(sys.argv[1], encoding="utf-8", errors="replace").read()
 blocks = re.findall(r'<script[^>]+application/ld\+json[^>]*>(.*?)</script>', html, re.S | re.I)
