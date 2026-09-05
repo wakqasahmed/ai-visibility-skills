@@ -33,9 +33,13 @@ def load_fixture(fixture_dir: Path) -> dict:
     return meta
 
 
-def run_should_use_fixture(fixture_dir: Path) -> list:
+def run_should_use_fixture(fixture_dir: Path, meta: dict) -> list:
     report_text = (fixture_dir / "golden_report.md").read_text()
-    result = contract.check_audit_contract(report_text)
+    result = contract.check_audit_contract(
+        report_text,
+        required_patterns=meta.get("required_patterns"),
+        forbidden_patterns=meta.get("forbidden_patterns"),
+    )
     return result.failures
 
 
@@ -63,7 +67,7 @@ def main() -> int:
 
         if category == "should_use":
             should_use_count += 1
-            failures = run_should_use_fixture(fixture_dir)
+            failures = run_should_use_fixture(fixture_dir, meta)
         elif category == "should_not_use":
             should_not_use_count += 1
             failures = run_should_not_use_fixture(fixture_dir, meta)

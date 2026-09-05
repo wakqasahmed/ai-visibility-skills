@@ -20,6 +20,8 @@ jobs:
         run: python3 scripts/validate-plugin.py
       - name: Validate citation ledger
         run: python3 scripts/validate-citations.py
+      - name: Validate shared guardrail copies
+        run: python3 scripts/validate-guardrails.py
       - name: Run ai-visibility-audit behavioral eval
         run: python3 eval/ai-visibility/ai-visibility-audit/run_eval.py
       - name: Run robots-ai-crawler-audit deterministic contract eval
