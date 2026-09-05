@@ -7,19 +7,22 @@
 
 ## Blocked high-value paths
 
-- `/blog/post-1` is blocked for ClaudeBot at the network edge, not in
-  `robots.txt`: `curl -A "ClaudeBot" .../blog/post-1` returns `403`, while
-  the same URL returns `200` for both GPTBot and a default user-agent -
-  `robots.txt` alone shows no rule that would explain this.
+- `/blog/post-1` returns `403` to the supplied hand-set `ClaudeBot` token while
+  a default request returns `200`. This is `[Derived]` evidence of differential
+  handling (rubric 1.2a), not proof that a genuine ClaudeBot request is blocked:
+  the header is spoofable and the probe did not originate from Anthropic's
+  published crawler IP ranges.
 
 ## AI crawler implications
 
-- ClaudeBot cannot fetch this page at all, so Claude cannot browse, cite, or
-  summarize it, despite `robots.txt` looking fully open - this points to a
-  WAF, CDN, or bot-management rule blocking the ClaudeBot user-agent string
-  specifically, which is invisible to a `robots.txt`-only review.
-- Because GPTBot succeeds on the identical URL, this is not a general
-  site-availability issue - it is scoped to the ClaudeBot user-agent.
+- The differential may be a WAF, CDN, or bot-management rule, including a
+  correct anti-spoofing rule that rejects an unverified source claiming the
+  `ClaudeBot` token. The supplied evidence cannot distinguish those cases.
+- Inspect operator-controlled request logs before changing the edge policy. A
+  log entry showing the same `403` from a source IP in Anthropic's current
+  `bots.json` would escalate the finding to `[Measured]` rubric 1.2b; a `2xx`
+  from a verified crawler source would show that the synthetic probe was not
+  representative.
 
 ## Recommended robots.txt changes
 
@@ -31,16 +34,18 @@ User-agent: *
 Allow: /
 ```
 
-The fix is at the edge/WAF/CDN layer: locate and remove the rule blocking
-the `ClaudeBot` user-agent string (bot-management allowlist, rate-limit
-rule, or WAF signature). Allowing ClaudeBot through the edge improves the
-odds Claude can browse and cite this page - it does not guarantee Claude
-will choose to cite it.
+Do not remove an edge/WAF/CDN rule on this evidence alone. Correlate the
+timestamp, URL, status, user-agent, and source IP in server/CDN/WAF logs with
+Anthropic's current published ranges. Only remediate the edge rule if a
+verified crawler request received the blocking response. Restoring access can
+improve the odds Claude can browse and cite this page; it does not guarantee
+Claude will choose to cite it.
 
 ## Verification commands
 
 ```bash
-curl -s -o /dev/null -w "%{http_code}\n" -A "ClaudeBot" https://example.com/blog/post-1
-# expect: 200 (was: 403)
-curl -s -o /dev/null -w "%{http_code}\n" -A "GPTBot" https://example.com/blog/post-1
+curl -s https://claude.com/crawling/bots.json
+curl -s -o /dev/null -w "%{http_code} %{redirect_url}\n" https://example.com/blog/post-1
+# Then query operator-controlled logs for this URL and compare each claimed
+# ClaudeBot source IP with the current prefixes above. Record its response status.
 ```
