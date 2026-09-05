@@ -99,12 +99,31 @@ html = open(sys.argv[1], encoding="utf-8", errors="replace").read()
 # independently of their order inside the tag — a fixed adjacent-token pattern
 # (`<meta[^>]+robots[^>]+>`) misses `<meta content="max-snippet:0" name="robots">`,
 # where `name="robots"` is the tag's last attribute, because HTML attribute order
-# is not significant.
-ATTR_RE = re.compile(r'''(\w[\w-]*)\s*=\s*(?:"([^"]*)"|'([^']*)')''')
+# is not significant. HTML also permits an unquoted attribute value
+# (`content=max-snippet:0`) and a bare boolean attribute with no value at all
+# (`data-nosnippet`, Google's own documented form) — both alternatives below
+# cover those so a valid but unquoted or valueless directive isn't missed.
+ATTR_RE = re.compile(
+    r'''(\w[\w-]*)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?'''
+)
 
-for tag in re.findall(r'<meta\b[^>]*>', html, re.I):
-    attrs = {m.group(1).lower(): (m.group(2) if m.group(2) is not None else m.group(3))
-             for m in ATTR_RE.finditer(tag)}
+
+def tag_attrs(attribute_text: str) -> dict:
+    """Parses only the attribute portion of a start tag (no leading `<name`
+    or trailing `>`) into a name->value dict. A bare boolean attribute (no
+    `=value`) maps to None, distinct from an attribute with an empty value
+    (`data-nosnippet=""` maps to ""); both count as "present" for `in` checks."""
+    attrs = {}
+    for m in ATTR_RE.finditer(attribute_text):
+        value = m.group(2) if m.group(2) is not None else (
+            m.group(3) if m.group(3) is not None else m.group(4)
+        )
+        attrs[m.group(1).lower()] = value
+    return attrs
+
+
+for attr_text in re.findall(r'<meta\b([^>]*)>', html, re.I):
+    attrs = tag_attrs(attr_text)
     name = (attrs.get("name") or "").lower()
     if name in ("robots", "googlebot"):
         content = attrs.get("content", "")
@@ -113,9 +132,14 @@ for tag in re.findall(r'<meta\b[^>]*>', html, re.I):
 
 # `data-nosnippet` is only valid — and only takes effect — on div, span, and
 # section elements; Google documents any other element carrying it as invalid
-# markup, not an active restriction.
-for tag_name, attrs in re.findall(r'<(\w+)((?:\s+[^<>]*)?)>', html, re.I):
-    if "data-nosnippet" not in attrs.lower():
+# markup, not an active restriction. Check the parsed attribute NAME, not a
+# raw substring match against the tag's attribute text — a substring check
+# would misfire on an unrelated attribute or class that merely contains the
+# string "data-nosnippet" (e.g. class="data-nosnippet-caption") without the
+# boolean data-nosnippet attribute actually being present.
+for tag_name, attr_text in re.findall(r'<(\w+)((?:\s+[^<>]*)?)>', html, re.I):
+    attrs = tag_attrs(attr_text)
+    if "data-nosnippet" not in attrs:
         continue
     if tag_name.lower() in ("div", "span", "section"):
         print(f"data-nosnippet on <{tag_name.lower()}>: active snippet exclusion")

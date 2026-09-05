@@ -26,6 +26,8 @@ jobs:
         run: python3 eval/ai-visibility/ai-visibility-audit/run_eval.py
       - name: Run robots-ai-crawler-audit deterministic contract eval
         run: python3 eval/ai-visibility/robots-ai-crawler-audit/run_eval.py
+      - name: Test robots-ai-crawler-audit meta-attribute extraction snippet
+        run: python3 -m unittest eval/ai-visibility/robots-ai-crawler-audit/test_meta_attr_extraction.py
       - name: Run answer-engine-content-audit deterministic contract eval
         run: python3 eval/ai-visibility/answer-engine-content-audit/run_eval.py
       - name: Run ai-visibility-audit deterministic outcome-contract eval
