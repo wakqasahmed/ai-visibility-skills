@@ -20,6 +20,8 @@ jobs:
         run: python3 scripts/validate-plugin.py
       - name: Validate citation ledger
         run: python3 scripts/validate-citations.py
+      - name: Validate shared guardrail copies
+        run: python3 scripts/validate-guardrails.py
       - name: Test PDF renderer
         run: python3 -m unittest tests/test_render_audit_pdf.py
       - name: Run ai-visibility-audit behavioral eval
