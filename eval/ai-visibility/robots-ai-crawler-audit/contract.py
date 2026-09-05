@@ -84,6 +84,22 @@ NONEMPTY_DISALLOW_RE = re.compile(r"\bDisallow:\s*/\S*", re.IGNORECASE)
 CITATION_PATH_LABEL_RE = re.compile(r"\bcitation[- ]path\b", re.IGNORECASE)
 
 
+def _has_affirmative_citation_path_label(text: str) -> bool:
+    """True if the text affirmatively identifies a citation-path impact — i.e. a
+    CITATION_PATH_LABEL_RE match with no negation word in the ~40 chars before
+    it. A report that explicitly denies citation-path impact ("no citation-path
+    impact", "is not a citation-path crawler") must NOT count as satisfying the
+    requirement to identify that impact — the bare substring 'citation-path' is
+    present either way, so this can't be told apart without checking negation,
+    same as _has_affirmative_guarantee below."""
+    for match in CITATION_PATH_LABEL_RE.finditer(text):
+        preceding = text[max(0, match.start() - 40):match.start()]
+        if NEGATION_BEFORE_RE.search(preceding):
+            continue
+        return True
+    return False
+
+
 @dataclass
 class ContractResult:
     failures: list = field(default_factory=list)
@@ -193,7 +209,7 @@ def check_audit_contract(text: str) -> ContractResult:
         )
         implications = extract_section(text, "ai crawler implications")
         if citation_path_block and (
-            implications is None or not CITATION_PATH_LABEL_RE.search(implications)
+            implications is None or not _has_affirmative_citation_path_label(implications)
         ):
             result.add(
                 "citation bot is blocked by robots.txt but 'AI crawler implications' "

@@ -87,6 +87,48 @@ def check_citation_path_classification_regression() -> list[str]:
     return []
 
 
+def check_citation_path_negation_regression() -> list[str]:
+    """Regression check for the exact bypass the old bare-substring
+    CITATION_PATH_LABEL_RE.search allowed: the literal words 'citation-path'
+    appearing in a sentence that explicitly DENIES the impact ('no citation-path
+    impact', 'is not a citation-path crawler') still matched the old check,
+    since it only tested for the substring's presence, not whether the text
+    actually affirms the classification it claims to."""
+    report = (
+        FIXTURES_DIR
+        / "should_use_08_oai_searchbot_citation_block"
+        / "golden_report.md"
+    ).read_text()
+    failures = []
+    for negated in (
+        "- OAI-SearchBot is not a citation-path crawler, so this rule prevents it from\n"
+        "  indexing public pages for ChatGPT search results. Allowing GPTBot does not\n"
+        "  offset this block because GPTBot is the separate training crawler.\n"
+        "- Removing the block permits crawling but does not guarantee that ChatGPT will\n"
+        "  index or cite any page.",
+        "- There is no citation-path impact from this block. Allowing GPTBot does not\n"
+        "  offset this block because GPTBot is the separate training crawler.\n"
+        "- Removing the block permits crawling but does not guarantee that ChatGPT will\n"
+        "  index or cite any page.",
+    ):
+        invalid_report = report.replace(
+            "- OAI-SearchBot is OpenAI's citation-path crawler, so this rule prevents it from\n"
+            "  indexing public pages for ChatGPT search results. Allowing GPTBot does not\n"
+            "  offset this block because GPTBot is the separate training crawler.\n"
+            "- Removing the block permits crawling but does not guarantee that ChatGPT will\n"
+            "  index or cite any page.",
+            negated,
+        )
+        assert invalid_report != report, "fixture text to replace was not found"
+        result_failures = contract.check_audit_contract(invalid_report).failures
+        if not any("citation-path" in failure for failure in result_failures):
+            failures.append(
+                f"contract accepted a report that explicitly denies citation-path "
+                f"impact ({negated.splitlines()[0]!r}) as if it affirmed it"
+            )
+    return failures
+
+
 def check_checks_md_uses_corrected_anthropic_tokens() -> list[str]:
     """Regression check that the skill's OWN instructions (references/checks.md), not
     just an eval fixture, actually name Anthropic's corrected crawler tokens and probe
@@ -192,6 +234,13 @@ def main() -> int:
     regression_failures = check_citation_path_classification_regression()
     status = "PASS" if not regression_failures else "FAIL"
     print(f"[{status}] contract requires citation-path classification for citation-bot blocks")
+    for failure in regression_failures:
+        print(f"    - {failure}")
+        total_failures += 1
+
+    regression_failures = check_citation_path_negation_regression()
+    status = "PASS" if not regression_failures else "FAIL"
+    print(f"[{status}] contract rejects negated citation-path classifications")
     for failure in regression_failures:
         print(f"    - {failure}")
         total_failures += 1
