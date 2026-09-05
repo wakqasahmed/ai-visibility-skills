@@ -153,8 +153,8 @@ machine-readable price) are scored here.
 
 ## Skills intentionally excluded from scoring
 
-Two of this pack's specialist skills produce findings that never appear in the deduction tables
-above, on purpose. Both are stated here explicitly rather than left silently absent, per this
+Five of this pack's specialist skills produce findings that never appear in the deduction tables
+above, on purpose. All five are stated here explicitly rather than left silently absent, per this
 rubric's own discipline (see "Handling inapplicable checks and pillars" above).
 
 - **`llms-txt-generator`** — `llms.txt` presence, validity, and correct `Content-Type` (a real
@@ -185,6 +185,30 @@ rubric's own discipline (see "Handling inapplicable checks and pillars" above).
   whose entire design purpose is to *not* be scored. Its findings are reported as-is (protocol
   probed, endpoint, observed status) with no pillar attribution and no contribution to the
   Overall Readiness Score.
+- **`semantic-entity-topical-map-audit`** — its entity-clarity classification and topical-map
+  findings add no deductions of their own. The skill explicitly forbids inventing a numeric
+  entity score, while the overlapping, scoreable schema facts already have homes in Pillar 3
+  (for example, missing `Organization` and `sameAs` in 3.1 and 3.6). Use its evidence for an
+  existing check when that check's condition is met, but do not deduct again for the
+  `AMBIGUOUS`/`PARTIALLY_GROUNDED` classification or for cluster depth. Report those specialist
+  findings in "What AI & Search Systems Can Understand Today," the relevant detailed finding,
+  and the action plan.
+- **`indexnow-instant-indexing-audit`** — IndexNow is an optional push-discovery enhancement;
+  absence does not block crawling or index eligibility through the passive `robots.txt` and
+  sitemap mechanisms already scored in Pillar 1. A configured integration can still produce
+  actionable findings about key hosting, `keyLocation` scope, payloads, and publish triggers,
+  but those findings belong in the Technical Appendix and action plan and never reduce the core
+  readiness score.
+- **`ai-share-of-voice-audit`** — its mention and citation figures are outcome observations over
+  an operator-supplied, dated transcript sample, not static website-readiness inputs. Their value
+  changes with the supplied query, engine, competitor, and capture-date cohort, so folding them
+  into the core score would make that score non-reproducible. Report the query matrix and
+  cohort-scoped calculations as a clearly labeled non-scoring benchmark, and route displacement
+  gaps into the action plan.
+
+`ai-search-remediation-plan` is also intentionally absent from the deduction tables because it
+consumes the audit's findings and turns them into prioritized implementation work; it does not
+produce an independent audit finding or score.
 
 ## Worked example
 
