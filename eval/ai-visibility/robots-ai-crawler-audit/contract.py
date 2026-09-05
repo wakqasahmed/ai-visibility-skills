@@ -79,6 +79,27 @@ LOOP_GOOGLE_EXTENDED_PROBE_RE = re.compile(
     r"(?:(?!\bdone\b).)*?curl[^\n]*\s-A\s+[\"']?\$\w+",
     re.IGNORECASE | re.DOTALL,
 )
+CITATION_PATH_BOT_RE = re.compile(
+    r"\b(?:OAI-SearchBot|Claude-SearchBot|PerplexityBot)\b", re.IGNORECASE
+)
+NONEMPTY_DISALLOW_RE = re.compile(r"\bDisallow:\s*/\S*", re.IGNORECASE)
+CITATION_PATH_LABEL_RE = re.compile(r"\bcitation[- ]path\b", re.IGNORECASE)
+
+
+def _has_affirmative_citation_path_label(text: str) -> bool:
+    """True if the text affirmatively identifies a citation-path impact — i.e. a
+    CITATION_PATH_LABEL_RE match with no negation word in the ~40 chars before
+    it. A report that explicitly denies citation-path impact ("no citation-path
+    impact", "is not a citation-path crawler") must NOT count as satisfying the
+    requirement to identify that impact — the bare substring 'citation-path' is
+    present either way, so this can't be told apart without checking negation,
+    same as _has_affirmative_guarantee below."""
+    for match in CITATION_PATH_LABEL_RE.finditer(text):
+        preceding = text[max(0, match.start() - 40):match.start()]
+        if NEGATION_BEFORE_RE.search(preceding):
+            continue
+        return True
+    return False
 
 
 @dataclass
@@ -133,6 +154,8 @@ def check_audit_contract(
       evidence (a status code, a robots.txt directive, a page-level preview
       directive, or a header name) -
       evidence discipline from references/checks.md
+    - a robots.txt block for a citation bot is classified as a citation-path
+      impact in "AI crawler implications"
     - no outcome-guarantee language anywhere (shared guardrails.md)
     - no recommendation to Allow crawlers into private/sensitive paths
       (shared guardrails.md)
@@ -182,6 +205,24 @@ def check_audit_contract(
                     f"finding bullet lacks cited evidence (status code, robots.txt "
                     f"directive, or header) in inline code: {bullet.strip()!r}"
                 )
+
+        # Correlate the bot name and the Disallow directive within the SAME bullet,
+        # not just anywhere in the section — otherwise a bullet naming a citation-path
+        # bot as explicitly *allowed* (in a report that also blocks a different bot,
+        # e.g. GPTBot) would wrongly count as that citation bot being blocked, since
+        # the two regexes would each independently match somewhere in the section.
+        citation_path_block = any(
+            CITATION_PATH_BOT_RE.search(bullet) and NONEMPTY_DISALLOW_RE.search(bullet)
+            for bullet in bullets
+        )
+        implications = extract_section(text, "ai crawler implications")
+        if citation_path_block and (
+            implications is None or not _has_affirmative_citation_path_label(implications)
+        ):
+            result.add(
+                "citation bot is blocked by robots.txt but 'AI crawler implications' "
+                "does not identify the citation-path impact"
+            )
 
     if _has_affirmative_guarantee(text):
         result.add(

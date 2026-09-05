@@ -20,16 +20,21 @@ curl -s "$SITE/robots.txt" | awk 'BEGIN{IGNORECASE=1} /^user-agent:/{ua=$0} /^di
 ## Known AI crawler user-agents to check for explicit rules
 
 Per each platform's own crawler documentation: GPTBot, OAI-SearchBot, and ChatGPT-User
-are OpenAI's [OPENAI-BOTS-01]; ClaudeBot, Claude-Web, and anthropic-ai are Anthropic's
-[ANTHROPIC-BOTS-01]; PerplexityBot is Perplexity's [PERPLEXITY-BOTS-01]; Google-Extended
-is Google's AI-training opt-out token [GOOGLE-EXTENDED-01]; Applebot-Extended is Apple's
-AI-training opt-out token [APPLE-BOTS-01]; CCBot is Common Crawl's [COMMONCRAWL-CCBOT-01];
-Amazonbot is Amazon's [AMAZON-BOTS-01]. Bytespider (ByteDance) has no verified first-party
-crawler-documentation page as of this review — treat any robots.txt rule for it as
-unconfirmed against an authoritative source.
+are OpenAI's [OPENAI-BOTS-01]; ClaudeBot, Claude-User, and Claude-SearchBot are
+Anthropic's [ANTHROPIC-BOTS-01]; PerplexityBot is Perplexity's [PERPLEXITY-BOTS-01];
+Google-Extended is Google's AI-training opt-out token [GOOGLE-EXTENDED-01];
+Applebot-Extended is Apple's AI-training opt-out token [APPLE-BOTS-01]; CCBot is Common
+Crawl's [COMMONCRAWL-CCBOT-01]; Amazonbot is Amazon's [AMAZON-BOTS-01]. Bytespider
+(ByteDance) has no verified first-party crawler-documentation page as of this review —
+treat any robots.txt rule for it as unconfirmed against an authoritative source.
+
+Distinguish policy classes in the report: GPTBot and ClaudeBot are training crawlers;
+Google-Extended and Applebot-Extended are training-use opt-out tokens; OAI-SearchBot,
+Claude-SearchBot, and PerplexityBot are citation-path search crawlers; ChatGPT-User and
+Claude-User are user-triggered fetchers. State which class each observed rule blocks.
 
 ```bash
-for ua in GPTBot ChatGPT-User OAI-SearchBot ClaudeBot Claude-Web anthropic-ai PerplexityBot Google-Extended Applebot-Extended Bytespider CCBot Amazonbot; do
+for ua in GPTBot ChatGPT-User OAI-SearchBot ClaudeBot Claude-User Claude-SearchBot PerplexityBot Google-Extended Applebot-Extended Bytespider CCBot Amazonbot; do
   printf "%-20s\n" "$ua"
   curl -s "$SITE/robots.txt" | awk -v target="$ua" '
     function finish() {
@@ -82,6 +87,11 @@ curl -s -o /dev/null -w "CCBot          %{http_code} %{redirect_url}\n" \
   -A 'CCBot/2.0 (https://commoncrawl.org/faq/)' "$URL"
 curl -s -o /dev/null -w "Amazonbot      %{http_code} %{redirect_url}\n" \
   -A 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Amazonbot/0.1) Chrome/W.X.Y.Z Safari/537.36' "$URL"
+# Anthropic does not publish a full request user-agent for ClaudeBot/Claude-SearchBot
+# (see the note above) — the bare robots.txt token is the only documented option, so
+# this result alone is never conclusive proof of a real ClaudeBot/Claude-SearchBot fetch.
+curl -s -o /dev/null -w "ClaudeBot      %{http_code} %{redirect_url}\n" -A 'ClaudeBot' "$URL"
+curl -s -o /dev/null -w "Claude-SearchBot %{http_code} %{redirect_url}\n" -A 'Claude-SearchBot' "$URL"
 ```
 
 The OpenAI, Perplexity, Common Crawl, and Amazon strings above are the examples their current
