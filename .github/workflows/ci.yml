@@ -13,7 +13,9 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+      - name: Validate workflow security
+        run: python3 scripts/validate-workflows.py
       - name: List skills
         run: scripts/list-skills.sh | grep -q "skills/ai-visibility/ai-visibility-audit/SKILL.md"
       - name: Validate plugin paths
@@ -22,6 +24,8 @@ jobs:
         run: python3 scripts/validate-citations.py
       - name: Test PDF renderer
         run: python3 -m unittest tests/test_render_audit_pdf.py
+      - name: Test workflow security validator
+        run: python3 -m unittest tests/test_validate_workflows.py
       - name: Run ai-visibility-audit behavioral eval
         run: python3 eval/ai-visibility/ai-visibility-audit/run_eval.py
       - name: Run robots-ai-crawler-audit deterministic contract eval
