@@ -193,18 +193,23 @@ subtopic pages `[AHREFS-TOPIC-CLUSTERS-01]`; a subtopic with no internal link pa
 is an orphan `[BACKLINKO-ORPHAN-PAGES-01]`. The standard detection method compares the linked-to
 URL set against the sitemap URL set.
 
+This skill owns the scratch directory created below. Do not reuse it for another skill; keep the
+same `WORK` value for checks 5 and 6 so a multi-skill run cannot cross-contaminate their URL sets.
+
 ```bash
+WORK=$(mktemp -d)
+
 # URLs the pillar page actually links to
 curl -s -L "$PILLAR_URL" \
-  | grep -o -E 'href="[^"#?]+"' | cut -d'"' -f2 | sort -u > /tmp/pillar-links.txt
+  | grep -o -E 'href="[^"#?]+"' | cut -d'"' -f2 | sort -u > "$WORK"/semantic-entity-topical-map-pillar-links.txt
 
 # Candidate subtopic URLs from the sitemap (adjust the path filter to the cluster)
 curl -s -L "$SITE/sitemap.xml" \
   | grep -o -E '<loc>[^<]+</loc>' | sed -E 's|</?loc>||g' \
-  | grep -E '/blog/|/guides/' | sort -u > /tmp/sitemap-urls.txt
+  | grep -E '/blog/|/guides/' | sort -u > "$WORK"/semantic-entity-topical-map-sitemap-urls.txt
 
 # Sitemap URLs with no link from the pillar
-comm -13 /tmp/pillar-links.txt /tmp/sitemap-urls.txt
+comm -13 "$WORK"/semantic-entity-topical-map-pillar-links.txt "$WORK"/semantic-entity-topical-map-sitemap-urls.txt
 ```
 
 Count only what this output lists. Do not extrapolate an orphan count beyond the URLs actually
@@ -221,7 +226,7 @@ while read -r subtopic; do
     | grep -o -E "<a[^>]+href=\"[^\"]*${PILLAR_PATH}[^\"]*\"[^>]*>[^<]*" \
     | sed -E 's/.*>//' | head -3 | paste -sd'|' - \
     || echo "NO LINK TO PILLAR"
-done < /tmp/sitemap-urls.txt
+done < "$WORK"/semantic-entity-topical-map-sitemap-urls.txt
 ```
 
 Generic anchors (`click here`, `read more`, a bare URL) are a finding in their own right: the link
