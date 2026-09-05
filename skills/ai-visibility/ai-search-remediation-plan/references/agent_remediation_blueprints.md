@@ -159,25 +159,31 @@ Use these standardized prompt templates when compiling remediation plans for age
 
 - **Goal**: Publish an A2A Agent Card for agent-to-agent discovery (`[A2A-SPEC-01]`)
 - **Issue**: A2A Agent Card returned HTML instead of JSON.
-- **Fix**: Serve an A2A Agent Card (JSON) at `/.well-known/agent-card.json` describing your agent. Include name, version, description, supportedInterfaces (with service URL and transport protocol), capabilities, and skills (each with id, name, description). This enables other AI agents to discover and interact with your agent via the A2A protocol.
+- **Fix**: Serve an A2A Agent Card (JSON) at `/.well-known/agent-card.json` describing your agent. Include name, description, version, supportedInterfaces (each with a service URL, a `protocolBinding` such as `JSONRPC`, and a `protocolVersion`), an object-shaped `capabilities`, agent-wide `defaultInputModes`/`defaultOutputModes`, and skills (each with id, name, description, and `tags`). This enables other AI agents to discover and interact with your agent via the A2A protocol.
 - **Recipe (`/.well-known/agent-card.json`)**:
   ```json
   {
     "name": "OperationsAgent",
-    "version": "1.0.0",
     "description": "Autonomous site operations and audit agent",
+    "version": "1.0.0",
     "supportedInterfaces": [
       {
         "url": "https://agent.example.com/a2a",
-        "protocol": "json-rpc"
+        "protocolBinding": "JSONRPC",
+        "protocolVersion": "0.3"
       }
     ],
-    "capabilities": ["audit", "remediation"],
+    "capabilities": {
+      "streaming": true
+    },
+    "defaultInputModes": ["text/plain"],
+    "defaultOutputModes": ["application/json"],
     "skills": [
       {
         "id": "site-audit",
         "name": "Site Audit Skill",
-        "description": "Performs multi-vector technical site audit"
+        "description": "Performs multi-vector technical site audit",
+        "tags": ["audit", "seo", "ai-visibility"]
       }
     ]
   }
@@ -191,18 +197,18 @@ Use these standardized prompt templates when compiling remediation plans for age
 
 - **Goal**: Publish an agent skills discovery index (`[AGENT-SKILLS-RFC-01]`)
 - **Issue**: Agent Skills index returned HTML instead of JSON.
-- **Fix**: Publish a skills discovery index at `/.well-known/agent-skills/index.json` (per the Agent Skills Discovery RFC v0.2.0). Include a `$schema` field, and a `skills` array where each entry has `name`, `type`, `description`, `url`, and a `sha256` digest.
+- **Fix**: Publish a skills discovery index at `/.well-known/agent-skills/index.json` (per the Agent Skills Discovery RFC v0.2.0). Include a top-level `$schema` field with the current schema URI, and a `skills` array where each entry has `name`, `type` (`"skill-md"` or `"archive"`), `description`, `url`, and a `digest` formatted as `sha256:{64 lowercase hex characters}`.
 - **Recipe (`/.well-known/agent-skills/index.json`)**:
   ```json
   {
-    "$schema": "https://agentskills.io/schema/v0.2.0/discovery.json",
+    "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
     "skills": [
       {
         "name": "ai-visibility-audit",
-        "type": "agent-skill",
+        "type": "skill-md",
         "description": "Audits website visibility across search and AI engines",
         "url": "https://example.com/.well-known/agent-skills/ai-visibility-audit/SKILL.md",
-        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        "digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       }
     ]
   }
@@ -216,26 +222,22 @@ Use these standardized prompt templates when compiling remediation plans for age
 
 - **Goal**: Support WebMCP to expose site tools to AI agents via the browser (`[WEBMCP-SPEC-01]`)
 - **Issue**: Browser session timed out or WebMCP not initialized.
-- **Fix**: Implement the WebMCP API by calling `navigator.modelContext.provideContext()` with tool definitions that expose your site's key actions to AI agents. Each tool needs a `name`, `description`, `inputSchema` (JSON Schema), and an `execute` callback function.
+- **Fix**: Implement the WebMCP API by calling `document.modelContext.registerTool()` once per tool that exposes one of your site's key actions to AI agents. Each tool needs a `name`, `description`, `inputSchema` (JSON Schema), and an `execute` callback function. WebMCP is currently a W3C Web Machine Learning Community Group report, not a finished W3C Standard — treat this as experimental and feature-detect before relying on it.
 - **Recipe (Frontend Browser Script)**:
   ```javascript
-  if ('modelContext' in navigator) {
-    navigator.modelContext.provideContext({
-      tools: [
-        {
-          name: "search_catalog",
-          description: "Search product catalog",
-          inputSchema: {
-            type: "object",
-            properties: { query: { type: "string" } },
-            required: ["query"]
-          },
-          execute: async ({ query }) => {
-            const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-            return await res.json();
-          }
-        }
-      ]
+  if ('modelContext' in document) {
+    document.modelContext.registerTool({
+      name: "search_catalog",
+      description: "Search product catalog",
+      inputSchema: {
+        type: "object",
+        properties: { query: { type: "string" } },
+        required: ["query"]
+      },
+      execute: async ({ query }) => {
+        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+        return await res.json();
+      }
     });
   }
   ```
@@ -248,7 +250,7 @@ Use these standardized prompt templates when compiling remediation plans for age
 
 - **Goal**: Publish an ARD manifest so agents can discover your site's capabilities (`[ARD-MANIFEST-01]`)
 - **Issue**: ARD capability manifest returned HTML instead of JSON.
-- **Fix**: Serve `/.well-known/ai-catalog.json` at the origin root with `Content-Type: application/json` and `Access-Control-Allow-Origin: *`. Include `specVersion`, a `host` object, and an `entries` array. Give each entry a `urn:air:<your-domain>:<namespace>:<name>` identifier, a `displayName`, an IANA media type in `"type"`, and exactly one of `url` or `data`. Add 2-5 `representativeQueries` per entry so registries can build semantic embeddings.
+- **Fix**: Serve `/.well-known/ai-catalog.json` at the origin root with `Content-Type: application/json` and `Access-Control-Allow-Origin: *`. Include `specVersion`, a `host` object, and an `entries` array. Give each entry an `identifier` field in `urn:air:<your-domain>:<namespace>:<name>` form, a `displayName`, an IANA media type in `"type"`, and exactly one of `url` or `data`. Add 2-5 `representativeQueries` per entry so registries can build semantic embeddings.
 - **Recipe (`/.well-known/ai-catalog.json`)**:
   ```json
   {
@@ -259,7 +261,7 @@ Use these standardized prompt templates when compiling remediation plans for age
     },
     "entries": [
       {
-        "id": "urn:air:signalops.agency:agent:audit",
+        "identifier": "urn:air:signalops.agency:agent:audit",
         "displayName": "SignalOps Site Audit Agent",
         "type": "application/json",
         "url": "https://signalops.agency/.well-known/agent-card.json",

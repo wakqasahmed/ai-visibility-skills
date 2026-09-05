@@ -24,8 +24,7 @@ Turn audit findings into execution-ready work.
 
 - **Prioritized Action Plan**: P0 (Immediate), P1 (Next), P2 (Improve), P3 (Optional/Experimental) backlog.
 - **Evidence Tier**: Label every item Tier 1 — Critical Foundation, Tier 2 — Important Improvement, Tier 3 — Supporting Signal, or Tier 4 — Experimental Protocol.
-- **Master Remediation Blueprints**: For agent-discovery/machine-readability/auth/protocol findings, structured cards with Goal, Issue, Fix, Recipe, Skill reference, and RFC docs (see [references/agent_remediation_blueprints.md](references/agent_remediation_blueprints.md)).
-- **Technical Appendix**: Developer tickets with delegate skills and verification commands for every other finding.
+- **Technical Appendix**: Developer tickets with delegate skills, blueprints, and verification commands. For agent-discovery/machine-readability/auth/protocol findings, this includes Master Remediation Blueprints — structured cards with Goal, Issue, Fix, Recipe, Skill reference, and RFC docs (see [references/agent_remediation_blueprints.md](references/agent_remediation_blueprints.md)). Every other finding gets a plain developer ticket instead.
 - **Ticket Detail**: Acceptance criteria, owner decisions, and blockers for every developer ticket and blueprint.
 
 ## Guardrails

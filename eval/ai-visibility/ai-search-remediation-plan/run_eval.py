@@ -75,13 +75,41 @@ def assert_per_ticket_priority_is_enforced() -> list:
         "- Owner: engineering.\n"
     )
     result = contract.check_plan_contract(plan_missing_ticket_priority, expected_ticket_count=1)
+    failures = []
     if result.passed:
-        return [
+        failures.append(
             "check_plan_contract did not reject a ticket with no priority label of "
             "its own, even though the plan declares the full P0-P3 vocabulary once "
             "elsewhere — the per-ticket priority requirement is not enforced"
-        ]
-    return []
+        )
+
+    plan_non_standard_priority_with_coincidental_prose = (
+        "**Prioritized Action Plan**: P0 (Immediate), P1 (Next), P2 (Improve), "
+        "P3 (Optional/Experimental) backlog.\n\n"
+        "## Unblock GPTBot in robots.txt\n\n"
+        "- Priority: urgent\n"
+        "- Evidence Tier: Tier 1 — Critical Foundation\n"
+        "- Source finding: robots-ai-crawler-audit, robots.txt:4\n"
+        "- Acceptance criteria: `robots.txt` no longer contains `Disallow: /` "
+        "under `User-agent: GPTBot`.\n"
+        "- Owner: schedule this as P0 (Immediate) given crawler impact.\n"
+        "- Verification:\n"
+        "  ```bash\n"
+        '  curl -s -o /dev/null -w "%{http_code}\\n" -A "GPTBot" "$URL"\n'
+        "  ```\n"
+    )
+    result = contract.check_plan_contract(
+        plan_non_standard_priority_with_coincidental_prose, expected_ticket_count=1
+    )
+    if result.passed:
+        failures.append(
+            "check_plan_contract accepted a ticket whose own '- Priority:' field "
+            "declares a non-standard value ('urgent') merely because a canonical "
+            "label's text ('P0 (Immediate)') also happens to appear elsewhere in "
+            "the ticket's prose — the priority check is matching by substring "
+            "instead of parsing the declared field"
+        )
+    return failures
 
 
 def main() -> int:

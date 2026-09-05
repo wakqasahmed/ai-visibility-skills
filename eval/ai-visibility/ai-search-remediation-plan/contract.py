@@ -29,6 +29,11 @@ PRIORITY_LABELS = (
     "P2 (Improve)",
     "P3 (Optional/Experimental)",
 )
+# Matches only an explicit `- Priority: <label>` field line, not any occurrence
+# of a priority label's text anywhere in the ticket body — a body that
+# discusses scheduling in prose ("schedule this as P0 (Immediate)") must not
+# be mistaken for a declared priority field.
+PRIORITY_FIELD_RE = re.compile(r"^-\s*Priority:\s*(.+?)\s*$", re.MULTILINE)
 
 DOMAIN_KEYWORDS = {
     "crawler": re.compile(r"crawler|robots\.txt|user-agent|disallow|gptbot|claudebot|perplexitybot", re.IGNORECASE),
@@ -62,11 +67,11 @@ class Ticket:
         return {name for name, pattern in DOMAIN_KEYWORDS.items() if pattern.search(self.body)}
 
     @property
-    def priority_labels_present(self) -> list:
-        """Which of the four P0-P3 labels this ticket's own body declares — checked
-        per-ticket, not just anywhere in the whole plan, so a ticket with no
-        priority (or a non-standard one like 'Priority: urgent') is caught."""
-        return [label for label in PRIORITY_LABELS if label in self.body]
+    def priority_field_values(self) -> list:
+        """Every raw `- Priority:` field value declared in this ticket, including
+        non-standard ones — used to distinguish "no Priority field at all" from
+        "a Priority field with a non-canonical value" when reporting failures."""
+        return PRIORITY_FIELD_RE.findall(self.body)
 
 
 @dataclass
@@ -125,16 +130,22 @@ def check_plan_contract(plan_text: str, expected_ticket_count: int | None = None
         )
 
     for ticket in tickets:
-        if len(ticket.priority_labels_present) == 0:
+        field_values = ticket.priority_field_values
+        if len(field_values) == 0:
             result.add(
-                f"ticket '{ticket.title}' has no P0-P3 priority label in its own body "
+                f"ticket '{ticket.title}' has no '- Priority:' field in its own body "
                 f"(declaring the vocabulary once elsewhere in the plan is not enough — "
                 f"every ticket must carry one)"
             )
-        elif len(ticket.priority_labels_present) > 1:
+        elif len(field_values) > 1:
             result.add(
-                f"ticket '{ticket.title}' carries more than one priority label: "
-                f"{ticket.priority_labels_present}"
+                f"ticket '{ticket.title}' declares more than one '- Priority:' field: "
+                f"{field_values}"
+            )
+        elif field_values[0] not in PRIORITY_LABELS:
+            result.add(
+                f"ticket '{ticket.title}' declares a non-standard priority "
+                f"'{field_values[0]}'; must be one of {list(PRIORITY_LABELS)}"
             )
 
         if not ticket.has_verification_command and not ticket.has_blocker_note:
