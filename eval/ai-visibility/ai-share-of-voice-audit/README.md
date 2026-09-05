@@ -7,9 +7,15 @@ work that belongs to a sibling skill.
 
 ## Fixtures
 
-- 5 positive fixtures (`should_use_01` to `05`)
-- 5 boundary/negative fixtures (`should_not_use_01` to `05`), each probing a declared delegation or
+- 6 positive fixtures (`should_use_01` to `06`)
+- 6 boundary/negative fixtures (`should_not_use_01` to `06`), each probing a declared delegation or
   guardrail boundary rather than an out-of-domain refusal
+- 1 ambiguous fixture (`should_clarify_01`) that requests an audit without saying whether answer
+  transcripts are available
+
+The final positive, negative, and ambiguous fixtures exercise the frontmatter trigger boundary:
+select the skill for supplied-transcript analysis, do not select it for live answer collection, and
+ask for transcripts when their availability is unclear.
 
 ## Layers
 

@@ -1,0 +1,5 @@
+{
+  "type": "should_not_use",
+  "reason": "Negative trigger: the skill does not collect live answer-engine responses and no transcripts were supplied.",
+  "expected_topic": "operator-supplied transcripts"
+}
