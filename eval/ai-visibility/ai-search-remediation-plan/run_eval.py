@@ -53,6 +53,37 @@ def run_should_not_use_fixture(fixture_dir: Path, meta: dict) -> list:
     return result.failures
 
 
+def assert_per_ticket_priority_is_enforced() -> list:
+    """Regression check for the per-ticket P0-P3 label requirement: a plan that
+    declares the full priority vocabulary once at the top, but omits a priority
+    label from an individual ticket's own body, must fail the contract. Proves
+    the negative — this exact input passed against contract.py before the
+    per-ticket check was added, since only the whole-document vocabulary was
+    checked, not each ticket."""
+    plan_missing_ticket_priority = (
+        "**Prioritized Action Plan**: P0 (Immediate), P1 (Next), P2 (Improve), "
+        "P3 (Optional/Experimental) backlog.\n\n"
+        "## Unblock GPTBot in robots.txt\n\n"
+        "- Evidence Tier: Tier 1 — Critical Foundation\n"
+        "- Source finding: robots-ai-crawler-audit, robots.txt:4\n"
+        "- Acceptance criteria: `robots.txt` no longer contains `Disallow: /` "
+        "under `User-agent: GPTBot`.\n"
+        "- Verification:\n"
+        "  ```bash\n"
+        '  curl -s -o /dev/null -w "%{http_code}\\n" -A "GPTBot" "$URL"\n'
+        "  ```\n"
+        "- Owner: engineering.\n"
+    )
+    result = contract.check_plan_contract(plan_missing_ticket_priority, expected_ticket_count=1)
+    if result.passed:
+        return [
+            "check_plan_contract did not reject a ticket with no priority label of "
+            "its own, even though the plan declares the full P0-P3 vocabulary once "
+            "elsewhere — the per-ticket priority requirement is not enforced"
+        ]
+    return []
+
+
 def main() -> int:
     fixture_dirs = sorted(p for p in FIXTURES_DIR.iterdir() if p.is_dir())
     if len(fixture_dirs) < 10:
@@ -62,6 +93,15 @@ def main() -> int:
     should_use_count = 0
     should_not_use_count = 0
     total_failures = 0
+
+    regression_failures = assert_per_ticket_priority_is_enforced()
+    if regression_failures:
+        print("[FAIL] per_ticket_priority_regression")
+        for failure in regression_failures:
+            print(f"    - {failure}")
+            total_failures += 1
+    else:
+        print("[PASS] per_ticket_priority_regression")
 
     for fixture_dir in fixture_dirs:
         meta = load_fixture(fixture_dir)

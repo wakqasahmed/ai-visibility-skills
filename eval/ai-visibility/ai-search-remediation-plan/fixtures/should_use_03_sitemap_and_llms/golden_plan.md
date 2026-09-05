@@ -1,6 +1,9 @@
+**Prioritized Action Plan**: P0 (Immediate), P1 (Next), P2 (Improve), P3 (Optional/Experimental) backlog.
+
 ## Add 40 orphaned blog posts to sitemap.xml
 
-- Priority: P1 (important — undiscoverable content)
+- Priority: P1 (Next)
+- Evidence Tier: Tier 1 — Critical Foundation
 - Source finding: sitemap-discovery-audit
 - Acceptance criteria: `sitemap.xml` lists all 40 previously orphaned blog post URLs.
 - Verification:
@@ -12,7 +15,8 @@
 
 ## Publish an llms.txt file at the site root
 
-- Priority: P3 (optional — convenience for AI agents, not blocking)
+- Priority: P3 (Optional/Experimental)
+- Evidence Tier: Tier 4 — Experimental Protocol
 - Source finding: llms-txt-generator
 - Acceptance criteria: `$URL/llms.txt` returns HTTP 200 with a valid llms.txt structure.
 - Verification:

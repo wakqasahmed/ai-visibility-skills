@@ -21,10 +21,11 @@ if set(index) != table_ids:
     )
 
 # This repo nests skills under skills/ai-visibility/<name>/ rather than skills/<name>/,
-# and concrete crawler/schema claims often live in each skill's references/checks.md
-# rather than its SKILL.md, so both are scanned for citations.
+# and concrete crawler/schema claims often live in a skill's references/*.md (checks.md,
+# scoring_rubric.md, agent_remediation_blueprints.md, ...) rather than its SKILL.md, so
+# every reference doc is scanned alongside SKILL.md for citations.
 citable_files = sorted(root.glob("skills/ai-visibility/*/SKILL.md")) + sorted(
-    root.glob("skills/ai-visibility/*/references/checks.md")
+    root.glob("skills/ai-visibility/*/references/*.md")
 )
 
 used = set()
