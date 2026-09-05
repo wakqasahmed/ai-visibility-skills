@@ -24,6 +24,8 @@ of known fixture finding-sets against it, and asserts:
    4.7 in Answer Readiness) into the rubric — they score with the same flat/
    per-occurrence/capped arithmetic as every other check, and are cleanly
    absent (no deduction) on a non-ecommerce site.
+6. AI-training opt-out controls are reported as a supporting signal and never
+   misclassified as critical crawler blocks.
 
 This does not invoke an LLM — it proves the rubric's arithmetic is
 well-defined and reproducible, which is the property the reporting
@@ -51,6 +53,9 @@ PILLAR_WEIGHTS = {
     "agent_readiness": 5,
 }
 
+CRITICAL_CRAWLER_ROBOTS_TOKENS = frozenset({"GPTBot", "ClaudeBot", "PerplexityBot", "Amazonbot"})
+SUPPORTING_TRAINING_ROBOTS_TOKENS = frozenset({"Google-Extended", "Applebot-Extended", "CCBot"})
+
 RUBRIC = {
     "discovery": {
         "1.1": {"deduction": 25, "cap": 50, "per_occurrence": True},
@@ -65,6 +70,7 @@ RUBRIC = {
         "1.10": {"deduction": 5},
         "1.11": {"deduction": 15},
         "1.12": {"deduction": 10},
+        "1.13": {"deduction": 5},
     },
     "technical_accessibility": {
         "2.1": {"deduction": 30},
@@ -113,6 +119,18 @@ RUBRIC = {
         "6.4": {"deduction": 15},
     },
 }
+
+
+def crawler_block_findings(blocked_tokens: list[str]) -> dict:
+    """Map full-site robots.txt blocks to their Discovery rubric checks."""
+    findings = {}
+    blocked_token_set = set(blocked_tokens)
+    critical_blocks = len(blocked_token_set & CRITICAL_CRAWLER_ROBOTS_TOKENS)
+    if critical_blocks:
+        findings["1.1"] = critical_blocks
+    if blocked_token_set & SUPPORTING_TRAINING_ROBOTS_TOKENS:
+        findings["1.13"] = 1
+    return findings
 
 
 @dataclass
@@ -227,6 +245,22 @@ def run_cap_enforcement() -> list:
     result = score_pillar("discovery", {"1.1": 3})
     if result.score != 50.0:
         failures.append(f"expected cap to hold 1.1 at -50 (score 50), got score {result.score}")
+    return failures
+
+
+def run_training_opt_out_scoring() -> list:
+    """A Google-Extended-only robots.txt block is not a critical crawler block."""
+    failures = []
+    findings = crawler_block_findings(["Google-Extended"])
+    if findings.get("1.1"):
+        failures.append("Google-Extended must not trigger critical crawler-block check 1.1")
+
+    result = score_pillar("discovery", findings)
+    if result.score != 95.0:
+        failures.append(
+            "expected a Google-Extended-only block to trigger only the -5 supporting "
+            f"signal (score 95), got {result.score}"
+        )
     return failures
 
 
@@ -370,6 +404,7 @@ def main() -> int:
         ("worked example reproduces docs/SCORING_RUBRIC.md", run_worked_example),
         ("scoring is order-independent", run_determinism_check),
         ("per-check deduction caps are enforced", run_cap_enforcement),
+        ("AI-training opt-out tokens do not trigger critical crawler-block scoring", run_training_opt_out_scoring),
         ("N/A pillar exclusion + weight reproportioning", run_na_pillar_reweighting),
         ("pillar score floors at 0", run_floor_at_zero),
         ("ecommerce-technical-seo-audit checks (1.9-1.11, 4.7) score correctly", run_ecommerce_checks_scoring),
