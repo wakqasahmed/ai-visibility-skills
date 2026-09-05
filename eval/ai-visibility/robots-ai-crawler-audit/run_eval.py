@@ -79,7 +79,7 @@ def check_google_extended_probe_regression() -> list[str]:
 def check_citation_path_classification_regression() -> list[str]:
     report = (
         FIXTURES_DIR
-        / "should_use_09_oai_searchbot_citation_block"
+        / "should_use_12_oai_searchbot_citation_block"
         / "golden_report.md"
     ).read_text()
     invalid_report = report.replace("citation-path crawler", "search crawler")
@@ -100,7 +100,7 @@ def check_citation_path_negation_regression() -> list[str]:
     actually affirms the classification it claims to."""
     report = (
         FIXTURES_DIR
-        / "should_use_09_oai_searchbot_citation_block"
+        / "should_use_12_oai_searchbot_citation_block"
         / "golden_report.md"
     ).read_text()
     failures = []
@@ -174,7 +174,7 @@ def check_citation_bot_correlation_regression() -> list[str]:
     classification for OAI-SearchBot."""
     report = (
         FIXTURES_DIR
-        / "should_use_09_oai_searchbot_citation_block"
+        / "should_use_12_oai_searchbot_citation_block"
         / "golden_report.md"
     ).read_text()
     mixed_report = report.replace(
