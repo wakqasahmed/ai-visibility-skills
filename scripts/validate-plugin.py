@@ -55,6 +55,19 @@ errors = registry_errors(actual_skills, skills, manifest_skills)
 if errors:
     raise SystemExit("Skill registry mismatch: " + "; ".join(errors))
 
+coverage_files = {
+    "orchestrator": root / "skills" / "ai-visibility" / "ai-visibility-audit" / "SKILL.md",
+    "scoring rubric": root / "docs" / "SCORING_RUBRIC.md",
+}
+coverage_errors = []
+for label, path in coverage_files.items():
+    content = path.read_text()
+    uncovered_skills = [skill for skill in actual_skills if skill not in content]
+    if uncovered_skills:
+        coverage_errors.append(f"{label} missing: {', '.join(uncovered_skills)}")
+if coverage_errors:
+    raise SystemExit("Skill coverage mismatch: " + "; ".join(coverage_errors))
+
 missing = [skill for skill in skills if not (root / skill / "SKILL.md").is_file()]
 if missing:
     raise SystemExit("Missing plugin skill paths: " + ", ".join(missing))
