@@ -19,7 +19,10 @@ fixture assertion so a server-rendered block cannot acquire a rubric 2.8 finding
 [`docs/SCORING_RUBRIC.md`](../../../docs/SCORING_RUBRIC.md)'s deduction table as
 data and proves the rubric's arithmetic — pillar scoring, per-check deduction
 caps, N/A-pillar exclusion and weight reproportioning, and the 0-100 floor —
-is deterministic and reproduces the doc's own worked example. It does not
+is deterministic and reproduces the doc's own worked example. It also verifies
+that an uncorroborated user-agent differential triggers only 1.2a/−10 with a
+`[Derived]` label, while operator log/IP corroboration replaces it with
+1.2b/−25 and `[Measured]`. It does not
 touch report *content* (that's what the outcome-contract layer above checks);
 it only proves the *score* a report states is reproducible from a given
 finding set, closing the gap where PR #82 introduced a composite score with
