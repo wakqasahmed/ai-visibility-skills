@@ -186,15 +186,18 @@ if not found:
 "
 ```
 
-## 5. Detect orphan subtopic pages in a topical cluster
+## 5. Detect orphan subtopic pages, and check subtopic back-links and anchor text to the pillar
 
-Covers workflow step 3. A topic cluster requires internal linking between the pillar page and its
-subtopic pages `[AHREFS-TOPIC-CLUSTERS-01]`; a subtopic with no internal link path from the pillar
-is an orphan `[BACKLINKO-ORPHAN-PAGES-01]`. The standard detection method compares the linked-to
-URL set against the sitemap URL set.
+Covers workflow step 3 `[AHREFS-TOPIC-CLUSTERS-01]`. A topic cluster requires internal linking
+between the pillar page and its subtopic pages; a subtopic with no internal link path from the
+pillar is an orphan `[BACKLINKO-ORPHAN-PAGES-01]`. The standard orphan-detection method compares
+the linked-to URL set against the sitemap URL set, then the reciprocal check verifies each
+subtopic links back to the pillar with descriptive anchor text.
 
-This skill owns the scratch directory created below. Do not reuse it for another skill; keep the
-same `WORK` value for checks 5 and 6 so a multi-skill run cannot cross-contaminate their URL sets.
+This skill owns the scratch directory created below. Do not reuse it for another skill, and run
+both checks in the same shell invocation — `WORK` must stay set for both, since a second,
+separately-invoked shell would see it unset and silently resolve `"$WORK"/...` to a bare filename
+in the current directory instead of the scratch directory.
 
 ```bash
 WORK=$(mktemp -d)
@@ -210,16 +213,8 @@ curl -s -L "$SITE/sitemap.xml" \
 
 # Sitemap URLs with no link from the pillar
 comm -13 "$WORK"/semantic-entity-topical-map-pillar-links.txt "$WORK"/semantic-entity-topical-map-sitemap-urls.txt
-```
 
-Count only what this output lists. Do not extrapolate an orphan count beyond the URLs actually
-compared.
-
-## 6. Check subtopic back-links and anchor text to the pillar
-
-Covers the reciprocal half of workflow step 3 `[AHREFS-TOPIC-CLUSTERS-01]`.
-
-```bash
+# Reciprocal check: does each candidate subtopic link back to the pillar, and with what anchor text?
 while read -r subtopic; do
   printf '%s -> ' "$subtopic"
   curl -s -L "$subtopic" \
@@ -228,6 +223,9 @@ while read -r subtopic; do
     || echo "NO LINK TO PILLAR"
 done < "$WORK"/semantic-entity-topical-map-sitemap-urls.txt
 ```
+
+Count only what the orphan-detection output lists. Do not extrapolate an orphan count beyond the
+URLs actually compared.
 
 Generic anchors (`click here`, `read more`, a bare URL) are a finding in their own right: the link
 exists but carries no descriptive signal about the pillar topic.

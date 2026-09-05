@@ -17,6 +17,7 @@ requires ANTHROPIC_API_KEY and is gated to a separate, non-PR workflow.
 Exit code 0 = pass, 1 = fail.
 """
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -24,6 +25,37 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import contract  # noqa: E402
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
+CHECKS_MD = (
+    Path(__file__).resolve().parents[3]
+    / "skills"
+    / "ai-visibility"
+    / "sitemap-discovery-audit"
+    / "references"
+    / "checks.md"
+)
+BASH_FENCE_RE = re.compile(r"```bash\n(.*?)\n```", re.DOTALL)
+
+
+def assert_work_scratch_dir_stays_in_scope() -> list:
+    """Regression check for the /tmp scratch-dir collision fix: every fenced bash
+    block that reads or writes `"$WORK"/...` must itself contain the `WORK=$(mktemp
+    -d)` assignment, since each ```bash fence is a separately-invoked shell and a
+    variable set in one does not carry over into the next. A block that uses
+    `$WORK` without setting it would silently resolve to a bare filename in the
+    current directory instead of the scratch directory — this exact bug existed
+    before the fix, split across two separate fenced blocks."""
+    checks_text = CHECKS_MD.read_text(encoding="utf-8")
+    failures = []
+    for index, block in enumerate(BASH_FENCE_RE.findall(checks_text), start=1):
+        uses_work = "$WORK" in block
+        sets_work = "WORK=$(mktemp" in block
+        if uses_work and not sets_work:
+            failures.append(
+                f"checks.md bash block #{index} references \"$WORK\" but does not "
+                f"assign WORK=$(mktemp -d) in the same block — it would run as a "
+                f"separate shell invocation with WORK unset"
+            )
+    return failures
 
 
 def load_fixture(fixture_dir: Path) -> dict:
@@ -55,6 +87,15 @@ def main() -> int:
     should_use_count = 0
     should_not_use_count = 0
     total_failures = 0
+
+    scratch_dir_failures = assert_work_scratch_dir_stays_in_scope()
+    if scratch_dir_failures:
+        print("[FAIL] work_scratch_dir_scope_regression")
+        for failure in scratch_dir_failures:
+            print(f"    - {failure}")
+            total_failures += 1
+    else:
+        print("[PASS] work_scratch_dir_scope_regression")
 
     for fixture_dir in fixture_dirs:
         meta = load_fixture(fixture_dir)
