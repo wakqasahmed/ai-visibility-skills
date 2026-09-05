@@ -23,6 +23,12 @@ BLOCKER_NOTE_RE = re.compile(r"blocked on", re.IGNORECASE)
 BLOCKER_KEYWORD_RE = re.compile(
     r"credential|access|legal|policy owner|cms access|approval", re.IGNORECASE
 )
+PRIORITY_LABELS = (
+    "P0 (Immediate)",
+    "P1 (Next)",
+    "P2 (Improve)",
+    "P3 (Optional/Experimental)",
+)
 
 DOMAIN_KEYWORDS = {
     "crawler": re.compile(r"crawler|robots\.txt|user-agent|disallow|gptbot|claudebot|perplexitybot", re.IGNORECASE),
@@ -83,6 +89,7 @@ def check_plan_contract(plan_text: str, expected_ticket_count: int | None = None
     """Deterministic, non-negotiable checks from references/checks.md.
 
     - one heading per ticket (independently identifiable and countable)
+    - the plan declares the complete P0-P3 priority vocabulary
     - every ticket has either a re-runnable verification command or an explicit
       "blocked on" note, never neither
     - a ticket mentioning blocker language (credential/access/legal/policy
@@ -96,6 +103,13 @@ def check_plan_contract(plan_text: str, expected_ticket_count: int | None = None
     if not tickets:
         result.add("no '## ' ticket headings found in plan")
         return result
+
+    missing_priority_labels = [label for label in PRIORITY_LABELS if label not in plan_text]
+    if missing_priority_labels:
+        result.add(
+            "plan does not declare the complete P0-P3 priority vocabulary; "
+            f"missing: {missing_priority_labels}"
+        )
 
     if expected_ticket_count is not None and len(tickets) != expected_ticket_count:
         result.add(

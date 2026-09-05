@@ -20,6 +20,10 @@ failing to passing once the fix ships. Reuse the relevant skill's `references/ch
 - International / hreflang fixes → `international-seo-hreflang-audit/references/checks.md`
 - Developer docs & API schema fixes → `docs-api-visibility-audit/references/checks.md`
 - Paywall & subscription access fixes → `paywall-access-audit/references/checks.md`
+- Commerce protocol discovery findings → `commerce-protocol-discovery/references/checks.md`
+- Entity identity / topical map fixes → `semantic-entity-topical-map-audit/references/checks.md`
+- IndexNow fixes → `indexnow-instant-indexing-audit/references/checks.md`
+- AI share-of-voice fixes → `ai-share-of-voice-audit/references/checks.md`
 
 Example ticket acceptance criterion, copied verbatim from the source check:
 
