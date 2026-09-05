@@ -47,6 +47,22 @@ def run_should_not_use_fixture(fixture_dir: Path, meta: dict) -> list:
     return result.failures
 
 
+def check_google_extended_probe_regression() -> list[str]:
+    report = (
+        FIXTURES_DIR
+        / "should_use_07_experimental_content_signals_and_dns_aid"
+        / "golden_report.md"
+    ).read_text()
+    invalid_report = report.replace(
+        "for ua in GPTBot ClaudeBot PerplexityBot; do",
+        "for ua in GPTBot ClaudeBot PerplexityBot Google-Extended; do",
+    )
+    failures = contract.check_audit_contract(invalid_report).failures
+    if not any("live-probes Google-Extended" in failure for failure in failures):
+        return ["contract accepted a Google-Extended HTTP user-agent probe"]
+    return []
+
+
 def main() -> int:
     fixture_dirs = sorted(p for p in FIXTURES_DIR.iterdir() if p.is_dir())
     if len(fixture_dirs) < 10:
@@ -56,6 +72,13 @@ def main() -> int:
     should_use_count = 0
     should_not_use_count = 0
     total_failures = 0
+
+    regression_failures = check_google_extended_probe_regression()
+    status = "PASS" if not regression_failures else "FAIL"
+    print(f"[{status}] contract rejects Google-Extended HTTP user-agent probes")
+    for failure in regression_failures:
+        print(f"    - {failure}")
+        total_failures += 1
 
     for fixture_dir in fixture_dirs:
         meta = load_fixture(fixture_dir)

@@ -11,7 +11,8 @@
 
 ## AI crawler implications
 
-- Major AI search and browsing crawlers (GPTBot, ClaudeBot, PerplexityBot, Google-Extended) can access all public content, verified via HTTP `200` responses without edge blocks.
+- Major AI search and browsing crawlers (GPTBot, ClaudeBot, PerplexityBot) can access all public content, verified via HTTP `200` responses without edge blocks.
+- `Google-Extended` is a `robots.txt`-only control token. The default `User-agent: *` policy does not block it, but it cannot be verified with an HTTP user-agent probe.
 - The origin includes full security headers (`Strict-Transport-Security`, `X-Content-Type-Options`, `X-Frame-Options`), establishing origin security.
 
 ## [EXPERIMENTAL] Emerging protocol signals (Content Signals, Web Bot Auth, DNS-AID)
@@ -40,7 +41,7 @@ This configuration preserves crawler access. This does not guarantee inclusion o
 ```bash
 curl -s https://example-saas.com/robots.txt | grep -i "content-signal"
 curl -sI https://example-saas.com/ | grep -iE "(strict-transport-security|x-content-type-options|x-frame-options)"
-for ua in GPTBot ClaudeBot PerplexityBot Google-Extended; do
+for ua in GPTBot ClaudeBot PerplexityBot; do
   printf "%-16s " "$ua"; curl -s -o /dev/null -w "%{http_code}\n" -A "$ua" https://example-saas.com/
 done
 curl -s -o /dev/null -w "%{http_code}\n" https://example-saas.com/.well-known/http-message-signatures-directory

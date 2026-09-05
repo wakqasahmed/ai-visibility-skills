@@ -33,4 +33,4 @@ Representative page (`https://trailmapstudio.example/`), fetched normally:
 </html>
 ```
 
-All major AI crawler user agents (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, CCBot) return HTTP 200 when fetching the representative page. `llms.txt` is present and returns HTTP 200.
+All major AI crawler user agents (GPTBot, ClaudeBot, PerplexityBot, CCBot) return HTTP 200 when fetching the representative page. The default `User-agent: *` policy also permits the `Google-Extended` robots-only token. `llms.txt` is present and returns HTTP 200.

@@ -20,6 +20,7 @@ FIXTURE_DIR = Path(__file__).resolve().parent / "fixture"
 ROBOTS_PATH = FIXTURE_DIR / "robots.txt"
 PAGE_PATH = FIXTURE_DIR / "index.html"
 HYDRATED_PAGE_PATH = FIXTURE_DIR / "hydrated.html"
+REPO_ROOT = Path(__file__).resolve().parents[3]
 
 TITLE_RE = re.compile(r"<title[^>]*>\s*[^\s<]", re.IGNORECASE)
 META_DESCRIPTION_RE = re.compile(
@@ -64,7 +65,7 @@ def check_robots_ai_crawler_block(robots_text: str) -> dict | None:
         elif stripped.lower().startswith("disallow:") and current_agent:
             target = stripped.split(":", 1)[1].strip()
             if target == "/" and current_agent.lower() in {
-                "gptbot", "claudebot", "perplexitybot", "google-extended", "ccbot",
+                "gptbot", "claudebot", "perplexitybot",
             }:
                 blocked_agents.append((current_agent, i))
 
@@ -362,10 +363,49 @@ def assert_documented_json_ld_extractor() -> list[str]:
     return failures
 
 
+def assert_crawler_policy_methodology() -> list[str]:
+    """Training-policy tokens must not be reported as critical crawler blocks,
+    and Google-Extended must never be used as an HTTP user-agent probe."""
+    failures = []
+    for token in ("Google-Extended", "CCBot"):
+        finding = check_robots_ai_crawler_block(
+            f"User-agent: {token}\nDisallow: /\n"
+        )
+        if finding is not None:
+            failures.append(
+                f"{token}-only robots.txt block produced a critical finding: "
+                f"{finding['title']!r}"
+            )
+
+    invalid_probe_patterns = (
+        re.compile(r"curl[^\n]*\s-A\s+[\"']?Google-Extended", re.IGNORECASE),
+        re.compile(
+            r"for\s+\w+\s+in[^\n;]*\bGoogle-Extended\b[^\n;]*;\s*do"
+            r"(?:(?!\bdone\b).)*?curl[^\n]*\s-A\s+[\"']?\$\w+",
+            re.IGNORECASE | re.DOTALL,
+        ),
+        re.compile(
+            r"Observed Command:[^\n]*for\s+\w+\s+in[^\n;]*"
+            r"\bGoogle-Extended\b",
+            re.IGNORECASE,
+        ),
+        re.compile(r"Google-Extended\s+200", re.IGNORECASE),
+    )
+    for path in REPO_ROOT.rglob("*.md"):
+        text = path.read_text()
+        if any(pattern.search(text) for pattern in invalid_probe_patterns):
+            failures.append(
+                f"{path.relative_to(REPO_ROOT)} recommends or records a "
+                "Google-Extended HTTP user-agent probe"
+            )
+    return failures
+
+
 def assert_report(findings: list[dict], report: str) -> list[str]:
     failures = assert_raw_multiline_json_ld()
     failures.extend(assert_hydration_methodology())
     failures.extend(assert_documented_json_ld_extractor())
+    failures.extend(assert_crawler_policy_methodology())
 
     if len(findings) < 2:
         failures.append(f"expected >=2 injected issues surfaced, got {len(findings)}")

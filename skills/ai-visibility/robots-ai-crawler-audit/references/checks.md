@@ -61,8 +61,11 @@ solely because it has a `User-agent` stanza.
 
 ## Live fetch as each bot (edge/WAF blocks won't show in robots.txt)
 
+Do not live-fetch as `Google-Extended`: it is a `robots.txt`-only control token and has no
+separate HTTP user-agent string [GOOGLE-EXTENDED-01].
+
 ```bash
-for ua in GPTBot ClaudeBot PerplexityBot Google-Extended CCBot Amazonbot; do
+for ua in GPTBot ClaudeBot PerplexityBot CCBot Amazonbot; do
   printf "%-16s " "$ua"
   curl -s -o /dev/null -w "%{http_code}\n" -A "$ua" "$URL"
 done

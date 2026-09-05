@@ -119,7 +119,7 @@ for a given input — that is what Layer 3 answers.
 | `should_use_02_missing_schema_and_meta` | Pricing page has no meta description or JSON-LD | important | schema-markup-audit |
 | `should_use_03_broken_sitemap` | sitemap.xml declared in robots.txt 404s, 200+ pages undiscoverable otherwise | important | sitemap-discovery-audit |
 | `should_use_04_thin_content_faq` | FAQ answers are one to two words, too thin to cite (discoverability otherwise clean) | optional | answer-engine-content-audit |
-| `should_use_05_multi_issue_ecommerce` | three simultaneous findings across all three severities and three different delegates | critical/important/optional | robots-ai-crawler-audit, schema-markup-audit, citation-readiness-audit |
+| `should_use_05_multi_issue_ecommerce` | three simultaneous findings across two severities and three different delegates, including a CCBot training-policy supporting signal | important/optional | robots-ai-crawler-audit, schema-markup-audit, citation-readiness-audit |
 | `should_use_06_helmet_and_hydration_metadata` | React-Helmet head tags present in the raw response, plus JSON-LD that only exists in the hydrated DOM — neither may be reported as absent (issue #102) | important | schema-markup-audit |
 
 **Should-not-use / near-miss** (should not produce a fabricated or forced audit report):
