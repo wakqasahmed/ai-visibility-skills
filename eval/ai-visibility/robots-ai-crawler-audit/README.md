@@ -54,7 +54,7 @@ least one expected decline signal.
 | `should_use_01_gptbot_full_block` | `robots.txt` has an explicit `Disallow: /` stanza for GPTBot | site-wide block, visible in `robots.txt`, confirmed live |
 | `should_use_02_xrobotstag_noindex_pricing` | `robots.txt` is clean, but `X-Robots-Tag: noindex` header blocks the pricing page | page-level header block invisible to `robots.txt`-only inspection |
 | `should_use_03_meta_robots_noindex_docs` | `robots.txt` and headers are clean, but a `<meta name="robots" content="noindex, nofollow">` tag blocks a docs page | HTML-level block, likely a CMS template default |
-| `should_use_04_edge_waf_block_claudebot` | `robots.txt` is permissive, but a hand-set ClaudeBot token returns 403 without operator log/IP corroboration | derived anti-spoofing/WAF warning, not a proven crawler block |
+| `should_use_04_edge_waf_block_oai_searchbot` | `robots.txt` is permissive, but a fetch with OAI-SearchBot's documented full user-agent returns 403 while PerplexityBot and a default request both return 200 | derived anti-spoofing/WAF warning, not a proven crawler block; must not conflate OAI-SearchBot (ChatGPT search surfacing) with GPTBot (training only) |
 | `should_use_05_crawl_delay_missing_ai_stanzas` | No named AI-bot stanzas, a blanket `Crawl-delay: 20` for everyone | not a block - ambiguous policy needing explicit stanzas, with cost/scraping tradeoffs called out |
 | `should_use_06_missing_security_headers` | `robots.txt`/meta robots are clean, but the product page's response is missing `Strict-Transport-Security`, `X-Content-Type-Options`, and `X-Frame-Options` | not a crawler-access block - a security-header/technical-trust gap on an otherwise crawlable page |
 

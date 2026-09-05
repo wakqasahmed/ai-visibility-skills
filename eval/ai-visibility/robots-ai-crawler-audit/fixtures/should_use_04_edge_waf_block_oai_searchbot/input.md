@@ -1,7 +1,7 @@
 # Request
 
-We checked robots.txt and it doesn't block GPTBot at all, but pages still
-don't seem to get crawled for ChatGPT search. What's going on?
+We checked robots.txt and it doesn't block OAI-SearchBot at all, but pages
+still don't seem to get crawled for ChatGPT search. What's going on?
 
 ## robots.txt (fetched from https://example.com/robots.txt)
 
@@ -19,13 +19,13 @@ $ curl -s https://example.com/robots.txt | awk 'BEGIN{IGNORECASE=1} /^user-agent
 User-agent: * | Disallow:
 ```
 
-No explicit GPTBot stanza found.
+No explicit OAI-SearchBot stanza found.
 
 ## Live fetch as each bot
 
 ```
 $ curl -s -o /dev/null -w "%{http_code}\n" \
-    -A 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko); compatible; GPTBot/1.4; +https://openai.com/gptbot' \
+    -A 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36; compatible; OAI-SearchBot/1.4; +https://openai.com/searchbot' \
     https://example.com/blog/post-1
 403
 $ curl -s -o /dev/null -w "%{http_code}\n" \
