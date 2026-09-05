@@ -76,7 +76,11 @@ def load_fixtures() -> list:
 
 def score_response(meta: dict, response_text: str) -> list:
     if meta["category"] == "should_use":
-        result = contract.check_audit_contract(response_text)
+        result = contract.check_audit_contract(
+            response_text,
+            required_patterns=meta.get("required_patterns"),
+            forbidden_patterns=meta.get("forbidden_patterns"),
+        )
         return result.failures
     else:
         result = contract.check_decline_response(

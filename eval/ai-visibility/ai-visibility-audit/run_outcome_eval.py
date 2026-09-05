@@ -26,6 +26,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import contract  # noqa: E402
+import run_eval  # noqa: E402
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
@@ -65,6 +66,15 @@ def main() -> int:
     should_use_count = 0
     should_not_use_count = 0
     total_failures = 0
+
+    raw_fixture_failures = run_eval.assert_raw_multiline_json_ld()
+    if raw_fixture_failures:
+        print("[FAIL] raw multiline JSON-LD fixture")
+        for failure in raw_fixture_failures:
+            print(f"    - {failure}")
+            total_failures += 1
+    else:
+        print("[PASS] raw multiline JSON-LD fixture")
 
     for fixture_dir in fixture_dirs:
         meta = load_meta(fixture_dir)
