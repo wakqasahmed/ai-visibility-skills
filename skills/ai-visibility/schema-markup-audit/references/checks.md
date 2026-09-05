@@ -48,15 +48,47 @@ Chromium-family browser; the pack does not pin one (`scripts/render-audit-pdf.py
 auto-detects whichever of Chrome/Edge/Chromium is installed), so detect it and handle its
 absence explicitly:
 
+This skill owns the scratch directory created below. Do not reuse it for another skill; a
+multi-skill run must not cross-contaminate hydrated-page evidence.
+
 ```bash
+WORK=$(mktemp -d)
 CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium \
   || command -v chromium-browser || command -v microsoft-edge || true)
 if [ -z "$CHROME" ]; then
   echo "no Chromium-family browser available, hydration cross-check not performed"
   exit 0
 fi
-"$CHROME" --headless=new --disable-gpu --virtual-time-budget=10000 --dump-dom "$URL" > /tmp/hydrated.html
-extract_json_ld /tmp/hydrated.html
+"$CHROME" --headless=new --disable-gpu --virtual-time-budget=10000 --dump-dom "$URL" > "$WORK"/schema-markup-audit-hydrated.html
+grep -oiE '<script[^>]+application/ld\+json[^>]*>' "$WORK"/schema-markup-audit-hydrated.html | wc -l
+# extract_json_ld is defined in the "Extract structured data" fence above, but
+# each ```bash fence is a separately-invoked shell — the function is not in
+# scope here, so it is redefined rather than called across fences.
+extract_json_ld() {
+  python3 -c '
+import json, re, sys
+source, mode = sys.argv[1:]
+html = open(source, encoding="utf-8", errors="replace").read() if source else sys.stdin.read()
+blocks = re.findall(r"<script[^>]+application/ld\+json[^>]*>(.*?)</script>", html, re.S | re.I)
+print(f"{len(blocks)} JSON-LD block(s)")
+def types(value):
+    if isinstance(value, dict):
+        if "@type" in value:
+            print(value["@type"])
+        for child in value.values():
+            types(child)
+    elif isinstance(value, list):
+        for child in value:
+            types(child)
+for block in blocks:
+    try:
+        data = json.loads(block)
+        types(data) if mode == "types" else print(json.dumps(data, indent=2))
+    except json.JSONDecodeError as exc:
+        print(f"unparseable JSON-LD block: {exc}")
+' "${1:-}" "${2:-json}"
+}
+extract_json_ld "$WORK"/schema-markup-audit-hydrated.html types
 ```
 
 Report the comparison, not just the pass that found something:
