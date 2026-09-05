@@ -16,10 +16,12 @@ jobs:
       - uses: actions/checkout@v6
       - name: List skills
         run: scripts/list-skills.sh | grep -q "skills/ai-visibility/ai-visibility-audit/SKILL.md"
-      - name: Validate plugin paths
+      - name: Validate plugin paths and audit coverage
         run: python3 scripts/validate-plugin.py
       - name: Validate citation ledger
         run: python3 scripts/validate-citations.py
+      - name: Validate shared guardrail copies
+        run: python3 scripts/validate-guardrails.py
       - name: Test PDF renderer
         run: python3 -m unittest tests/test_render_audit_pdf.py
       - name: Run ai-visibility-audit behavioral eval
@@ -64,3 +66,5 @@ jobs:
         run: python3 eval/ai-visibility/indexnow-instant-indexing-audit/run_eval.py
       - name: Run ai-share-of-voice-audit deterministic contract eval
         run: python3 eval/ai-visibility/ai-share-of-voice-audit/run_eval.py
+      - name: Test ai-share-of-voice-audit model-harness routing logic
+        run: python3 -m unittest eval/ai-visibility/ai-share-of-voice-audit/test_model_harness.py

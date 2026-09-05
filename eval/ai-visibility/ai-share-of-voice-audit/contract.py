@@ -53,6 +53,18 @@ INLINE_CODE_RE = re.compile(r"`[^`]+`")
 SOV_RATIO_RE = re.compile(r"(\d+)\s*/\s*(\d+)\s*=\s*([\d.]+)\s*%")
 PROVENANCE_RE = re.compile(r"\[(Measured|Derived)\]")
 CAPTURE_DATE_RE = re.compile(r"capture date[^\n]*\d{4}-\d{2}-\d{2}", re.IGNORECASE)
+FRONTMATTER_DESCRIPTION_RE = re.compile(
+    r"^---\s*$.*?^description:\s*(.+?)\s*$.*?^---\s*$",
+    re.IGNORECASE | re.MULTILINE | re.DOTALL,
+)
+TRANSCRIPT_TRIGGER_RE = re.compile(
+    r"\b(use|analy[sz]e)\b.*\boperator-supplied\b.*\banswer transcripts?\b",
+    re.IGNORECASE,
+)
+LIVE_COLLECTION_EXCLUSION_RE = re.compile(
+    r"\b(does not|do not|not for|never)\b.*\b(collect|query)\w*\b.*\blive answers?\b",
+    re.IGNORECASE,
+)
 
 RATIO_TOLERANCE_PCT = 0.1
 
@@ -65,6 +77,27 @@ class ValidationResult:
     def add_failure(self, reason: str) -> None:
         self.passed = False
         self.failures.append(reason)
+
+
+def validate_trigger_contract(skill_text: str) -> ValidationResult:
+    result = ValidationResult(passed=True)
+    match = FRONTMATTER_DESCRIPTION_RE.search(skill_text)
+    if not match:
+        result.add_failure("skill frontmatter has no description")
+        return result
+
+    description = match.group(1)
+    if not TRANSCRIPT_TRIGGER_RE.search(description):
+        result.add_failure(
+            "description does not say to use the skill to analyze operator-supplied "
+            "answer transcripts"
+        )
+    if not LIVE_COLLECTION_EXCLUSION_RE.search(description):
+        result.add_failure(
+            "description does not say the skill is not for collecting or querying live answers"
+        )
+
+    return result
 
 
 def _check_numeric_coherence(text: str, result: ValidationResult) -> None:

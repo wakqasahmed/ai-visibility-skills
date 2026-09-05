@@ -26,7 +26,10 @@ of known fixture finding-sets against it, and asserts:
    absent (no deduction) on a non-ecommerce site.
 6. AI-training opt-out controls are reported as a supporting signal and never
    misclassified as critical crawler blocks.
-7. Google `nosnippet` / `max-snippet:0` exclusion on a key page triggers the
+7. A user-agent differential stays a smaller, derived finding until operator
+   log/IP evidence corroborates a real crawler request, when it escalates to
+   the critical, measured finding instead of stacking both deductions.
+8. Google `nosnippet` / `max-snippet:0` exclusion on a key page triggers the
    Critical Foundation deduction in Answer Readiness.
 
 This does not invoke an LLM — it proves the rubric's arithmetic is
@@ -61,7 +64,8 @@ SUPPORTING_TRAINING_ROBOTS_TOKENS = frozenset({"Google-Extended", "Applebot-Exte
 RUBRIC = {
     "discovery": {
         "1.1": {"deduction": 25, "cap": 50, "per_occurrence": True},
-        "1.2": {"deduction": 25},
+        "1.2a": {"deduction": 10},
+        "1.2b": {"deduction": 25},
         "1.3": {"deduction": 15},
         "1.4": {"deduction": 10},
         "1.5": {"deduction": 10, "cap": 10, "per_occurrence": True},  # per 10% broken
@@ -134,6 +138,15 @@ def crawler_block_findings(blocked_tokens: list[str]) -> dict:
     if blocked_token_set & SUPPORTING_TRAINING_ROBOTS_TOKENS:
         findings["1.13"] = 1
     return findings
+
+
+def classify_ua_differential(
+    corroborating_observations: list[str],
+) -> tuple[dict[str, int], str]:
+    """Map one UA-differential observation to its exclusive rubric finding."""
+    if corroborating_observations:
+        return {"1.2b": 1}, "[Measured]"
+    return {"1.2a": 1}, "[Derived]"
 
 
 @dataclass
@@ -264,6 +277,42 @@ def run_training_opt_out_scoring() -> list:
             "expected a Google-Extended-only block to trigger only the -5 supporting "
             f"signal (score 95), got {result.score}"
         )
+    return failures
+
+
+def run_ua_differential_evidence_scoring() -> list:
+    """A hand-set UA differential is derived until operator evidence confirms
+    that the affected request came from the crawler it claimed to be."""
+    failures = []
+
+    uncorroborated, uncorroborated_label = classify_ua_differential([])
+    if uncorroborated != {"1.2a": 1} or uncorroborated_label != "[Derived]":
+        failures.append(
+            "an uncorroborated UA differential must map only to 1.2a and [Derived], "
+            f"got {uncorroborated!r} and {uncorroborated_label!r}"
+        )
+    uncorroborated_score = score_pillar("discovery", uncorroborated).score
+    if uncorroborated_score != 90.0:
+        failures.append(
+            "expected uncorroborated 1.2a to deduct -10 (score 90), got "
+            f"{uncorroborated_score}"
+        )
+
+    corroborated, corroborated_label = classify_ua_differential(
+        ["server log source IP matches the vendor's published CIDR"]
+    )
+    if corroborated != {"1.2b": 1} or corroborated_label != "[Measured]":
+        failures.append(
+            "a log/IP-corroborated UA differential must map only to 1.2b and [Measured], "
+            f"got {corroborated!r} and {corroborated_label!r}"
+        )
+    corroborated_score = score_pillar("discovery", corroborated).score
+    if corroborated_score != 75.0:
+        failures.append(
+            "expected corroborated 1.2b to deduct -25 (score 75), got "
+            f"{corroborated_score}"
+        )
+
     return failures
 
 
@@ -417,6 +466,7 @@ def main() -> int:
         ("scoring is order-independent", run_determinism_check),
         ("per-check deduction caps are enforced", run_cap_enforcement),
         ("AI-training opt-out tokens do not trigger critical crawler-block scoring", run_training_opt_out_scoring),
+        ("UA differential evidence controls check 1.2 severity and provenance", run_ua_differential_evidence_scoring),
         ("N/A pillar exclusion + weight reproportioning", run_na_pillar_reweighting),
         ("pillar score floors at 0", run_floor_at_zero),
         ("ecommerce-technical-seo-audit checks (1.9-1.11, 4.7) score correctly", run_ecommerce_checks_scoring),
