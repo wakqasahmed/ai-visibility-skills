@@ -1,0 +1,6 @@
+{
+  "id": "should_use_10_invalid_data_nosnippet_element",
+  "category": "should_use",
+  "description": "data-nosnippet is placed on a <p> element, which Google does not honor - only div, span, and section carry the exclusion. The audit must report this as invalid, non-functional markup rather than an active snippet restriction, and must not tell the operator the price is hidden from AI Overviews.",
+  "expects_full_report": true
+}

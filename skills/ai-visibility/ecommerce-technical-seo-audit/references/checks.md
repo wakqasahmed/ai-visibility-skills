@@ -70,9 +70,14 @@ near-duplicate of the base category page.
 
 ## Orphan pages
 
+This skill owns the scratch directory created below. Do not reuse it for another skill; a
+multi-skill run must not cross-contaminate its URL sets.
+
 ```bash
+WORK=$(mktemp -d)
+
 # Build the sitemap URL set and the on-site internal-link URL set, then diff
-curl -s "$SITE/sitemap.xml" | grep -oE '<loc>[^<]+</loc>' | sed -e 's/<loc>//' -e 's/<\/loc>//' | sort -u > /tmp/sitemap-urls.txt
+curl -s "$SITE/sitemap.xml" | grep -oE '<loc>[^<]+</loc>' | sed -e 's/<loc>//' -e 's/<\/loc>//' | sort -u > "$WORK"/ecommerce-technical-seo-sitemap-urls.txt
 
 curl -s "$SITE" | grep -oE 'href="[^"]+"' | sed 's/href="//;s/"$//' | SITE="$SITE" python3 -c '
 import os, sys
@@ -87,12 +92,13 @@ for href in sys.stdin:
     if link.scheme != site_parts.scheme or link.netloc != site_parts.netloc:
         continue
     print(urlunsplit((link.scheme, link.netloc, link.path, link.query, "")))
-' | sort -u > /tmp/nav-links.txt
+' | sort -u > "$WORK"/ecommerce-technical-seo-nav-links.txt
 
-# Repeat the href-extraction pass against a sampled category page or two, appending to /tmp/nav-links.txt,
+# Repeat the href-extraction pass against a sampled category page or two, appending to
+# "$WORK"/ecommerce-technical-seo-nav-links.txt,
 # since a page can be linked only from deeper navigation, not the homepage.
 
-comm -23 /tmp/sitemap-urls.txt /tmp/nav-links.txt
+comm -23 "$WORK"/ecommerce-technical-seo-sitemap-urls.txt "$WORK"/ecommerce-technical-seo-nav-links.txt
 ```
 
 Any sampled URL that appears in the sitemap but never in the internal-link set gathered above is

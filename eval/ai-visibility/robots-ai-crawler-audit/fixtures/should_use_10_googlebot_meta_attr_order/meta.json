@@ -1,0 +1,6 @@
+{
+  "id": "should_use_09_googlebot_meta_attr_order",
+  "category": "should_use",
+  "description": "A <meta content=\"nosnippet\" name=\"googlebot\"> tag (Google-specific meta name, content attribute before name) makes a key page ineligible for snippets exactly like the general <meta name=\"robots\"> form would; an attribute-order-dependent or robots-only extraction would miss it entirely.",
+  "expects_full_report": true
+}
