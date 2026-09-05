@@ -1,0 +1,6 @@
+{
+  "id": "should_use_07_client_rendered_content_hydration",
+  "category": "should_use",
+  "description": "Content heading and answers are injected client-side via JavaScript on a React SPA, showing an empty root container in raw HTML.",
+  "expected_finding_count": 1
+}

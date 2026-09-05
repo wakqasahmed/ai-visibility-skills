@@ -14,9 +14,18 @@ text = re.sub('<[^<]+?>', ' ', html)
 text = re.sub(r'\s+', ' ', text).strip()
 print(text[:2000])
 "
+# Hydrated DOM cross-check when raw HTML is empty (SPA / client-rendered content)
+CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium \
+  || command -v chromium-browser || command -v microsoft-edge || true)
+if [ -n "$CHROME" ]; then
+  "$CHROME" --headless=new --disable-gpu --virtual-time-budget=10000 --dump-dom "$URL" > /tmp/hydrated_content.html
+  grep -oE "<h1[^>]*>[^<]+" /tmp/hydrated_content.html
+else
+  echo "no Chromium-family browser available, hydration cross-check not performed"
+fi
 ```
 
-If the heading/body text is missing from raw HTML while the page renders fine in a browser, the content is client-side-only and most AI crawlers will not see it — flag as a critical gap before scoring content quality.
+If the heading/body text is missing from raw HTML while the page renders in the hydrated DOM, report as *Present in rendered DOM but absent from initial server response* — invisible to non-JS crawlers. If no browser is available, report as `[Derived]` with explicit disclosure.
 
 ## Inventory candidate answer pages
 

@@ -18,7 +18,18 @@ soup = BeautifulSoup(html, 'html.parser')
 for link in soup.find_all('link', rel=re.compile(r'alternate', re.I)):
     if link.get('hreflang'):
         print(f\"{link.get('hreflang')}: {link.get('href')}\")
-"
+## 1b. Cross-Check Hydrated DOM (Headless Browser)
+
+```bash
+# When raw HTML yields 0 hreflang tags on client-rendered SPA/React apps
+CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium \
+  || command -v chromium-browser || command -v microsoft-edge || true)
+if [ -n "$CHROME" ]; then
+  "$CHROME" --headless=new --disable-gpu --virtual-time-budget=10000 --dump-dom "$URL" > /tmp/hydrated_hreflang.html
+  grep -oiE '<link[^>]+rel=["'\'']alternate["'\''][^>]+hreflang=["'\''][^"'\'']+["'\''][^>]*>' /tmp/hydrated_hreflang.html
+else
+  echo "no Chromium-family browser available, hydration cross-check not performed"
+fi
 ```
 
 ## 2. Check HTTP Response `Link:` Headers
