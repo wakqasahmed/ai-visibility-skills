@@ -1,9 +1,9 @@
 {
   "category": "should_use",
   "mode": "audit",
-  "description": "Three simultaneous findings of differing severity and delegate: CCBot fully blocked (critical), no Product JSON-LD (important), vague unlinked return policy answer (optional).",
+  "description": "Three simultaneous findings across three delegates: CCBot training-data access disabled as a supporting signal (optional), no Product JSON-LD (important), and a vague unlinked return policy answer (optional).",
   "expected_min_findings": 3,
   "expected_max_findings": null,
-  "expected_severities": ["critical", "important", "optional"],
+  "expected_severities": ["important", "optional"],
   "expected_delegates": ["robots-ai-crawler-audit", "schema-markup-audit", "citation-readiness-audit"]
 }

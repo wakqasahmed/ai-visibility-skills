@@ -38,12 +38,12 @@ No AI bot (GPTBot, ClaudeBot, PerplexityBot, etc.) has its own User-agent stanza
 ## Input 2
 
 ```
-Per-bot live fetch: GPTBot 200, ClaudeBot 200, PerplexityBot 200, Google-Extended 200, CCBot 200, Amazonbot 200, Googlebot 200
+Per-bot live fetch: GPTBot 200, ClaudeBot 200, PerplexityBot 200, CCBot 200, Amazonbot 200, Googlebot 200
 ```
 
 ### Correct output 2
 
-All 7 tested crawler UAs got genuine HTTP 200s with real page content in the body (confirmed separately, not a captcha/soft-block). Verdict: helps visibility — no edge/WAF block.
+All 6 tested crawler UAs got genuine HTTP 200s with real page content in the body (confirmed separately, not a captcha/soft-block). Verdict: helps visibility — no edge/WAF block. Google-Extended is evaluated only from `robots.txt` because it has no separate HTTP user-agent.
 
 ## Input 3
 

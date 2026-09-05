@@ -9,14 +9,16 @@
 
 ## Blocked high-value paths
 
-No paths are currently blocked for PerplexityBot or Google-Extended - both
-return `200` on the homepage under the default rule.
+No paths are currently blocked for PerplexityBot, which returns `200` on the
+homepage. The default `User-agent: *` policy also does not block the
+`Google-Extended` robots-only control token; it has no HTTP user-agent to test.
 
 ## AI crawler implications
 
-- PerplexityBot and Google-Extended can currently fetch and cite this site,
-  but the 20-second `Crawl-delay` applies to them too and will slow full-site
-  discovery of new or updated pages.
+- PerplexityBot can currently fetch this site, but the 20-second `Crawl-delay`
+  applies to it and may slow discovery of new or updated pages.
+- Google-Extended is not a browsing or citation crawler. Its inherited
+  `robots.txt` policy currently permits Google's training and grounding uses.
 - Because there are no explicit per-bot stanzas, any future decision to
   block or throttle a specific bot (e.g. a scraper-heavy one like Bytespider)
   cannot be made without also affecting every other crawler under the same

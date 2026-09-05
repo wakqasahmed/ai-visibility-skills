@@ -1,8 +1,8 @@
 # AI Visibility Audit — cascadekettles.example
 
-Overall: blocked
+Overall: partially ready
 
-- [CRITICAL] robots.txt blocks CCBot from the entire site
+- [OPTIONAL] CCBot training-data access is disabled as a supporting policy signal
   evidence: robots.txt — "Disallow: /" under "User-agent: CCBot"
   delegate for deep dive: robots-ai-crawler-audit
 - [IMPORTANT] No Product JSON-LD structured data on product pages
