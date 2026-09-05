@@ -1,6 +1,0 @@
-{
-  "id": "should_use_04_edge_waf_block_claudebot",
-  "category": "should_use",
-  "description": "robots.txt is permissive, but an uncorroborated fetch with a hand-set ClaudeBot token returns 403 while GPTBot and a default user-agent return 200; the result must remain a derived anti-spoofing/WAF warning until operator log/IP evidence verifies a real crawler block.",
-  "expects_full_report": true
-}

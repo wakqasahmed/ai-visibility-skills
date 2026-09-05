@@ -105,10 +105,14 @@ corroborates that a genuine crawler request received the blocking response:
   (`ccbot.json`) [COMMONCRAWL-CCBOT-01], Amazon (its published IP-address lists)
   [AMAZON-BOTS-01], or Microsoft (`bingbot.json`) [BINGBOT-VERIFY-01]. Record the log timestamp,
   requested URL, response status, source IP, and range-list URL used.
-- Where the vendor documents hostname verification, run reverse DNS on the logged source IP and
-  then forward-resolve the returned hostname; require the forward result to contain the original
-  IP. Common Crawl documents this flow for `*.crawl.commoncrawl.org`, and Bing documents it for
-  `*.search.msn.com` [COMMONCRAWL-CCBOT-01] [BINGBOT-VERIFY-01]. Record both DNS outputs.
+- Where the vendor documents hostname verification, run reverse DNS on the logged source IP;
+  require the resulting hostname to end in the vendor's documented suffix, then forward-resolve
+  that hostname and require the forward result to contain the original IP. Both checks are
+  required — a hostname that forward/reverse round-trips to the same IP but does not end in the
+  documented suffix proves nothing, since any IP owner can publish a matching PTR record and an
+  A/AAAA record pointing back to it. Common Crawl documents `*.crawl.commoncrawl.org` and Bing
+  documents `*.search.msn.com` [COMMONCRAWL-CCBOT-01] [BINGBOT-VERIFY-01]. Record the reverse
+  hostname, the suffix match, and the forward-resolution result.
 - For Bingbot or Googlebot, use the verified property's Bing Webmaster crawl information or
   Google Search Console Crawl Stats/URL Inspection evidence showing the same response failure.
   Those tools corroborate their own crawlers only; they do not verify GPTBot, ClaudeBot, or
