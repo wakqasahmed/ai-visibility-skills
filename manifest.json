@@ -4,5 +4,5 @@
   "last_reviewed": "2026-09-01",
   "skill_count": 17,
   "skills": ["ai-visibility-audit", "llms-txt-generator", "robots-ai-crawler-audit", "schema-markup-audit", "sitemap-discovery-audit", "answer-engine-content-audit", "citation-readiness-audit", "ai-search-remediation-plan", "image-audit", "ecommerce-technical-seo-audit", "commerce-protocol-discovery", "international-seo-hreflang-audit", "docs-api-visibility-audit", "paywall-access-audit", "indexnow-instant-indexing-audit", "semantic-entity-topical-map-audit", "ai-share-of-voice-audit"],
-  "source_count": 50
+  "source_count": 58
 }

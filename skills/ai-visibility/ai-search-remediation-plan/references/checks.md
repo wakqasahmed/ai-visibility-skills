@@ -52,7 +52,7 @@ verification command, since it can't be closed by running a check.
 
 ## [EXPERIMENTAL] Emerging Draft Protocol Ticket Guidance
 
-Any ticket generated for emerging draft standards (DNS-AID, Content Signals, Web Bot Auth, Markdown negotiation, Auth.md/ARD manifests) must be explicitly titled with `[EXPERIMENTAL - DRAFT SPEC]` and assigned `Priority: Optional (Draft Standard)`. Ensure tickets state clearly that implementation is optional and non-blocking for core search/crawler discovery.
+Any ticket generated for emerging draft standards (DNS-AID, Content Signals, Web Bot Auth, Markdown negotiation, Auth.md/ARD manifests) must be explicitly titled with `[EXPERIMENTAL - DRAFT SPEC]` and assigned `Priority: P3 (Optional/Experimental)` — every ticket carries one of the four P0-P3 labels, with no separate priority vocabulary for experimental work. Ensure tickets state clearly that implementation is optional and non-blocking for core search/crawler discovery.
 
 ## Evidence discipline
 

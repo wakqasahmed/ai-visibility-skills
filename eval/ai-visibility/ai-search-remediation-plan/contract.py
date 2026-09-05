@@ -61,6 +61,13 @@ class Ticket:
     def domains_touched(self) -> set:
         return {name for name, pattern in DOMAIN_KEYWORDS.items() if pattern.search(self.body)}
 
+    @property
+    def priority_labels_present(self) -> list:
+        """Which of the four P0-P3 labels this ticket's own body declares — checked
+        per-ticket, not just anywhere in the whole plan, so a ticket with no
+        priority (or a non-standard one like 'Priority: urgent') is caught."""
+        return [label for label in PRIORITY_LABELS if label in self.body]
+
 
 @dataclass
 class ContractResult:
@@ -118,6 +125,18 @@ def check_plan_contract(plan_text: str, expected_ticket_count: int | None = None
         )
 
     for ticket in tickets:
+        if len(ticket.priority_labels_present) == 0:
+            result.add(
+                f"ticket '{ticket.title}' has no P0-P3 priority label in its own body "
+                f"(declaring the vocabulary once elsewhere in the plan is not enough — "
+                f"every ticket must carry one)"
+            )
+        elif len(ticket.priority_labels_present) > 1:
+            result.add(
+                f"ticket '{ticket.title}' carries more than one priority label: "
+                f"{ticket.priority_labels_present}"
+            )
+
         if not ticket.has_verification_command and not ticket.has_blocker_note:
             result.add(
                 f"ticket '{ticket.title}' has neither a re-runnable verification "
