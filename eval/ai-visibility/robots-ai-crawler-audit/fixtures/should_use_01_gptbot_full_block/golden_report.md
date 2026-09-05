@@ -14,12 +14,11 @@
 
 ## AI crawler implications
 
-- GPTBot (OpenAI's training/browsing crawler) cannot read any page, including
-  product pages, so this site cannot be cited or summarized by ChatGPT's web
-  browsing or training corpus while this rule stands.
-- No stanza was found for other named AI crawlers (ClaudeBot, PerplexityBot,
-  Google-Extended), so they fall under the permissive `User-agent: *` rule and
-  are not blocked.
+- GPTBot is OpenAI's training crawler, so it cannot collect any page for model
+  training while this rule stands. This rule does not block the separately
+  controlled OAI-SearchBot citation path or ChatGPT-User fetcher.
+- No stanza was found for other named AI crawlers, so they fall under the
+  permissive `User-agent: *` rule and are not blocked.
 
 ## Recommended robots.txt changes
 
@@ -31,9 +30,9 @@ User-agent: GPTBot
 Allow: /
 ```
 
-This improves the odds that ChatGPT can browse and cite this site's public
-pages - it does not guarantee inclusion or citation, since OpenAI's crawling
-and citation behavior is independent of any single robots.txt change.
+This permits OpenAI's training crawler to fetch public pages. It does not
+guarantee any platform outcome and does not change the separate OAI-SearchBot
+or ChatGPT-User policies.
 
 ## Verification commands
 
