@@ -44,6 +44,47 @@ def registry_errors(
     return errors
 
 
+def synchronization_errors(root: Path, skill_names: list[str]) -> list[str]:
+    errors = []
+    canonical_guardrails = root / "skills/ai-visibility/references/guardrails.md"
+    canonical_guardrails_bytes = canonical_guardrails.read_bytes()
+
+    for skill_name in skill_names:
+        bundled_guardrails = root / "skills/ai-visibility" / skill_name / "references/guardrails.md"
+        if not bundled_guardrails.is_file():
+            errors.append(f"missing shared guardrails copy: {bundled_guardrails.relative_to(root)}")
+        elif bundled_guardrails.read_bytes() != canonical_guardrails_bytes:
+            errors.append(f"shared guardrails copy is out of sync: {bundled_guardrails.relative_to(root)}")
+
+    synchronized_documents = [
+        (
+            root / "docs/SCORING_RUBRIC.md",
+            root / "skills/ai-visibility/ai-visibility-audit/references/scoring_rubric.md",
+            {
+                "(templates/AUDIT_REPORT_TEMPLATE_V3.md)": "(audit_report_template_v3.md)",
+            },
+        ),
+        (
+            root / "docs/templates/AUDIT_REPORT_TEMPLATE_V3.md",
+            root / "skills/ai-visibility/ai-visibility-audit/references/audit_report_template_v3.md",
+            {
+                "(../SCORING_RUBRIC.md)": "(scoring_rubric.md)",
+            },
+        ),
+    ]
+
+    for canonical, bundled, link_rewrites in synchronized_documents:
+        expected = canonical.read_text()
+        for canonical_link, bundled_link in link_rewrites.items():
+            if canonical_link not in expected:
+                errors.append(f"documented link rewrite is missing from {canonical.relative_to(root)}: {canonical_link}")
+            expected = expected.replace(canonical_link, bundled_link)
+        if bundled.read_text() != expected:
+            errors.append(f"bundled document is out of sync: {bundled.relative_to(root)}")
+
+    return errors
+
+
 root = Path(__file__).resolve().parents[1]
 plugin = json.loads((root / ".claude-plugin" / "plugin.json").read_text())
 skills = plugin.get("skills", [])
@@ -54,6 +95,10 @@ actual_skills = sorted(path.parent.name for path in root.glob("skills/ai-visibil
 errors = registry_errors(actual_skills, skills, manifest_skills)
 if errors:
     raise SystemExit("Skill registry mismatch: " + "; ".join(errors))
+
+errors = synchronization_errors(root, actual_skills)
+if errors:
+    raise SystemExit("Synchronized copy mismatch: " + "; ".join(errors))
 
 coverage_files = {
     "orchestrator": root / "skills" / "ai-visibility" / "ai-visibility-audit" / "SKILL.md",

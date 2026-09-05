@@ -36,3 +36,5 @@ See [Shared Guardrails](references/guardrails.md) for the cross-cutting rules on
 - Keep tasks independently executable where practical.
 - Do not bundle broad content strategy, technical SEO, and schema changes into one vague ticket.
 - Make human-only blockers explicit before implementation starts.
+
+See [Shared Guardrails](references/guardrails.md) for cross-cutting rules on outcome guarantees and factual evidence.

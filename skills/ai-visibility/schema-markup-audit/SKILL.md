@@ -35,3 +35,5 @@ Use the extraction commands and per-type property checklists in `references/chec
 - Do not add schema claims that are not visible or supportable on the page.
 - Separate rich-result eligibility from broader AI understanding.
 - Prefer schema that clarifies real entities over decorative markup.
+
+See [Shared Guardrails](references/guardrails.md) for cross-cutting rules on outcome guarantees and factual evidence.

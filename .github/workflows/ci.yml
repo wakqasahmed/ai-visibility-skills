@@ -20,7 +20,7 @@ jobs:
           python3 scripts/validate-workflows.py
       - name: List skills
         run: scripts/list-skills.sh | grep -q "skills/ai-visibility/ai-visibility-audit/SKILL.md"
-      - name: Validate plugin paths and audit coverage
+      - name: Validate plugin paths, synchronized copies, and audit coverage
         run: python3 scripts/validate-plugin.py
       - name: Validate citation ledger
         run: python3 scripts/validate-citations.py

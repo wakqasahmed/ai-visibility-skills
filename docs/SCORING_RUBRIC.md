@@ -1,6 +1,6 @@
-<!-- Canonical copy. A bundled duplicate lives at skills/ai-visibility/ai-visibility-audit/references/scoring_rubric.md for self-contained single-skill installs (issue #91) — keep both in sync when editing either. -->
-
 # V3 Scoring Rubric
+
+<!-- Keep this canonical document and its bundled single-skill copy (skills/ai-visibility/ai-visibility-audit/references/scoring_rubric.md) in sync. Only their relative link targets may differ. -->
 
 This is the deduction table the [V3 report template](templates/AUDIT_REPORT_TEMPLATE_V3.md)'s
 `Overall Readiness Score` and six pillar scores are derived from. It exists because a bare
@@ -163,7 +163,7 @@ rubric's own discipline (see "Handling inapplicable checks and pillars" above).
 - **`llms-txt-generator`** — `llms.txt` presence, validity, and correct `Content-Type` (a real
   `text/plain` file vs. a JS-shell/SPA-fallback false positive) is never scored, in any pillar.
   This isn't an oversight this issue is fixing — it's an explicit, already-shipped design
-  decision: `docs/AUDIT_REPORTING_GUIDE.md`'s four-tier evidence hierarchy names `llms.txt` by
+  decision: the pack's top-level `docs/AUDIT_REPORTING_GUIDE.md` — its four-tier evidence hierarchy names `llms.txt` by
   name as a Tier 4 "Experimental Protocol" and states as a "Mandatory Rule" that "Tier 4 items
   *never* reduce the core 100-point audit score," and Pillar 6's own rationale text above
   repeats the same rule for the same reason. `llms.txt` is a community draft convention
@@ -171,7 +171,7 @@ rubric's own discipline (see "Handling inapplicable checks and pillars" above).
   unlike `robots.txt` and `sitemap.xml`, which are long-established, universally-respected
   standards this rubric does score. Wiring `llms-txt-generator`'s findings into a pillar would
   directly contradict that already-documented mandatory rule rather than close a gap, so its
-  findings stay exactly where `docs/templates/AUDIT_REPORT_TEMPLATE_V3.md` already places them:
+  findings stay exactly where the [V3 report template](templates/AUDIT_REPORT_TEMPLATE_V3.md) already places them:
   Section 6, "[EXPERIMENTAL] Emerging Agent Protocols (Draft Standards)" — reported, but
   explicitly non-scoring.
 - **`commerce-protocol-discovery`** — none of its four discovery probes (UCP business profile,
@@ -245,7 +245,7 @@ free-form estimate with this table.
 
 It does not, and cannot, predict whether ChatGPT, Perplexity, or any other AI system will
 actually cite or recommend the audited site — that is a live-platform outcome this pack
-explicitly treats as out of scope for a static crawl-based audit (see
-[`docs/RUNNING_AN_AUDIT.md`](RUNNING_AN_AUDIT.md)). What it produces is a reproducible score
+explicitly treats as out of scope for a static crawl-based audit (see the pack's top-level
+`docs/RUNNING_AN_AUDIT.md`). What it produces is a reproducible score
 for the audited *readiness signals* — the same category of claim a Lighthouse or PageSpeed
 score makes about performance, not a citation or ranking guarantee.
