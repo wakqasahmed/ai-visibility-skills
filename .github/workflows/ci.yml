@@ -62,3 +62,5 @@ jobs:
         run: python3 eval/ai-visibility/indexnow-instant-indexing-audit/run_eval.py
       - name: Run ai-share-of-voice-audit deterministic contract eval
         run: python3 eval/ai-visibility/ai-share-of-voice-audit/run_eval.py
+      - name: Test ai-share-of-voice-audit model-harness routing logic
+        run: python3 -m unittest eval/ai-visibility/ai-share-of-voice-audit/test_model_harness.py

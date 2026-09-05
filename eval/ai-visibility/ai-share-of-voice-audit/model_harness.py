@@ -52,6 +52,81 @@ DISABLED_SYSTEM_PROMPT = (
     "You are a general-purpose assistant. Respond helpfully to the user's message."
 )
 
+# Decoy skill names/descriptions from this same pack, used only for the routing
+# phase below. Real skill selection happens from frontmatter name+description
+# alone, before any skill body is loaded — these give the model the same kind
+# of choice a real routing decision faces, without needing every installed
+# skill in this repo.
+ROUTING_CANDIDATES = [
+    (
+        "ai-share-of-voice-audit",
+        "Use to analyze operator-supplied answer transcripts for brand mention "
+        "frequency, citation share of voice (SoV), and competitor displacement "
+        "across ChatGPT, Claude, Perplexity, Gemini, and Google AI Overviews. "
+        "This skill does not collect or query live answers.",
+    ),
+    (
+        "ai-visibility-audit",
+        "Audit whether ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews, "
+        "and other AI agents can discover, understand, cite, and recommend a "
+        "website using a 6-pillar decision-support scoring model.",
+    ),
+    (
+        "citation-readiness-audit",
+        "Audit whether a website has stable, specific, trustworthy pages that AI "
+        "systems can cite for claims, pricing, policies, docs, support answers, "
+        "and company identity.",
+    ),
+    (
+        "ai-search-remediation-plan",
+        "Convert AI visibility, AEO, GEO, crawler, schema, sitemap, and citation "
+        "audit findings into prioritized implementation tickets or a practical "
+        "remediation checklist.",
+    ),
+]
+ROUTING_SKILL_NAME = "ai-share-of-voice-audit"
+
+
+def build_routing_prompt() -> str:
+    listing = "\n".join(f"- {name}: {desc}" for name, desc in ROUTING_CANDIDATES)
+    return (
+        "You are choosing which of your available agent skills, if any, applies to "
+        "the user's message below. You have NOT loaded any skill's full "
+        "instructions yet — decide using only the name and description below, the "
+        "same way a real skill router would.\n\n"
+        f"Available skills:\n{listing}\n\n"
+        "Respond with exactly one line in the form:\n"
+        "DECISION: <skill-name> | none | clarify\n"
+        "Then, on a new line, a one-sentence reason. Use 'none' if no listed skill "
+        "applies. Use 'clarify' if a listed skill might apply but a required "
+        "prerequisite is missing or unstated and you would ask before proceeding."
+    )
+
+
+def parse_routing_decision(response_text: str) -> str:
+    for line in response_text.splitlines():
+        line = line.strip()
+        if line.upper().startswith("DECISION:"):
+            return line.split(":", 1)[1].strip().lower()
+    return ""
+
+
+def score_routing(meta: dict, decision: str) -> list:
+    fixture_type = meta.get("type")
+    selected = ROUTING_SKILL_NAME.lower() in decision
+    if fixture_type == "should_use":
+        if not selected:
+            return [f"expected routing to select {ROUTING_SKILL_NAME}, got: {decision!r}"]
+        return []
+    if fixture_type == "should_clarify":
+        if selected or "clarify" not in decision:
+            return [f"expected routing to ask for clarification, got: {decision!r}"]
+        return []
+    # should_not_use: must not select this skill
+    if selected:
+        return [f"expected routing to NOT select {ROUTING_SKILL_NAME}, got: {decision!r}"]
+    return []
+
 
 def build_enabled_system_prompt() -> str:
     skill_md = (SKILL_DIR / "SKILL.md").read_text()
@@ -119,6 +194,32 @@ def run_condition(client, model: str, fixtures: list, trials: int, enabled: bool
     return {"per_fixture": per_fixture, "overall_pass_rate": overall_pass_rate}
 
 
+def run_routing(client, model: str, fixtures: list, trials: int) -> dict:
+    """Tests the actual routing decision: given only candidate skills' names and
+    descriptions (no skill body loaded), does the model select, decline, or ask
+    for clarification correctly? This runs before/instead of the enabled/disabled
+    ablation above, which only tests behavior after this skill's body is already
+    force-loaded and therefore cannot verify the trigger-selection issue itself."""
+    system_prompt = build_routing_prompt()
+    per_fixture = {}
+
+    for meta in fixtures:
+        trial_results = []
+        for _ in range(trials):
+            response_text = call_model(client, model, system_prompt, meta["input"])
+            decision = parse_routing_decision(response_text)
+            failures = score_routing(meta, decision)
+            trial_results.append({"passed": not failures, "decision": decision, "failures": failures})
+        pass_rate = mean(1.0 if t["passed"] else 0.0 for t in trial_results)
+        per_fixture[meta["_dir"].name] = {
+            "type": meta.get("type"),
+            "pass_rate": pass_rate,
+            "trials": trial_results,
+        }
+
+    return {"per_fixture": per_fixture}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--trials", type=int, default=DEFAULT_TRIALS)
@@ -147,8 +248,17 @@ def main() -> int:
 
     client = anthropic.Anthropic(api_key=api_key)
     fixtures = load_fixtures()
+    failing_fixtures = []
 
-    print(f"Running {args.trials} trial(s) per fixture x {len(fixtures)} fixtures x 2 conditions "
+    print(f"Running routing phase: {args.trials} trial(s) per fixture x {len(fixtures)} "
+          f"fixtures, frontmatter-only, against {args.model}...\n")
+    routing_results = run_routing(client, args.model, fixtures, args.trials)
+    for fixture_name, result in routing_results["per_fixture"].items():
+        print(f"  routing/{fixture_name}: pass_rate={result['pass_rate']:.2f}")
+        if result["pass_rate"] < args.threshold:
+            failing_fixtures.append(f"routing/{fixture_name} ({result['pass_rate']:.2f})")
+
+    print(f"\nRunning {args.trials} trial(s) per fixture x {len(fixtures)} fixtures x 2 conditions "
           f"(skill-enabled, skill-disabled) against {args.model}...\n")
 
     enabled_results = run_condition(client, args.model, fixtures, args.trials, enabled=True)
@@ -164,11 +274,14 @@ def main() -> int:
             f"  {fixture_name}: enabled={enabled_fixture['pass_rate']:.2f} "
             f"disabled={disabled_fixture['pass_rate']:.2f}"
         )
+        if enabled_fixture["pass_rate"] < args.threshold:
+            failing_fixtures.append(f"{fixture_name} ({enabled_fixture['pass_rate']:.2f})")
 
     output = {
         "model": args.model,
         "trials": args.trials,
         "threshold": args.threshold,
+        "routing": routing_results,
         "enabled": enabled_results,
         "disabled": disabled_results,
     }
@@ -177,14 +290,13 @@ def main() -> int:
         print(f"\nWrote results to {args.output}")
 
     if enabled_results["overall_pass_rate"] < args.threshold:
-        print(
-            f"\nFAIL: skill-enabled pass rate {enabled_results['overall_pass_rate']:.2f} "
-            f"is below threshold {args.threshold}"
-        )
+        failing_fixtures.append(f"overall skill-enabled ({enabled_results['overall_pass_rate']:.2f})")
+
+    if failing_fixtures:
+        print(f"\nFAIL: below threshold {args.threshold}: {', '.join(failing_fixtures)}")
         return 1
 
-    print(f"\nPASS: skill-enabled pass rate {enabled_results['overall_pass_rate']:.2f} "
-          f">= threshold {args.threshold}")
+    print(f"\nPASS: routing and skill-enabled pass rates all >= threshold {args.threshold}")
     return 0
 
 
