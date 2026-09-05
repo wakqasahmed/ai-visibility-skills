@@ -40,14 +40,16 @@
 ## Verification Commands
 
 ```bash
+WORK=$(mktemp -d)
+
 # URLs the pillar page actually links to, versus the sitemap's tutorial URLs
 curl -s -L "https://devtools.co/microservices-architecture" \
-  | grep -o -E 'href="[^"#?]+"' | cut -d'"' -f2 | sort -u > /tmp/pillar-links.txt
+  | grep -o -E 'href="[^"#?]+"' | cut -d'"' -f2 | sort -u > "$WORK"/semantic-entity-topical-map-pillar-links.txt
 
 curl -s -L "https://devtools.co/sitemap.xml" \
   | grep -o -E '<loc>[^<]+</loc>' | sed -E 's|</?loc>||g' \
-  | grep -E '/tutorials/' | sort -u > /tmp/sitemap-urls.txt
+  | grep -E '/tutorials/' | sort -u > "$WORK"/semantic-entity-topical-map-sitemap-urls.txt
 
 # Sitemap URLs with no link from the pillar
-comm -13 /tmp/pillar-links.txt /tmp/sitemap-urls.txt
+comm -13 "$WORK"/semantic-entity-topical-map-pillar-links.txt "$WORK"/semantic-entity-topical-map-sitemap-urls.txt
 ```

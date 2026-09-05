@@ -20,6 +20,10 @@ failing to passing once the fix ships. Reuse the relevant skill's `references/ch
 - International / hreflang fixes → `international-seo-hreflang-audit/references/checks.md`
 - Developer docs & API schema fixes → `docs-api-visibility-audit/references/checks.md`
 - Paywall & subscription access fixes → `paywall-access-audit/references/checks.md`
+- Commerce protocol discovery findings → `commerce-protocol-discovery/references/checks.md`
+- Entity identity / topical map fixes → `semantic-entity-topical-map-audit/references/checks.md`
+- IndexNow fixes → `indexnow-instant-indexing-audit/references/checks.md`
+- AI share-of-voice fixes → `ai-share-of-voice-audit/references/checks.md`
 
 Example ticket acceptance criterion, copied verbatim from the source check:
 
@@ -48,7 +52,7 @@ verification command, since it can't be closed by running a check.
 
 ## [EXPERIMENTAL] Emerging Draft Protocol Ticket Guidance
 
-Any ticket generated for emerging draft standards (DNS-AID, Content Signals, Web Bot Auth, Markdown negotiation, Auth.md/ARD manifests) must be explicitly titled with `[EXPERIMENTAL - DRAFT SPEC]` and assigned `Priority: Optional (Draft Standard)`. Ensure tickets state clearly that implementation is optional and non-blocking for core search/crawler discovery.
+Any ticket generated for emerging draft standards (DNS-AID, Content Signals, Web Bot Auth, Markdown negotiation, Auth.md/ARD manifests) must be explicitly titled with `[EXPERIMENTAL - DRAFT SPEC]` and assigned `Priority: P3 (Optional/Experimental)` — every ticket carries one of the four P0-P3 labels, with no separate priority vocabulary for experimental work. Ensure tickets state clearly that implementation is optional and non-blocking for core search/crawler discovery.
 
 ## Evidence discipline
 

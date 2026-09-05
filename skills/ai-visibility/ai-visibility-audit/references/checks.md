@@ -24,23 +24,42 @@ is the path a two-probe guess-list misses).
 Do not live-fetch as `Google-Extended`: it is a `robots.txt`-only control token and has no
 separate HTTP user-agent string [GOOGLE-EXTENDED-01].
 
-```bash
-for ua in GPTBot ClaudeBot PerplexityBot CCBot; do
-  printf "%-16s " "$ua"; curl -s -o /dev/null -w "%{http_code}\n" -A "$ua" "$URL"
-done
-```
+Run `robots-ai-crawler-audit`'s `references/checks.md` live-fetch procedure. It uses the
+vendors' documented full/example request user-agents and compares them with a default fetch.
+A status differential from a hand-set header is spoofable and therefore `[Derived]` evidence
+under rubric 1.2a, not proof that the real crawler is blocked. Escalate to `[Measured]` rubric
+1.2b only with the operator log/IP, vendor-specific forward-confirmed reverse DNS, or
+vendor-webmaster corroboration that procedure requires; never deduct both checks for the same
+finding [BINGBOT-VERIFY-01].
 
 ## Machine-readable context
 
 Attributes are matched anywhere inside the tag, not adjacent to the tag name: frameworks
 inject their own attributes first (`<meta data-react-helmet="true" name="description" ...>`),
 and an adjacent-token pattern silently misses those tags.
+Define the JSON-LD extractor once in the audit shell; it accepts a file path or reads stdin
+when the path is omitted, so the raw and hydrated passes use identical matching semantics.
 
 ```bash
+extract_json_ld() {
+  python3 -c '
+import json, re, sys
+source = sys.argv[1]
+html = open(source, encoding="utf-8", errors="replace").read() if source else sys.stdin.read()
+blocks = re.findall(r"<script[^>]+application/ld\+json[^>]*>(.*?)</script>", html, re.S | re.I)
+print(f"{len(blocks)} JSON-LD block(s)")
+for block in blocks:
+    try:
+        print(json.dumps(json.loads(block), indent=2)[:400])
+    except json.JSONDecodeError as exc:
+        print(f"unparseable JSON-LD block: {exc}")
+' "${1:-}"
+}
+
 curl -s "$URL" | grep -oiE '<title[^>]*>[^<]*'
 curl -s "$URL" | grep -oiE '<meta[^>]+name="description"[^>]*>'
 curl -s "$URL" | grep -oiE '<link[^>]+rel="canonical"[^>]*>'
-curl -s "$URL" | grep -oiE '<script[^>]+application/ld\+json[^>]*>[^<]*' | sed 's/^<script[^>]*>//' | python3 -m json.tool
+curl -s "$URL" | extract_json_ld
 curl -s -o /dev/null -w "%{http_code}\n" "$SITE/llms.txt"
 ```
 
@@ -52,29 +71,40 @@ local Chromium-family browser. The pack does not pin one — `scripts/render-aud
 auto-detects whichever of Chrome/Edge/Chromium happens to be installed and degrades when none
 is — so detect it the same way and handle the no-browser case explicitly:
 
+This skill owns the scratch directory created below. Do not reuse it for another skill; a
+multi-skill run must not cross-contaminate hydrated-page evidence.
+
 ```bash
+WORK=$(mktemp -d)
 CHROME=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium \
   || command -v chromium-browser || command -v microsoft-edge || true)
 if [ -z "$CHROME" ]; then
   echo "no Chromium-family browser available, hydration cross-check not performed"
   exit 0
 fi
-"$CHROME" --headless=new --disable-gpu --virtual-time-budget=10000 --dump-dom "$URL" > /tmp/hydrated.html
+"$CHROME" --headless=new --disable-gpu --virtual-time-budget=10000 --dump-dom "$URL" > "$WORK"/ai-visibility-audit-hydrated.html
 
-grep -oiE '<title[^>]*>[^<]*' /tmp/hydrated.html
-grep -oiE '<meta[^>]+name="description"[^>]*>' /tmp/hydrated.html
-grep -oiE '<link[^>]+rel="canonical"[^>]*>' /tmp/hydrated.html
-python3 - /tmp/hydrated.html <<'PY'
+grep -oiE '<title[^>]*>[^<]*' "$WORK"/ai-visibility-audit-hydrated.html
+grep -oiE '<meta[^>]+name="description"[^>]*>' "$WORK"/ai-visibility-audit-hydrated.html
+grep -oiE '<link[^>]+rel="canonical"[^>]*>' "$WORK"/ai-visibility-audit-hydrated.html
+# extract_json_ld is defined in the "Machine-readable context" fence above, but
+# each ```bash fence is a separately-invoked shell — the function is not in
+# scope here, so it is redefined rather than called across fences.
+extract_json_ld() {
+  python3 -c '
 import json, re, sys
-html = open(sys.argv[1], encoding="utf-8", errors="replace").read()
-blocks = re.findall(r'<script[^>]+application/ld\+json[^>]*>(.*?)</script>', html, re.S | re.I)
-print(f"{len(blocks)} JSON-LD block(s) in hydrated DOM")
+source = sys.argv[1]
+html = open(source, encoding="utf-8", errors="replace").read() if source else sys.stdin.read()
+blocks = re.findall(r"<script[^>]+application/ld\+json[^>]*>(.*?)</script>", html, re.S | re.I)
+print(f"{len(blocks)} JSON-LD block(s)")
 for block in blocks:
     try:
         print(json.dumps(json.loads(block), indent=2)[:400])
     except json.JSONDecodeError as exc:
         print(f"unparseable JSON-LD block: {exc}")
-PY
+' "${1:-}"
+}
+extract_json_ld "$WORK"/ai-visibility-audit-hydrated.html
 ```
 
 Frameworks that stream head/schema content into the page rather than serving it as static tags

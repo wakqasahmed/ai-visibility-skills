@@ -1,6 +1,9 @@
+**Prioritized Action Plan**: P0 (Immediate), P1 (Next), P2 (Improve), P3 (Optional/Experimental) backlog.
+
 ## Rewrite thin FAQ answers with citable substance
 
-- Priority: P3 (optional — quality improvement, not a hard block)
+- Priority: P3 (Optional/Experimental)
+- Evidence Tier: Tier 2 — Important Improvement
 - Source finding: answer-engine-content-audit
 - Acceptance criteria: all 12 FAQ answers are at least 2 sentences and directly answer the question asked, with no answer under 20 characters.
 - Verification:

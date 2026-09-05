@@ -1,0 +1,5 @@
+{
+  "type": "should_clarify",
+  "reason": "Ambiguous trigger: the request does not say whether the required answer transcripts are available.",
+  "expected_topic": "operator-supplied transcripts"
+}

@@ -1,6 +1,6 @@
 # V3 Scoring Rubric
 
-<!-- Keep this canonical document and its bundled single-skill copy in sync. Only their relative link targets may differ. -->
+<!-- Keep this canonical document and its bundled single-skill copy (skills/ai-visibility/ai-visibility-audit/references/scoring_rubric.md) in sync. Only their relative link targets may differ. -->
 
 This is the deduction table the [V3 report template](audit_report_template_v3.md)'s
 `Overall Readiness Score` and six pillar scores are derived from. It exists because a bare
@@ -63,7 +63,8 @@ Source skills: `robots-ai-crawler-audit`, `sitemap-discovery-audit`, `ecommerce-
 | # | Check | Tier | Deduction | N/A condition | Rationale |
 |---|---|---|---|---|---|
 | 1.1 | `robots.txt` has `Disallow: /` under a named major AI-crawler user-agent (GPTBot, ClaudeBot, PerplexityBot, Amazonbot) | Critical Foundation | −25 per distinct blocked crawler family, capped at −50 total | Never — every public site has a `robots.txt` fetch outcome | A full-site `Disallow` for a named AI crawler doesn't degrade the crawler's view of the site, it eliminates it — the crawler never sees a single page. This is the single most severe, unambiguous blocker the pillar can find, so it gets the largest weight in the pillar and is capped rather than allowed to zero the pillar on its own, since a site that blocks 3 named bots isn't 3x worse than one that blocks 1 in a way a human reader would find intuitive. |
-| 1.2 | Live fetch as a bot user-agent returns a different status (403/429/redirect) than a default UA fetch of the same URL | Critical Foundation | −25 | Never | An edge/WAF-level block is invisible to a `robots.txt` read alone and is just as total a blocker as an explicit `Disallow` — evidenced by the differential status code, not an assumption. |
+| 1.2a | Live fetch with a vendor-documented full/example bot user-agent returns a different status (403/429/redirect) than a default-UA fetch of the same URL, with no operator log/IP evidence that a genuine crawler received that response `[Derived]` | Important Improvement | −10 | N/A if no user-agent differential was observed, or if corroboration triggers 1.2b instead | A hand-set user-agent header is spoofable and the probe does not originate from the vendor's crawler network. The differential is a useful WAF/bot-management warning, but cannot distinguish a real crawler block from correct anti-spoofing behavior, so it must not carry the pillar's largest deduction. |
+| 1.2b | The differential response is corroborated by at least one operator-controlled observation of a genuine crawler request: a server/CDN/WAF log source IP matching the vendor's current published range, vendor-specific forward-confirmed reverse DNS, or that vendor's webmaster crawl/fetch evidence `[Measured]` | Critical Foundation | −25 | N/A if no user-agent differential was observed or no required corroboration is available; mutually exclusive with 1.2a | Corroboration ties the blocking response to the real crawler rather than a self-asserted header, making the access failure measured evidence of an edge/WAF-level block. Replace 1.2a with 1.2b when corroboration is obtained; never deduct both for the same finding. |
 | 1.3 | `sitemap.xml` / `sitemap_index.xml` returns non-2xx at both conventional paths and isn't declared (or is declared but 404s) in `robots.txt` | Important Improvement | −15 | Never | No sitemap doesn't block crawling outright (a crawler can still discover pages via links), but it removes the fastest, most reliable discovery path and is a documented Tier-2 example in the V3 design doc. |
 | 1.4 | Sitemap fetch succeeds but is not well-formed XML (fails `xml.dom.minidom.parseString`) | Important Improvement | −10 | Never | A malformed sitemap is worse than a missing one in one respect — it may be silently ignored or partially parsed by different consumers, giving inconsistent discovery results. |
 | 1.5 | ≥10% of sampled sitemap URLs return non-2xx | Important Improvement | −1 per 10% of sampled URLs broken, capped at −10 | N/A if sitemap itself is absent (already penalized under 1.3) | Sitemap entries returning dead links tell a crawler the sitemap is unreliable, discounting trust in every other entry too — scaled by proportion rather than a flat penalty because a site with 2 stale URLs out of 500 is a materially different problem than one with half its sitemap broken. |
@@ -109,8 +110,9 @@ Source skills: `schema-markup-audit`, `docs-api-visibility-audit` (API platform 
 
 ## Pillar 4 — Answer Readiness (weight: 20%)
 
-Source skills: `answer-engine-content-audit`, `ecommerce-technical-seo-audit`
-(catalog-specific extractability check 4.7, ecommerce sites only).
+Source skills: `answer-engine-content-audit`, `robots-ai-crawler-audit`,
+`ecommerce-technical-seo-audit` (catalog-specific extractability check 4.7,
+ecommerce sites only).
 
 | # | Check | Tier | Deduction | N/A condition | Rationale |
 |---|---|---|---|---|---|
@@ -121,6 +123,7 @@ Source skills: `answer-engine-content-audit`, `ecommerce-technical-seo-audit`
 | 4.5 | Meta description on a sampled key page is missing, or present but empty/boilerplate/over ~160 characters ("vague") | Supporting Signal | −5 missing / −3 vague | Never | Per the task's own calibration example, this is "a minor citation-quality signal" — it affects how a snippet reads, not whether the underlying content can be found or understood, so it sits well below the title check and the structural answer checks above. |
 | 4.6 | No freshness signal (`article:published_time`/`article:modified_time` meta, or a visible "updated"/"last modified" string) on time-sensitive content (pricing, docs, guides) | Supporting Signal | −10 | N/A if the sampled content is genuinely evergreen with no freshness claim to make (rare — most business content benefits from a dateline) | Freshness is a supporting trust/recency signal, not a blocker to extracting the answer itself, consistent with its Tier-3 framing in the V3 design doc's "content freshness" example. |
 | 4.7 | A sampled category/collection page has under ~300 words of unique, non-boilerplate, non-product-grid text *and* that text duplicates another category's copy (`ecommerce-technical-seo-audit`'s two-part thin-content test) | Important Improvement | −10 per flagged sampled page, capped at −20 | N/A if the site has no category/collection page structure (e.g. a single-product store or a non-ecommerce site) | A category page this thin gives an agent nothing distinct to extract or cite about that specific category — it can only paraphrase the product grid or fall back to a near-identical sibling page's copy. This is a real but non-catastrophic extractability gap, not the "promised then empty" failure of 4.1 (a dedicated FAQ section is a much stronger, explicit signal to a reader that an answer exists here), so it sits at the same Important tier and weight as 4.2/4.3 rather than 4.1's Critical tier. The check requires *both* low word count and duplication, per the skill's own guardrail against flagging a page as thin from word count alone (a low count can be a legitimate short category with no duplication problem) and against extrapolating a small sample into a catalog-wide count — the −20 cap keeps a 3-5 page sample from swinging the pillar further than the sample itself justifies. |
+| 4.8 | `<meta name="robots">`, `<meta name="googlebot">`, or `X-Robots-Tag` contains `nosnippet` or `max-snippet:0` on a sampled key page | Critical Foundation | −25 | Never | Google requires a page to be eligible for a snippet before it can appear as a supporting link in AI Overviews or AI Mode; `nosnippet` and the equivalent `max-snippet:0` prevent that eligibility and direct-input use `[GOOGLE-AI-FEATURES-01]` `[GOOGLE-ROBOTS-META-01]`. This is an explicit page-level answer exclusion, but it also suppresses classic Google Search text snippets; report the trade-off and confirm the site's intended content policy rather than blindly recommending removal. |
 
 ## Pillar 5 — Trust & Authority (weight: 15%)
 
@@ -153,8 +156,8 @@ machine-readable price) are scored here.
 
 ## Skills intentionally excluded from scoring
 
-Two of this pack's specialist skills produce findings that never appear in the deduction tables
-above, on purpose. Both are stated here explicitly rather than left silently absent, per this
+Five of this pack's specialist skills produce findings that never appear in the deduction tables
+above, on purpose. All five are stated here explicitly rather than left silently absent, per this
 rubric's own discipline (see "Handling inapplicable checks and pillars" above).
 
 - **`llms-txt-generator`** — `llms.txt` presence, validity, and correct `Content-Type` (a real
@@ -184,6 +187,30 @@ rubric's own discipline (see "Handling inapplicable checks and pillars" above).
   whose entire design purpose is to *not* be scored. Its findings are reported as-is (protocol
   probed, endpoint, observed status) with no pillar attribution and no contribution to the
   Overall Readiness Score.
+- **`semantic-entity-topical-map-audit`** — its entity-clarity classification and topical-map
+  findings add no deductions of their own. The skill explicitly forbids inventing a numeric
+  entity score, while the overlapping, scoreable schema facts already have homes in Pillar 3
+  (for example, missing `Organization` and `sameAs` in 3.1 and 3.6). Use its evidence for an
+  existing check when that check's condition is met, but do not deduct again for the
+  `AMBIGUOUS`/`PARTIALLY_GROUNDED` classification or for cluster depth. Report those specialist
+  findings in "What AI & Search Systems Can Understand Today," the relevant detailed finding,
+  and the action plan.
+- **`indexnow-instant-indexing-audit`** — IndexNow is an optional push-discovery enhancement;
+  absence does not block crawling or index eligibility through the passive `robots.txt` and
+  sitemap mechanisms already scored in Pillar 1. A configured integration can still produce
+  actionable findings about key hosting, `keyLocation` scope, payloads, and publish triggers,
+  but those findings belong in the Technical Appendix and action plan and never reduce the core
+  readiness score.
+- **`ai-share-of-voice-audit`** — its mention and citation figures are outcome observations over
+  an operator-supplied, dated transcript sample, not static website-readiness inputs. Their value
+  changes with the supplied query, engine, competitor, and capture-date cohort, so folding them
+  into the core score would make that score non-reproducible. Report the query matrix and
+  cohort-scoped calculations as a clearly labeled non-scoring benchmark, and route displacement
+  gaps into the action plan.
+
+`ai-search-remediation-plan` is also intentionally absent from the deduction tables because it
+consumes the audit's findings and turns them into prioritized implementation work; it does not
+produce an independent audit finding or score.
 
 ## Worked example
 

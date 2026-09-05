@@ -23,6 +23,17 @@ BLOCKER_NOTE_RE = re.compile(r"blocked on", re.IGNORECASE)
 BLOCKER_KEYWORD_RE = re.compile(
     r"credential|access|legal|policy owner|cms access|approval", re.IGNORECASE
 )
+PRIORITY_LABELS = (
+    "P0 (Immediate)",
+    "P1 (Next)",
+    "P2 (Improve)",
+    "P3 (Optional/Experimental)",
+)
+# Matches only an explicit `- Priority: <label>` field line, not any occurrence
+# of a priority label's text anywhere in the ticket body — a body that
+# discusses scheduling in prose ("schedule this as P0 (Immediate)") must not
+# be mistaken for a declared priority field.
+PRIORITY_FIELD_RE = re.compile(r"^-\s*Priority:\s*(.+?)\s*$", re.MULTILINE)
 
 DOMAIN_KEYWORDS = {
     "crawler": re.compile(r"crawler|robots\.txt|user-agent|disallow|gptbot|claudebot|perplexitybot", re.IGNORECASE),
@@ -55,6 +66,13 @@ class Ticket:
     def domains_touched(self) -> set:
         return {name for name, pattern in DOMAIN_KEYWORDS.items() if pattern.search(self.body)}
 
+    @property
+    def priority_field_values(self) -> list:
+        """Every raw `- Priority:` field value declared in this ticket, including
+        non-standard ones — used to distinguish "no Priority field at all" from
+        "a Priority field with a non-canonical value" when reporting failures."""
+        return PRIORITY_FIELD_RE.findall(self.body)
+
 
 @dataclass
 class ContractResult:
@@ -83,6 +101,7 @@ def check_plan_contract(plan_text: str, expected_ticket_count: int | None = None
     """Deterministic, non-negotiable checks from references/checks.md.
 
     - one heading per ticket (independently identifiable and countable)
+    - the plan declares the complete P0-P3 priority vocabulary
     - every ticket has either a re-runnable verification command or an explicit
       "blocked on" note, never neither
     - a ticket mentioning blocker language (credential/access/legal/policy
@@ -97,6 +116,13 @@ def check_plan_contract(plan_text: str, expected_ticket_count: int | None = None
         result.add("no '## ' ticket headings found in plan")
         return result
 
+    missing_priority_labels = [label for label in PRIORITY_LABELS if label not in plan_text]
+    if missing_priority_labels:
+        result.add(
+            "plan does not declare the complete P0-P3 priority vocabulary; "
+            f"missing: {missing_priority_labels}"
+        )
+
     if expected_ticket_count is not None and len(tickets) != expected_ticket_count:
         result.add(
             f"expected {expected_ticket_count} ticket(s), found {len(tickets)}: "
@@ -104,6 +130,24 @@ def check_plan_contract(plan_text: str, expected_ticket_count: int | None = None
         )
 
     for ticket in tickets:
+        field_values = ticket.priority_field_values
+        if len(field_values) == 0:
+            result.add(
+                f"ticket '{ticket.title}' has no '- Priority:' field in its own body "
+                f"(declaring the vocabulary once elsewhere in the plan is not enough — "
+                f"every ticket must carry one)"
+            )
+        elif len(field_values) > 1:
+            result.add(
+                f"ticket '{ticket.title}' declares more than one '- Priority:' field: "
+                f"{field_values}"
+            )
+        elif field_values[0] not in PRIORITY_LABELS:
+            result.add(
+                f"ticket '{ticket.title}' declares a non-standard priority "
+                f"'{field_values[0]}'; must be one of {list(PRIORITY_LABELS)}"
+            )
+
         if not ticket.has_verification_command and not ticket.has_blocker_note:
             result.add(
                 f"ticket '{ticket.title}' has neither a re-runnable verification "

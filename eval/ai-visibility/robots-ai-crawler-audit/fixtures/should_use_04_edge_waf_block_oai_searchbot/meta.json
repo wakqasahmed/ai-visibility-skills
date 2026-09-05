@@ -1,0 +1,6 @@
+{
+  "id": "should_use_04_edge_waf_block_oai_searchbot",
+  "category": "should_use",
+  "description": "robots.txt is permissive, but a fetch with OAI-SearchBot's documented full request user-agent returns 403 while PerplexityBot's documented full user-agent and a default user-agent return 200; the result must remain a derived anti-spoofing/WAF warning until operator log/IP evidence verifies a real crawler block, and must not conflate OAI-SearchBot (ChatGPT search surfacing) with GPTBot (training-data collection, no effect on ChatGPT search visibility).",
+  "expects_full_report": true
+}
