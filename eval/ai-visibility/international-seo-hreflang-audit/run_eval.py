@@ -43,7 +43,7 @@ def run_eval() -> int:
                 failures.append((fix.name, "missing golden_report.md"))
                 continue
             text = report_file.read_text(encoding="utf-8")
-            res = validate_report_contract(text)
+            res = validate_report_contract(text, hydration_only=meta.get("hydration_only", False))
         else:
             response_file = fix / "golden_response.md"
             if not response_file.exists():
