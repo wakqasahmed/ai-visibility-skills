@@ -63,6 +63,30 @@ For any feed found, sample one item and compare its price and availability again
 product page; a stale feed misleads agents more than no feed. Flag variable products whose feed
 entries collapse to a `$0` or base-price-only offer.
 
+## [EXPERIMENTAL] Third-Party Agent Readiness Attestation (isitagentready.com)
+
+This probe checks an emerging third-party benchmark (`isitagentready.com`) for public production
+domains where external network requests and third-party benchmark checks are permitted. It is
+strictly marked `[EXPERIMENTAL]` in reports, is informational only, and never reduces the core
+score:
+
+```bash
+# Privacy Guard: Only run against public domains, never internal/staging/private-network URLs
+if [[ "$SITE" =~ ^https?://(localhost|127\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.|192\.168\.|\[?(::1|[fF][cCdD][0-9a-fA-F]{0,2}:)|.*\.internal|.*\.local|.*\.staging) ]]; then
+  echo "Private/staging target detected — skipping external third-party scan for privacy."
+else
+  curl -s -m 10 -X POST "https://isitagentready.com/api/scan" \
+    -H "Content-Type: application/json" \
+    -d "$(python3 -c 'import json,sys; print(json.dumps({"url": sys.argv[1]}))' "$SITE")" \
+    | python3 -m json.tool || echo "External attestation scan unavailable."
+fi
+```
+
+When reporting these findings, always include an `[EXPERIMENTAL]` label and note that adoption is
+optional and draft-stage — record only the endpoint probed and the observed result, never a
+scored assessment, and never let it corroborate or substitute for a `[Measured]` first-party
+finding.
+
 ## Evidence discipline
 
 Record every probe as: endpoint probed, command run, and observed HTTP status/result — never

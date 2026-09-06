@@ -166,6 +166,14 @@ curl -s -i -H "Accept: text/markdown" "$URL" | grep -i "content-type"
 # Auth.md / ARD Manifests [ARD-MANIFEST-01]
 curl -s -o /dev/null -w "%{http_code}\n" "$SITE/auth.md"
 curl -s -o /dev/null -w "%{http_code}\n" "$SITE/.well-known/ard.json"
+
+# Optional Third-Party External Attestation Scan (Public Domains Only)
+if [[ ! "$SITE" =~ ^https?://(localhost|127\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.|192\.168\.|\[?(::1|[fF][cCdD][0-9a-fA-F]{0,2}:)|.*\.internal|.*\.local|.*\.staging) ]]; then
+  curl -s -m 10 -X POST "https://isitagentready.com/api/scan" \
+    -H "Content-Type: application/json" \
+    -d "$(python3 -c 'import json,sys; print(json.dumps({"url": sys.argv[1]}))' "$SITE")" \
+    | python3 -m json.tool || echo "External attestation scan unavailable."
+fi
 ```
 
 ## Evidence discipline & date arithmetic
