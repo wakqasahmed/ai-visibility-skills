@@ -65,6 +65,20 @@ SENSITIVE_PATH_RE = re.compile(
 
 RECOMMENDED_FIXES_ACTIONABLE_RE = re.compile(r"`[^`]+`|```", re.MULTILINE)
 
+RAW_PASS_RE = re.compile(
+    r"initial (server )?response|raw html|raw `?curl|raw pass|server-delivered|server response",
+    re.IGNORECASE,
+)
+HYDRATED_PASS_RE = re.compile(
+    r"hydrated dom|rendered dom|--dump-dom|headless chrom|after javascript",
+    re.IGNORECASE,
+)
+NON_JS_CRAWLER_RE = re.compile(
+    r"non-js|do(es)? not execute javascript|without executing javascript|"
+    r"javascript-executing|js-executing",
+    re.IGNORECASE,
+)
+
 
 @dataclass
 class ContractResult:
@@ -107,6 +121,7 @@ def check_audit_contract(
     text: str,
     evidenced_sections: list[str] | None = None,
     forbidden_patterns: list[str] | None = None,
+    hydration_only: bool = False,
 ) -> ContractResult:
     """Deterministic, non-negotiable checks for an image-audit report.
 
@@ -122,6 +137,11 @@ def check_audit_contract(
     - none of the fixture's declared forbidden patterns (e.g. an invented,
       unverifiable alt-text string) appear in the response - per the
       "do not write alt text describing something not depicted" guardrail
+    - hydration_only fixtures (an image tag only exists after client-side
+      hydration): "Fetchability findings" must show both the raw pass and
+      the hydrated pass and disclose that the gap is invisible to
+      non-JS-executing crawlers, and "Verification commands" must include a
+      headless/--dump-dom re-check, not curl alone
     """
     result = ContractResult()
 
@@ -143,6 +163,25 @@ def check_audit_contract(
             result.add(
                 "'Verification commands' section has no curl (or equivalent "
                 "re-runnable) command"
+            )
+        if hydration_only and not HYDRATED_PASS_RE.search(verification):
+            result.add(
+                "fixture is hydration-only but 'Verification commands' has no headless/"
+                "--dump-dom re-check command"
+            )
+
+    if hydration_only:
+        fetchability = extract_section(text, "fetchability findings") or ""
+        if not RAW_PASS_RE.search(fetchability) or not HYDRATED_PASS_RE.search(fetchability):
+            result.add(
+                "fixture is hydration-only but 'Fetchability findings' does not show both "
+                "a raw pass and a hydrated-DOM pass - the divergence must be evidenced, not "
+                "asserted"
+            )
+        if not NON_JS_CRAWLER_RE.search(fetchability):
+            result.add(
+                "fixture is hydration-only but 'Fetchability findings' never discloses that "
+                "the gap is invisible to crawlers that do not execute JavaScript"
             )
 
     for section_name in evidenced_sections or []:

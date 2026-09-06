@@ -35,7 +35,9 @@ def load_fixture(fixture_dir: Path) -> dict:
 def run_should_use_fixture(fixture_dir: Path, meta: dict) -> list:
     report_text = (fixture_dir / "golden_report.md").read_text()
     result = contract.check_report_contract(
-        report_text, expected_finding_count=meta.get("expected_finding_count")
+        report_text,
+        expected_finding_count=meta.get("expected_finding_count"),
+        hydration_only=meta.get("hydration_only", False),
     )
     return result.failures
 

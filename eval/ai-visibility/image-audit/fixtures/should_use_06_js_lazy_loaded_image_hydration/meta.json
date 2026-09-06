@@ -1,5 +1,6 @@
 {
   "category": "should_use",
   "description": "Image tags and alt text are injected dynamically via JavaScript on a client-rendered catalog page.",
-  "evidenced_sections": ["alt text coverage and quality summary", "fetchability findings"]
+  "evidenced_sections": ["alt text coverage and quality summary", "fetchability findings"],
+  "hydration_only": true
 }

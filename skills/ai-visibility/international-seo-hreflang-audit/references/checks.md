@@ -18,6 +18,9 @@ soup = BeautifulSoup(html, 'html.parser')
 for link in soup.find_all('link', rel=re.compile(r'alternate', re.I)):
     if link.get('hreflang'):
         print(f\"{link.get('hreflang')}: {link.get('href')}\")
+"
+```
+
 ## 1b. Cross-Check Hydrated DOM (Headless Browser)
 
 ```bash

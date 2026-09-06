@@ -39,6 +39,7 @@ def run_should_use_fixture(fixture_dir: Path, meta: dict) -> list:
         report_text,
         evidenced_sections=meta.get("evidenced_sections"),
         forbidden_patterns=meta.get("forbidden_patterns"),
+        hydration_only=meta.get("hydration_only", False),
     )
     return result.failures
 

@@ -39,6 +39,20 @@ ABSENCE_PATTERN_RE = re.compile(
 )
 CHECK_COMMAND_RE = re.compile(r"curl|grep", re.IGNORECASE)
 
+RAW_PASS_RE = re.compile(
+    r"initial (server )?response|raw html|raw `?curl|raw pass|server-delivered|server response",
+    re.IGNORECASE,
+)
+HYDRATED_PASS_RE = re.compile(
+    r"hydrated dom|rendered dom|--dump-dom|headless chrom|after javascript",
+    re.IGNORECASE,
+)
+NON_JS_CRAWLER_RE = re.compile(
+    r"non-js|do(es)? not execute javascript|without executing javascript|"
+    r"javascript-executing|js-executing",
+    re.IGNORECASE,
+)
+
 
 @dataclass
 class Finding:
@@ -90,7 +104,11 @@ def parse_findings(report_text: str) -> list:
     return findings
 
 
-def check_report_contract(report_text: str, expected_finding_count: int | None = None) -> ContractResult:
+def check_report_contract(
+    report_text: str,
+    expected_finding_count: int | None = None,
+    hydration_only: bool = False,
+) -> ContractResult:
     """Deterministic, non-negotiable checks from references/checks.md + SKILL.md.
 
     - one heading per finding (independently identifiable and countable)
@@ -108,6 +126,11 @@ def check_report_contract(report_text: str, expected_finding_count: int | None =
       pulling the actual rendered text first)
     - status=vague must be paired with a real (non-absence) excerpt proving
       the weak answer actually exists, not just an assertion
+    - hydration_only fixtures (raw HTML is empty but the hydrated DOM has the
+      content): every finding must show both the raw pass and the hydrated
+      pass, disclose that the gap is invisible to non-JS-executing crawlers,
+      and must not be scored 'critical' — the content exists, so this is a
+      delivery gap, not a total absence
     """
     result = ContractResult()
     findings = parse_findings(report_text)
@@ -157,6 +180,26 @@ def check_report_contract(report_text: str, expected_finding_count: int | None =
                     f"finding '{f.title}' has status 'vague' but Observed text shows no actual "
                     f"excerpt was captured — vagueness must be evidenced by real (weak) text, "
                     f"not asserted"
+                )
+
+        if hydration_only:
+            combined = f"{f.command or ''} {f.observed or ''}"
+            if not RAW_PASS_RE.search(combined) or not HYDRATED_PASS_RE.search(combined):
+                result.add(
+                    f"finding '{f.title}' is a hydration-only fixture but its Command/Observed "
+                    f"text does not show both a raw pass and a hydrated-DOM pass — the divergence "
+                    f"must be evidenced, not asserted"
+                )
+            if not NON_JS_CRAWLER_RE.search(combined):
+                result.add(
+                    f"finding '{f.title}' is a hydration-only fixture but never discloses that "
+                    f"the gap is invisible to crawlers that do not execute JavaScript"
+                )
+            if f.severity and f.severity.lower() == "critical":
+                result.add(
+                    f"finding '{f.title}' is a hydration-only fixture scored 'critical' — the "
+                    f"content exists in the hydrated DOM, so this is a delivery gap (important), "
+                    f"not a total absence"
                 )
 
     return result
