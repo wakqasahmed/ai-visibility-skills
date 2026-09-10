@@ -75,7 +75,7 @@ jobs:
 
           rm -f /tmp/ocr-preflight.json
 
-      - uses: alibaba/open-code-review@1c8f930fc923753b17b80f633aea54274fc83825 # v1.7.15
+      - uses: alibaba/open-code-review@04284b5dc19e0f52528ca466a767e4a2c100e5f5 # v1.11.6
         with:
           llm_url: ${{ vars.OCR_LLM_URL }}
           llm_auth_token: ${{ secrets.OCR_LLM_AUTH_TOKEN }}
