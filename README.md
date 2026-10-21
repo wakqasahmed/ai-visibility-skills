@@ -148,3 +148,16 @@ Deterministic checks run free on every PR. Proving the outcome-eval harnesses wi
 - **Ethereum (ETH) / any ERC-20 including stablecoins:** `0x59bc573e414D62d44461234dEf438247dfc3Cf6A`
 
 Double-check every character against this page before sending. Full portfolio picture and rationale: [wakqasahmed/skills](https://github.com/wakqasahmed/skills#fund-the-real-harness-runs).
+
+---
+
+<div align="center">
+
+### 🔍 [Want continuous 24/7 AI search monitoring & remediation? →](https://buildeon.solutions/products/ai-seo-ops/?utm_source=github&utm_medium=skill_repo&utm_campaign=ai_visibility_skills)
+
+*This is the engineering foundation behind **AIOpsome** by Buildeon Systems — continuous prompt monitoring across ChatGPT Search, Perplexity, Claude, and Google AI Overviews.*
+
+[**AIOpsome by Buildeon**](https://buildeon.solutions/products/ai-seo-ops/) · [**AI Visibility Solutions**](https://buildeon.solutions/solutions/ai-visibility/) · [**Book an AI Search Audit**](https://buildeon.solutions/work-with-us/?source=github-ai-visibility&variant=stack)
+
+</div>
+
